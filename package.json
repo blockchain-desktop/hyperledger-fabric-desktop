@@ -47,6 +47,8 @@
     }
   },
   "dependencies": {
+    "fabric-client": "~1.1.0",
+    "grpc": "^1.6.0",
     "electron-compile": "^6.4.3",
     "electron-devtools-installer": "^2.1.0",
     "electron-squirrel-startup": "^1.0.0",
