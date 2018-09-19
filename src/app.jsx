@@ -1,5 +1,5 @@
 import React from 'react';
-import BasicLayout from './Components/BasicLayout';
+import BasicLayout from './components/BasicLayout';
 
 var Fabric_Client = require('fabric-client');
 var path = require('path');
