@@ -1,7 +1,22 @@
 import React from 'react';
 import { Layout, Menu, Icon } from 'antd';
+import DataContent from './content/DataContent';
+import ChaincodeInvokeContent from './content/ChaincodeInvokeContent';
+import ChaincodeInstallContent from './content/ChaincodeInstallContent';
 
-const { Header, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
+
+// 内容路由：在此配置内容key对应的内容类，切换主页面内容
+function ContentRoute(props) {
+  if (props.contentKey === 1) {
+    return <DataContent />;
+  } else if (props.contentKey === 2) {
+    return <ChaincodeInvokeContent />;
+  } else if (props.contentKey === 3) {
+    return <ChaincodeInstallContent />;
+  }
+  return <h1>侧边栏按钮未绑定对应内容</h1>;
+}
 
 export default class BasicLayout extends React.Component {
   constructor(props) {
@@ -49,9 +64,8 @@ export default class BasicLayout extends React.Component {
         </Sider>
 
         <Layout>
-          {/* 在此配置内容key对应的内容类，相当于路由 */}
           <Content style={{ margin: '24px 16px', padding: 24, background: '#fff' }}>
-            {this.state.contentKey}
+            <ContentRoute contentKey={this.state.contentKey} />
           </Content>
         </Layout>
 
