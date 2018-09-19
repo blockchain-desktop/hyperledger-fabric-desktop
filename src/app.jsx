@@ -1,4 +1,5 @@
 import React from 'react';
+import { DatePicker } from 'antd';
 
 var Fabric_Client = require('fabric-client');
 var path = require('path');
@@ -93,6 +94,8 @@ export default class App extends React.Component {
       <h2>Welcome to React!</h2>
       <button onClick={this.onClick}>调用按钮</button>
       <div>调用结果：{this.state.result}</div>
+
+      <DatePicker />
     </div>);
   }
 }
