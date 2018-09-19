@@ -1,5 +1,5 @@
 import React from 'react';
-import { DatePicker } from 'antd';
+import Page from './Components/Page';
 
 var Fabric_Client = require('fabric-client');
 var path = require('path');
@@ -17,7 +17,7 @@ export default class App extends React.Component {
   }
 
   onClick(e) {
-    
+
   var fabric_client = new Fabric_Client();
 
   // setup the fabric network
@@ -33,7 +33,7 @@ export default class App extends React.Component {
   var result = '';
   this.setState({
     result: result
-  });    
+  });
   // ----------------------------------------------
       // TODO: 导入fabric query函数。
   // create the key value store as defined in the fabric-client/config/default.json 'key-value-store' setting
@@ -79,7 +79,7 @@ export default class App extends React.Component {
                   console.log("Response is ", query_responses[0].toString());
                   this.setState({
                     result: query_responses[0].toString()
-                  });       
+                  });
               }
           } else {
               console.log("No payloads were returned from query");
@@ -90,12 +90,8 @@ export default class App extends React.Component {
   }
 
   render() {
-    return (<div>
-      <h2>Welcome to React!</h2>
-      <button onClick={this.onClick}>调用按钮</button>
-      <div>调用结果：{this.state.result}</div>
-
-      <DatePicker />
-    </div>);
+    return (
+        <Page />
+    );
   }
 }
