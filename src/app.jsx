@@ -1,5 +1,5 @@
 import React from 'react';
-import Page from './Components/Page';
+import BasicLayout from './Components/BasicLayout';
 
 var Fabric_Client = require('fabric-client');
 var path = require('path');
@@ -91,7 +91,7 @@ export default class App extends React.Component {
 
   render() {
     return (
-        <Page />
+        <BasicLayout />
     );
   }
 }
