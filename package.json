@@ -1,6 +1,6 @@
 {
-  "name": "hyperledger-fabric-desktop-demo",
-  "productName": "hyperledger-fabric-desktop-demo",
+  "name": "hyperledger-fabric-desktop",
+  "productName": "hyperledger-fabric-desktop",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": "src/index.js",
@@ -32,7 +32,7 @@
         "packageManager": "npm"
       },
       "electronWinstallerConfig": {
-        "name": "hyperledger_fabric_desktop_demo"
+        "name": "hyperledger_fabric_desktop"
       },
       "electronInstallerDebian": {},
       "electronInstallerRedhat": {},
@@ -42,7 +42,7 @@
       },
       "windowsStoreConfig": {
         "packageName": "",
-        "name": "hyperledgerfabricdesktopdemo"
+        "name": "hyperledgerfabricdesktop"
       }
     }
   },
