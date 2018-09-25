@@ -5,10 +5,18 @@ TODO: 介绍客户端的使用
 
 
 ## 参与开发
-[详细说明请参考官方文档](https://hyperledger-fabric.readthedocs.io/en/release-1.1/write_first_app.html)
+[详细说明请参考官方文档](https://hyperledger-fabric.readthedocs.io/en/release-1.1/write_first_app.html)  
+
+必备条件：
+* node.js：8.9.x 版本及以上，推荐8.x.x最新LTS版本 (9版本及以上暂不支持)
+* docker：17.06.2-ce 版本及以上
+* docker-compose：1.14.0 版本及以上
+
+推荐IDE：WebStorm、VSCode
 
 ### 1. 启动基础fabric网络  
 #### 1.1 启动网络
+
 启动
 ```bash
 cd ../fabric/fabcar
@@ -22,7 +30,10 @@ node enrollAdmin.js
 node registerUser.js
 ```
 
-生成的证书位于`fabcar/hfc-key-store`
+生成的证书位于`fabric/fabcar/hfc-key-store`。
+目前已在`src/components/content/resources/hfc-key-store`放置有效证书，
+只需启动网络即可使用，无需获取CA证书并放置对应目录。
+因网络根证书不会变化，所以git仓库中保存的证书可以使用。
 
 
 #### 1.2 关闭网络
