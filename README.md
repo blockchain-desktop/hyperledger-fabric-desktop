@@ -7,9 +7,8 @@
 
 ## 如何参与？
 1. 任何人：任何问题、开发事项，请在github提issue
-2. 开发者：交流处理issue，分配处理人
-3. 开发者：在projects中领取任务，进行开发
-4. 维护者：处理协调issues与projects开发进展
+2. 开发者：交流处理issue，确定处理人。开发完成后close issues。
+3. 维护者：处理协调issues与projects开发进展
 
 ## 入门文档
 [文档地址](./doc/index.md)
