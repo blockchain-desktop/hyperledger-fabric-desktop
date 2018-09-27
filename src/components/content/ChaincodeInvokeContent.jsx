@@ -17,6 +17,7 @@ export default class ChaincodeInvokeContent extends React.Component {
       result: '',
       value: '',
 
+
       channel:'mychannel',                              // queryCar chaincode function - requires 1 argument, ex: args: ['CAR4'],
       chaincodeId: 'fabcar',        // queryAllCars chaincode function - requires no arguments , ex: args: [''],
       fcn: 'queryAllCars',
