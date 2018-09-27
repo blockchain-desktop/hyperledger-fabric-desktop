@@ -1,10 +1,13 @@
 import React from 'react';
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu, Icon, Button } from 'antd';
 import DataContent from './content/DataContent';
 import ChaincodeInvokeContent from './content/ChaincodeInvokeContent';
 import ChaincodeInstallContent from './content/ChaincodeInstallContent';
 
 const { Sider, Content } = Layout;
+
+var fs = require('fs');
+var write = require('../util/readAndWrite');
 
 // 内容路由：在此配置内容key对应的内容类，切换主页面内容
 function ContentRoute(props) {
@@ -27,6 +30,7 @@ export default class BasicLayout extends React.Component {
     };
     this.onCollapse = this.onCollapse.bind(this);
     this.switchContent = this.switchContent.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
   onCollapse(collapsed) {
@@ -36,6 +40,16 @@ export default class BasicLayout extends React.Component {
   switchContent(contentKey) {
     this.setState({ contentKey });
   }
+
+  onClick(e){
+    this.props.onGetChildMessage(false);  // 调用父组件传来的函数，将数据作为参数传过去
+    var config = JSON.parse(fs.readFileSync('config.json'));
+    config['isSign'] = false;
+    var content = JSON.stringify(config);
+    write.write(content,'config.json');
+
+  }
+
 
   render() {
     return (
@@ -68,6 +82,10 @@ export default class BasicLayout extends React.Component {
             <ContentRoute contentKey={this.state.contentKey} />
           </Content>
         </Layout>
+
+        <div style={{ margin: '24px 0' }}>
+          <Button type="primary" style={{ width: '80%' }} onClick={this.onClick}>退出</Button>
+        </div>
 
       </Layout>
     );

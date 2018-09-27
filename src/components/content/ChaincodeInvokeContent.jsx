@@ -5,9 +5,9 @@ var Fabric_Client = require('fabric-client');
 var path = require('path');
 var util = require('util');
 var os = require('os');
+var fs=require('fs');
 
 const { TextArea } = Input;
-
 
 
 export default class ChaincodeInvokeContent extends React.Component {
@@ -16,7 +16,8 @@ export default class ChaincodeInvokeContent extends React.Component {
     this.state = {
       result: '',
       value: '',
-                                    // queryCar chaincode function - requires 1 argument, ex: args: ['CAR4'],
+
+      channel:'mychannel',                              // queryCar chaincode function - requires 1 argument, ex: args: ['CAR4'],
       chaincodeId: 'fabcar',        // queryAllCars chaincode function - requires no arguments , ex: args: [''],
       fcn: 'queryAllCars',
       args: '',
@@ -28,6 +29,7 @@ export default class ChaincodeInvokeContent extends React.Component {
     this.fcnChange = this.fcnChange.bind(this);
     this.argsChange = this.argsChange.bind(this);
     this.typeChange = this.typeChange.bind(this);
+    this.channelChange = this.channelChange.bind(this);
 
   }
 
@@ -48,6 +50,10 @@ export default class ChaincodeInvokeContent extends React.Component {
     this.setState({type: event.target.value})
   }
 
+  channelChange(event){
+    this.setState({channel: event.target.value})
+  }
+
 
 
 
@@ -57,22 +63,24 @@ export default class ChaincodeInvokeContent extends React.Component {
 
     var fabric_client = new Fabric_Client();
 
+    var config = JSON.parse(fs.readFileSync('config.json'));
+    console.log(config);
+
     // setup the fabric network
-    var channel = fabric_client.newChannel('mychannel');
-    var peer = fabric_client.newPeer('grpc://localhost:7051');
+    var channel = fabric_client.newChannel(this.state.channel);
+    var peer = fabric_client.newPeer(config['peer']);
     channel.addPeer(peer);
 
     //
     var member_user = null;
 
-    var store_path = path.join(__dirname, 'resources/hfc-key-store');
+    var store_path = path.join(config['path']);
     console.log('Store path:'+store_path);
     var tx_id = null;
     var result = '';
     this.setState({
       result: result,
     });
-
 
 
 
@@ -136,16 +144,20 @@ export default class ChaincodeInvokeContent extends React.Component {
   render() {
     return (
       <div>
+
+        <div style={{ margin: '24px 0' }}>
+          通道名称：
+          <Input  type="text" value={this.state.channel} style={{ width: '70%'  }} onChange={this.channelChange}/>
+        </div>
+
         <div style={{ margin: '24px 0' }}>
           智能合约：
           <Input  type="text" value={this.state.chaincodeId} style={{ width: '70%'  }} onChange={this.chaincodeIdChange}/>
-          {this.state.chaincodeId}
         </div>
 
         <div style={{ margin: '24px 0' }}>
           函数名称：
           <Input  type="text" value={this.state.fcn} style={{ width: '70%'  }} onChange={this.fcnChange}/>
-          {this.state.fcn}
         </div>
 
         <div style={{ margin: '24px 0' }}>
@@ -153,7 +165,6 @@ export default class ChaincodeInvokeContent extends React.Component {
           <Select mode="tags" style={{ width: '70%' }} placeholder="parameter" onChange={this.argsChange}>
             <Option value="null">null</Option>
           </Select>
-          {this.state.args}
         </div>
 
         <div style={{ margin: '24px 0' }}>
@@ -162,7 +173,6 @@ export default class ChaincodeInvokeContent extends React.Component {
             <Radio.Button value="invoke">调用</Radio.Button>
             <Radio.Button value="query">查询</Radio.Button>
           </Radio.Group>
-          {this.state.type}
         </div>
 
         <div style={{ margin: '24px 0' }}>
