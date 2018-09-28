@@ -6,25 +6,46 @@ var fs=require('fs');
 
 class FabricClient {
 
-  // 回调函数 callback(result):  result为字符串结果
-  queryCc(callback, chaincodeId, fcn, args, channel) {
-
+  constructor() {
+    // TODO: 若配置更新，如何调整？
     var fabric_client = new Fabric_Client();
 
     var config = JSON.parse(fs.readFileSync('config.json'));
     console.log(config);
 
-    // setup the fabric network
-    var channel = fabric_client.newChannel(channel);
-    var peer = fabric_client.newPeer(config['peer']);
-    channel.addPeer(peer);
-
-    //
-    var member_user = null;
-
     var store_path = path.join(config['path']);
     console.log('Store path:'+store_path);
     var tx_id = null;
+
+    this.fabric_client = fabric_client;
+    this.config = config;
+    this.store_path = store_path;
+    this.channels = {};
+  }
+
+  // 查询链码函数，参数说明如下：
+  //   callback(result): function 回调函数，result为字符串结果
+  //   chaincodeId: string
+  //   fcn: string
+  //   args: []string
+  //   channelName: string
+  queryCc(callback, chaincodeId, fcn, args, channelName) {
+    console.log(`start query, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`)
+    var fabric_client = this.fabric_client;
+    var config = this.config;
+    var store_path = this.store_path;
+
+    // setup each channel once
+    if (!this.channels[channelName]) {
+      var channel = fabric_client.newChannel(channelName);
+      var peer = fabric_client.newPeer(config['peer']);
+      channel.addPeer(peer);
+      this.channels[channelName] = channel
+    } else {
+      var channel = this.channels[channelName]
+    }
+
+    var member_user = null;
 
     // ----------------------------------------------
     // create the key value store as defined in the fabric-client/config/default.json 'key-value-store' setting
@@ -44,7 +65,7 @@ class FabricClient {
       return fabric_client.getUserContext('user1', true);
     }).then((user_from_store) => {
       if (user_from_store && user_from_store.isEnrolled()) {
-        console.log('Successfully loaded user1 from persistence');
+        console.log('Successfully loaded user1 from persistence, user:', user_from_store);
         member_user = user_from_store;
       } else {
         throw new Error('Failed to get user1.... run registerUser.js');
@@ -55,7 +76,7 @@ class FabricClient {
         chaincodeId: chaincodeId,
         fcn: fcn,
         //type:this.state.type,
-        args: [args]
+        args: args ? args : [] // FIXME: caller should be responsible for checking input.
       };
 
 
