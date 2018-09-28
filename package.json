@@ -13,7 +13,7 @@
   },
   "keywords": [],
   "author": "dengyi",
-  "license": "GPLv3",
+  "license": "GPL-3.0-or-later",
   "config": {
     "forge": {
       "make_targets": {
