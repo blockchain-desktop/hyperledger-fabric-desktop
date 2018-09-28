@@ -4,7 +4,7 @@ var util = require('util');
 var os = require('os');
 var fs=require('fs');
 
-export default class FabricClient {
+class FabricClient {
 
   // 回调函数 callback(result):  result为字符串结果
   queryCc(callback, chaincodeId, fcn, args, channel) {
@@ -91,9 +91,12 @@ export default class FabricClient {
 }
 
 
-// var clientMap = {};
+var __fabricClient
 
-// FabricClient单例模式
-// export default getFabricClient(privKey, cert, peerUrl) {
-//   return
-// }
+// FabricClient单例模式。后续考虑优化为多套身份，多个client
+export default function getFabricClientSingleton() {
+  if (!__fabricClient) {
+    __fabricClient = new FabricClient();
+  }
+  return __fabricClient;
+}

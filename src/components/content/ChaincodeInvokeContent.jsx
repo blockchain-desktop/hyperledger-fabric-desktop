@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Input, Select, Radio} from 'antd';
-import FabricClient from '../../util/fabric'
+import getFabricClientSingleton from '../../util/fabric'
 
 const { TextArea } = Input;
 
@@ -54,7 +54,7 @@ export default class ChaincodeInvokeContent extends React.Component {
   }
 
   onClick(e) {
-    var fc = new FabricClient();
+    var fc = getFabricClientSingleton();
     fc.queryCc(this.onClickCallback, this.state.chaincodeId, this.state.fcn, this.state.args, this.state.channel)
   }
 
