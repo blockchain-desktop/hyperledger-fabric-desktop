@@ -41,6 +41,7 @@ class FabricClient {
       this.fabric_client.setCryptoSuite(crypto_suite);
 
       // FIXME: user1 待修改为自定义参数
+      // FIXME: _getUser的登陆问题,可能仅需启动时一次
       return this.fabric_client.getUserContext('user1', true);
     })
 
@@ -68,7 +69,7 @@ class FabricClient {
   }
 
   /**
-   *  查询链码函数
+   *  查询链码
    * @param callback {function(string)}  回调函数，参数为字符串结果
    * @param chaincodeId {string}
    * @param fcn {string}
@@ -115,6 +116,14 @@ class FabricClient {
 
   }
 
+  /**
+   *  调用链码，写入账本
+   * @param callback {function(string)}  回调函数，参数为字符串结果
+   * @param chaincodeId {string}
+   * @param fcn {string}
+   * @param args {[]string}
+   * @param channelName {string}
+   */
   invokeCc(callback, chaincodeId, fcn, args, channelName) {
     console.log(`start invoke, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`)
     let channel = this._setupChannelOnce(channelName);
@@ -246,6 +255,40 @@ class FabricClient {
   installCc() {}
 
   instantiateCc() {}
+
+  /**
+   * 根据区块号，获取区块
+   * @param callback
+   * @param blockNumber
+   * @param channelName
+   */
+  queryBlock(callback, blockNumber, channelName) {
+    let channel = this._setupChannelOnce(channelName)
+
+    this._getUser().then((user) => {
+      return channel.queryBlock(blockNumber)
+    }).then((block) => {
+      console.log("block:", block, block.toString())
+      callback(JSON.stringify(block))
+    })
+  }
+
+  /**
+   * 获取区块链信息，包含区块高度height
+   * @param callback
+   * @param channelName
+   */
+  queryInfo(callback, channelName) {
+    let channel = this._setupChannelOnce(channelName)
+
+    this._getUser().then((user) => {
+      return channel.queryInfo()
+    }).then((blockchainInfo) => {
+      console.log("blockchainInfo:", blockchainInfo, blockchainInfo.toString())
+      callback(JSON.stringify(blockchainInfo))
+    })
+
+  }
 
 }
 
