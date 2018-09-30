@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Input, Select, Radio} from 'antd';
-import FabricClient from '../../util/fabric'
+import getFabricClientSingleton from '../../util/fabric'
 
 const { TextArea } = Input;
 
@@ -17,7 +17,7 @@ export default class ChaincodeInvokeContent extends React.Component {
       chaincodeId: 'fabcar',        // queryAllCars chaincode function - requires no arguments , ex: args: [''],
       fcn: 'queryAllCars',
       args: '',
-      type: 'invoke'
+      type: 'query'
     };
 
     this.onClick = this.onClick.bind(this);
@@ -55,8 +55,16 @@ export default class ChaincodeInvokeContent extends React.Component {
   }
 
   onClick(e) {
-    var fc = new FabricClient();
-    fc.queryCc(this.onClickCallback, this.state.chaincodeId, this.state.fcn, this.state.args, this.state.channel)
+    this.setState({result: ''})
+
+    var fc = getFabricClientSingleton();
+    if (this.state.type === 'query') {
+      fc.queryCc(this.onClickCallback, this.state.chaincodeId, this.state.fcn, this.state.args, this.state.channel)
+    } else if (this.state.type === 'invoke') {
+      fc.invokeCc(this.onClickCallback, this.state.chaincodeId, this.state.fcn, this.state.args, this.state.channel)
+    } else {
+      console.error("Chaincode calling type is invalid.")
+    }
   }
 
   render() {
@@ -88,8 +96,8 @@ export default class ChaincodeInvokeContent extends React.Component {
         <div style={{ margin: '24px 0' }}>
           &emsp;&emsp;方法：
           <Radio.Group value={this.state.type} buttonStyle="solid" onChange={this.typeChange}>
-            <Radio.Button value="invoke">调用</Radio.Button>
-            <Radio.Button value="query">查询</Radio.Button>
+            <Radio.Button value="query">查询(query)</Radio.Button>
+            <Radio.Button value="invoke">调用(invoke)</Radio.Button>
           </Radio.Group>
         </div>
 
