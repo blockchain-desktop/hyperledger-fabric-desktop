@@ -1,1 +1,1 @@
-{"isSign":false,"peer":"grpc://localhost:7051","cer":"","pri":"","path":"src/components/content/resources/key/"}
+{"isSign":true,"peer":"grpc://localhost:7051","cer":"src/components/content/resources/key/user1","pri":"src/components/content/resources/key/e9784e1569ca9aeee9179f0cb685c3d43ccb5641e8824d80833d59c029e74184-priv","path":"src/components/content/resources/key/"}

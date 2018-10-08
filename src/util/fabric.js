@@ -269,7 +269,7 @@ class FabricClient {
       return channel.queryBlock(blockNumber)
     }).then((block) => {
       console.log("block:", block, block.toString())
-      callback(JSON.stringify(block))
+      callback(block)
     })
   }
 
@@ -285,7 +285,7 @@ class FabricClient {
       return channel.queryInfo()
     }).then((blockchainInfo) => {
       console.log("blockchainInfo:", blockchainInfo, blockchainInfo.toString())
-      callback(JSON.stringify(blockchainInfo))
+      callback(blockchainInfo)
     })
 
   }

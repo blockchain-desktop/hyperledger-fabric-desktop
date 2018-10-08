@@ -75,6 +75,9 @@ export default class BasicLayout extends React.Component {
               <span>智能合约安装</span>
             </Menu.Item>
           </Menu>
+          <div style={{ margin: '500px 50px' }}>
+            <Button type="primary" style={{ width: '80%' }} onClick={this.onClick}>退出</Button>
+          </div>
         </Sider>
 
         <Layout>
@@ -82,10 +85,6 @@ export default class BasicLayout extends React.Component {
             <ContentRoute contentKey={this.state.contentKey} />
           </Content>
         </Layout>
-
-        <div style={{ margin: '24px 0' }}>
-          <Button type="primary" style={{ width: '80%' }} onClick={this.onClick}>退出</Button>
-        </div>
 
       </Layout>
     );

@@ -11,11 +11,9 @@ export default class ChaincodeInvokeContent extends React.Component {
     this.state = {
       result: '',
       value: '',
-
-
-      channel:'mychannel',                              // queryCar chaincode function - requires 1 argument, ex: args: ['CAR4'],
-      chaincodeId: 'fabcar',        // queryAllCars chaincode function - requires no arguments , ex: args: [''],
-      fcn: 'queryAllCars',
+      channel:'mychannel',
+      chaincodeId: 'fabcar',   // queryCar chaincode function - requires 1 argument, ex: args: ['CAR4'],
+      fcn: 'queryAllCars',    // queryAllCars chaincode function - requires no arguments , ex: args: [''],
       args: '',
       type: 'query'
     };
@@ -60,6 +58,7 @@ export default class ChaincodeInvokeContent extends React.Component {
     var fc = getFabricClientSingleton();
     if (this.state.type === 'query') {
       fc.queryCc(this.onClickCallback, this.state.chaincodeId, this.state.fcn, this.state.args, this.state.channel)
+
     } else if (this.state.type === 'invoke') {
       fc.invokeCc(this.onClickCallback, this.state.chaincodeId, this.state.fcn, this.state.args, this.state.channel)
     } else {

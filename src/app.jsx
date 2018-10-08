@@ -1,6 +1,7 @@
 import React from 'react';
 import BasicLayout from './components/BasicLayout';
 import UserLayout from './components/UserLayout';
+import demo from './components/demo';
 var fs = require('fs');
 
 export default class App extends React.Component {
