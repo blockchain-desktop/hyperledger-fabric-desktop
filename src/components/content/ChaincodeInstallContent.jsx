@@ -55,7 +55,10 @@ class ContractDiv extends React.Component {
   handleMenuClick(e) {
     if (e.key == 1) { console.log('click on item 1'); }
     if (e.key == 2) { console.log('click on item 2'); }
-    if (e.key == 3) { console.log('click on item 3'); }
+    if (e.key == 3) {
+      console.log('click on item 3');
+      this.props.onDel(e);
+    }
   }
 
   render() {
@@ -82,7 +85,7 @@ class ContractDiv extends React.Component {
     }
     const menu = (
       <Menu onClick={this.handleMenuClick}>
-        <Menu.Item key="1" disabled>安装</Menu.Item>
+        <Menu.Item key="1">安装</Menu.Item>
         <Menu.Item key="2">部署</Menu.Item>
         <Menu.Item key="3">删除</Menu.Item>
       </Menu>
@@ -115,6 +118,14 @@ class ContractDiv extends React.Component {
 class ListToDo extends React.Component {
   constructor(props) {
     super(props);
+
+    this.handleDelete=this.handleDelete.bind(this);
+  }
+
+  handleDelete(e){
+    var index=this.props.ckey;
+    this.props.todo.splice(index,1);
+    this.props.onDelete(this.props.todo);
   }
 
   render() {
@@ -127,7 +138,7 @@ class ListToDo extends React.Component {
       <ul id="list" style={ulandliStyle}>
         {
         this.props.todo.map((item,i) => {
-           return <li key={i} style={ulandliStyle}><ContractDiv citem={item}/> </li>
+           return <li key={i} style={ulandliStyle}><ContractDiv citem={item} ckey={i} onDel={this.handleDelete}/> </li>
         })
         }
       </ul>
@@ -149,6 +160,7 @@ export default class ChaincodeInstallContent extends React.Component {
     this.handleCancel = this.handleCancel.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
     this.saveFormRef = this.saveFormRef.bind(this);
+    this.handleChange=this.handleChange.bind(this);
   }
 
   showModal() {
@@ -179,6 +191,10 @@ export default class ChaincodeInstallContent extends React.Component {
     this.formRef = formRef;
   }
 
+  handleChange(newlist){
+    this.setState({todolist: newlist});
+  }
+
   render() {
     const divStyle = {
       height: '200px',
@@ -207,7 +223,7 @@ export default class ChaincodeInstallContent extends React.Component {
             onCreate={this.handleCreate}
           />
         </div>
-        <ListToDo todo={this.state.todolist} />
+        <ListToDo todo={this.state.todolist} onDelete={this.handleChange}/>
       </div>
     );
   }
