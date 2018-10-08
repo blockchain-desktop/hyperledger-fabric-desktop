@@ -19,14 +19,14 @@ const CollectionCreateForm = Form.create()(
             <Form layout="vertical">
               <FormItem label="名称">
                 {getFieldDecorator('name', {
-                  rules: [{ required: true, message: 'Please input the title of collection!' }],
+                  rules: [{ required: true, message: '请输入链码名称!' }],
                 })(
                   <Input />,
                             )}
               </FormItem>
               <FormItem label="版本">
                 {getFieldDecorator('version', {
-                  rules: [{ required: true, message: 'Please input the title of collection!' }],
+                  rules: [{ required: true, message: '请输入链码版本号!' }],
                 })(
                   <Input />,
                             )}
@@ -57,31 +57,38 @@ class ContractDiv extends React.Component {
     if (e.key == 2) { console.log('click on item 2'); }
     if (e.key == 3) {
       console.log('click on item 3');
-      this.props.onDel(e);
+      this.props.onDel();
     }
   }
 
   render() {
     const ConTractDivStyle = {
       height: '200px',
-      width: '49%',
-      marginBottom: '24px',
-      marginRight: '2%',
+      width: '240px',
+      marginBottom: '20px',
+      marginRight: '20px',
       display: 'block',
       alignItems: 'center',
-      position:'relative',
-      boxSizing:'border-box',
       border:'1px solid rgb(217, 217, 217)',
-      borderRadius:'4px'
+      borderRadius:'4px',
+      float: 'left'
+    };
+    const contentStyle={
+      padding:'24px'
     };
     const PStyle={
       display:'block',
       alignItems:'center',
       overflow:'hidden',
-      margin:'1em',
+      margin:'12px',
+      whiteSpace:'nowrap',
+      textOverflow:'ellipsis',
+      fontSize:'14px'
     };
+
     const DropdownStyle={
-      margin: '1em',
+      display:'block',
+      margin: '12px',
     }
     const menu = (
       <Menu onClick={this.handleMenuClick}>
@@ -92,23 +99,23 @@ class ContractDiv extends React.Component {
         );
     return (
       <div style={ConTractDivStyle}>
+        <div style={contentStyle}>
         <div>
           <p style={PStyle}>
             <span style={{fontSize:'16px'}}>{this.props.citem.name}</span>
-            <span style={{fontSize:'14px',marginLeft:'1em',backgroundColor:'rgb(216, 216, 216)'}}>{this.props.citem.version}</span>
+            <span style={{fontSize:'12px',marginLeft:'12px',backgroundColor:'rgb(216, 216, 216)'}}>{this.props.citem.version}</span>
           </p>
           <p style={PStyle}>
             {this.props.citem.description}
           </p>
           <p style={PStyle}>
-            <span>已部署在172.20.11.116:2375</span>
+            已部署在172.20.11.116:2375
           </p>
         </div>
         <div style={DropdownStyle}>
-          <Dropdown.Button overlay={menu}>
-              操作
-          </Dropdown.Button>
+          <Dropdown.Button overlay={menu} type="primary">链码操作</Dropdown.Button>
         </div>
+       </div>
       </div>
     );
   }
@@ -122,26 +129,22 @@ class ListToDo extends React.Component {
     this.handleDelete=this.handleDelete.bind(this);
   }
 
-  handleDelete(e){
+  handleDelete(){
     var index=this.props.ckey;
     this.props.todo.splice(index,1);
     this.props.onDelete(this.props.todo);
   }
 
   render() {
-    const ulandliStyle={
-     padding:'0',
-     margin:'0',
-     listStyle:'none'
-    };
+
     return (
-      <ul id="list" style={ulandliStyle}>
+      <div>
         {
         this.props.todo.map((item,i) => {
-           return <li key={i} style={ulandliStyle}><ContractDiv citem={item} ckey={i} onDel={this.handleDelete}/> </li>
+           return <ContractDiv key={i} citem={item} ckey={i} onDel={this.handleDelete}/>
         })
         }
-      </ul>
+      </div>
     );
   }
 
@@ -196,13 +199,19 @@ export default class ChaincodeInstallContent extends React.Component {
   }
 
   render() {
-    const divStyle = {
+    const mainDivStyle={
+       minHeight:'600px',
+       minWidth:'600px'
+    }
+
+    const plusDivStyle = {
       height: '200px',
-      width: '49%',
-      marginBottom: '24px',
-      marginRight: '2%',
+      width: '240px',
+      marginBottom: '20px',
+      marginRight: '20px',
       display: 'block',
       alignItems: 'center',
+      float:'left'
     };
 
     const buttonStyle = {
@@ -213,8 +222,8 @@ export default class ChaincodeInstallContent extends React.Component {
     };
 
     return (
-      <div>
-        <div style={divStyle}>
+      <div style={mainDivStyle}>
+        <div style={plusDivStyle}>
           <Button icon="plus" style={buttonStyle} onClick={this.showModal}>添加合约</Button>
           <CollectionCreateForm
             wrappedComponentRef={this.saveFormRef}
