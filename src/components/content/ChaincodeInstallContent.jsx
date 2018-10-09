@@ -4,6 +4,7 @@ import moment from 'moment'
 
 //弹出层窗口组件
 const FormItem = Form.Item;
+
 const CollectionCreateForm = Form.create()(
     class extends React.Component {
       render() {
