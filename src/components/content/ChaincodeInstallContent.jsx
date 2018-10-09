@@ -163,7 +163,6 @@ class ListToDo extends React.Component {
   }
 
   render() {
-
     return (
       <div>
         {
