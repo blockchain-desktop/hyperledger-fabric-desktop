@@ -122,8 +122,7 @@ export default class DataContent extends React.Component {
 
     return (
       <div style={{ background: '#ECECEC', padding: '15px'}}>
-
-        <Row>
+        <Row style={{whiteSpace:'nowrap', textOverflow:'ellipsis'}}>
           <Col span={12}>
             <Card title={this.state.url} bordered={false}>{this.state.startTime}</Card>
           </Col>
