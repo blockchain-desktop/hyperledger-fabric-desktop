@@ -67,6 +67,7 @@ class ContractDiv extends React.Component {
     }
     if (e.key == 3) {
       this.props.onDel();
+      console.log("you have remove the smartbill.");
     }
   }
 
