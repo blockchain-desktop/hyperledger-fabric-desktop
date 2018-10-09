@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Form, Input, Modal, Menu, Dropdown,Icon } from 'antd';
-import moment from 'moment'
+import moment from 'moment';
+import getFabricClientSingleton from '../../util/fabric'
 
 //弹出层窗口组件
 const FormItem = Form.Item;
@@ -52,16 +53,35 @@ class ContractDiv extends React.Component {
        disable1: false,
        disable2: false,
        time:'',
+       result:'已新建智能合约'
     };
     this.handleMenuClick = this.handleMenuClick.bind(this);
+    this.handleInstallChaincodeCallBack=this.handleInstallChaincodeCallBack.bind(this);
+    this.handleInstantiateChaincodeCallBack=this.handleInstantiateChaincodeCallBack.bind(this);
   }
 
+  handleInstallChaincodeCallBack(result){
+     this.setState({result: result});
+  }
+  handleInstantiateChaincodeCallBack(result){
+     this.setState({result:result});
+  }
   handleMenuClick(e) {
+    var fc=getFabricClientSingleton();
     if (e.key == 1) {
+      fc.installCc(this.handleInstallChaincodeCallBack,
+          'github.com/hyperledger/fabric-dev-network/chaincode/fabcar/go',
+          'fabcar3',
+          '1.3')
       this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
       this.setState({disable1: true});
     }
     if (e.key == 2) {
+        fc.instantiateCc(this.handleInstantiateChaincodeCallBack,
+            'mychannel',
+            'fabcar3',
+            '1.3',
+            [""])
       this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
       this.setState({disable2: true});
     }
@@ -133,7 +153,7 @@ class ContractDiv extends React.Component {
             {this.props.citem.description}
           </p>
           <p style={PStyle}>
-           <span> 已部署在172.20.11.116:2375 </span>
+           <span>{this.state.result}</span>
            <span style={timeSpanStyle}>{this.state.time}</span>
           </p>
         </div>
