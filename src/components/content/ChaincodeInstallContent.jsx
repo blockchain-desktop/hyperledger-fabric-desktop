@@ -58,17 +58,14 @@ class ContractDiv extends React.Component {
 
   handleMenuClick(e) {
     if (e.key == 1) {
-      console.log('click on item 1');
       this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
       this.setState({disable1: true});
     }
     if (e.key == 2) {
-      console.log('click on item 2');
       this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
       this.setState({disable2: true});
     }
     if (e.key == 3) {
-      console.log('click on item 3');
       this.props.onDel();
     }
   }
