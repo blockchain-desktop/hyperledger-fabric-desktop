@@ -83,8 +83,8 @@ export default class BasicLayout extends React.Component {
           </Content>
         </Layout>
 
-        <div style={{ margin: '24px 0' }}>
-          <Button type="primary" style={{ width: '80%' }} onClick={this.onClick}>退出</Button>
+        <div style={{ margin: '24px' }}>
+          <Button type="primary"  onClick={this.onClick}>退出</Button>
         </div>
 
       </Layout>

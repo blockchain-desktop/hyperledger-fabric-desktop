@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Form, Input, Modal, Menu, Dropdown,Icon } from 'antd';
+import moment from 'moment'
 
 //弹出层窗口组件
 const FormItem = Form.Item;
@@ -47,14 +48,24 @@ class ContractDiv extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-
+       disable1: false,
+       disable2: false,
+       time:'',
     };
     this.handleMenuClick = this.handleMenuClick.bind(this);
   }
 
   handleMenuClick(e) {
-    if (e.key == 1) { console.log('click on item 1'); }
-    if (e.key == 2) { console.log('click on item 2'); }
+    if (e.key == 1) {
+      console.log('click on item 1');
+      this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
+      this.setState({disable1: true});
+    }
+    if (e.key == 2) {
+      console.log('click on item 2');
+      this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
+      this.setState({disable2: true});
+    }
     if (e.key == 3) {
       console.log('click on item 3');
       this.props.onDel();
@@ -66,7 +77,7 @@ class ContractDiv extends React.Component {
       height: '200px',
       width: '240px',
       marginBottom: '20px',
-      marginRight: '20px',
+      marginRight: '10px',
       display: 'block',
       alignItems: 'center',
       border:'1px solid rgb(217, 217, 217)',
@@ -74,27 +85,41 @@ class ContractDiv extends React.Component {
       float: 'left'
     };
     const contentStyle={
-      padding:'24px'
+      padding:'10px'
     };
     const PStyle={
       display:'block',
       alignItems:'center',
       overflow:'hidden',
-      margin:'12px',
+      margin:'10px',
       whiteSpace:'nowrap',
       textOverflow:'ellipsis',
       fontSize:'14px'
     };
-
+    const nameSpanStyle={
+        fontSize:'16px'
+    }
+    const versionSpanStyle={
+      fontSize:'12px',
+      marginLeft:'12px',
+      padding:'0 5px',
+      backgroundColor:'rgb(216, 216, 216)'
+    }
+    const timeSpanStyle={
+      display:'block',
+      marginTop:'5px',
+      fontSize:'12px',
+      color:'gray',
+    }
     const DropdownStyle={
       display:'block',
       margin: '12px',
     }
     const menu = (
       <Menu onClick={this.handleMenuClick}>
-        <Menu.Item key="1">安装</Menu.Item>
-        <Menu.Item key="2">部署</Menu.Item>
-        <Menu.Item key="3">删除</Menu.Item>
+        <Menu.Item key="1" disabled={this.state.disable1}>安装</Menu.Item>
+        <Menu.Item key="2" disabled={this.state.disable2}>部署</Menu.Item>
+        <Menu.Item key="3" >删除</Menu.Item>
       </Menu>
         );
     return (
@@ -102,14 +127,15 @@ class ContractDiv extends React.Component {
         <div style={contentStyle}>
         <div>
           <p style={PStyle}>
-            <span style={{fontSize:'16px'}}>{this.props.citem.name}</span>
-            <span style={{fontSize:'12px',marginLeft:'12px',backgroundColor:'rgb(216, 216, 216)'}}>{this.props.citem.version}</span>
+            <span style={nameSpanStyle}>{this.props.citem.name}</span>
+            <span style={versionSpanStyle}>{this.props.citem.version}</span>
           </p>
           <p style={PStyle}>
             {this.props.citem.description}
           </p>
           <p style={PStyle}>
-            已部署在172.20.11.116:2375
+           <span> 已部署在172.20.11.116:2375 </span>
+           <span style={timeSpanStyle}>{this.state.time}</span>
           </p>
         </div>
         <div style={DropdownStyle}>
