@@ -13,7 +13,8 @@ const CollectionCreateForm = Form.create()(
           <Modal
             visible={visible}
             title="新建智能合约"
-            okText="Create"
+            okText="新建"
+            cancelText="取消"
             onCancel={onCancel}
             onOk={onCreate}
           >
