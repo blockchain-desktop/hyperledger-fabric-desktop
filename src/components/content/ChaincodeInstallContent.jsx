@@ -7,6 +7,25 @@ import getFabricClientSingleton from '../../util/fabric'
 const FormItem = Form.Item;
 const CollectionCreateForm = Form.create()(
     class extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+
+        };
+      this.nameValidator=this.nameValidator.bind(this);
+      this.versionValidator=this.versionValidator.bind(this);
+    }
+    nameValidator(rule,value,callback){
+      if(!/^[A-Za-z0-9]+$/.test(value))
+       callback("只支持英文和数字，不支持中文及其他字符！");
+      callback();
+    }
+
+    versionValidator(rule,value,callback){
+        if(!/^\d+(.\d+)?$/.test(value))
+         callback("只支持数字和小数点！");
+        callback();
+    }
       render() {
         const { visible, onCancel, onCreate, form } = this.props;
         const { getFieldDecorator } = form;
@@ -22,17 +41,24 @@ const CollectionCreateForm = Form.create()(
             <Form layout="vertical">
               <FormItem label="名称">
                 {getFieldDecorator('name', {
-                  rules: [{ required: true, message: '请输入链码名称!' }],
+                  rules: [{ required: true, message: '请输入链码名称! ' },{validator:this.nameValidator}],
                 })(
                   <Input />,
                             )}
               </FormItem>
               <FormItem label="版本">
                 {getFieldDecorator('version', {
-                  rules: [{ required: true, message: '请输入链码版本号!' }],
+                  rules: [{ required: true, message: '请输入链码版本号! ' },{validator:this.versionValidator}],
                 })(
                   <Input />,
                             )}
+              </FormItem>
+              <FormItem label="路径">
+                  {getFieldDecorator('path', {
+                      rules: [{ required: true, message: '请输入链码文件路径!' }],
+                  })(
+                  <Input placeholder="github.com/hyperledger/fabric-dev-network/chaincode/fabcar/go"/>,
+                  )}
               </FormItem>
               <FormItem label="描述">
                 {getFieldDecorator('description')(<Input type="textarea" />)}
@@ -62,28 +88,28 @@ class ContractDiv extends React.Component {
 
   handleInstallChaincodeCallBack(result){
      this.setState({result: result});
+     this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
+     this.setState({disable1: true});
   }
   handleInstantiateChaincodeCallBack(result){
      this.setState({result:result});
+     this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
+     this.setState({disable2: true});
   }
   handleMenuClick(e) {
     var fc=getFabricClientSingleton();
     if (e.key == 1) {
       fc.installCc(this.handleInstallChaincodeCallBack,
-          'github.com/hyperledger/fabric-dev-network/chaincode/fabcar/go',
-          'fabcar3',
-          '1.3')
-      this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
-      this.setState({disable1: true});
+          this.props.citem.path,
+          this.props.citem.name,
+          this.props.citem.version)
     }
     if (e.key == 2) {
         fc.instantiateCc(this.handleInstantiateChaincodeCallBack,
             'mychannel',
-            'fabcar3',
-            '1.3',
+            this.props.citem.name,
+            this.props.citem.version,
             [""])
-      this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
-      this.setState({disable2: true});
     }
     if (e.key == 3) {
       this.props.onDel();

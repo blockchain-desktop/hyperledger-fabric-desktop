@@ -35,7 +35,7 @@ cd ../fabric/fabcar
 ./startFabric.sh
 ```
 
-启动后，获取CA证书  
+启动后，获取CA证书(此步可跳过)  
 ```bash
 cd ../fabric/fabcar
 node enrollAdmin.js
