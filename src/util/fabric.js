@@ -1,8 +1,10 @@
 var Fabric_Client = require('fabric-client');
+var Fabric_CA_Client = require('fabric-ca-client');
 var path = require('path');
 var util = require('util');
 var os = require('os');
 var fs=require('fs');
+
 
 function readAllFiles(dir) {
   var files = fs.readdirSync(dir);
@@ -39,7 +41,33 @@ class FabricClient {
    * @returns {Promise<Client.User | never>}
    * @private
    */
-  _getUser() {
+  _enrollUser(userName) {
+    let usrName = userName ? userName: 'user1'
+
+    // TODO: 生成admin的逻辑，待删除
+    // -------------------- admin start ---------
+    // if (usrName == 'Org1Admin') {
+    //   console.log("start to create admin user.")
+    //   var keyPath = '/Users/dengyi/Documents/Developments/nodepath/hyperledger-fabric-desktop-demo/fabric/basic-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/';
+    //   var keyPEM = Buffer.from(readAllFiles(keyPath)[0]).toString();
+    //   var certPath = '/Users/dengyi/Documents/Developments/nodepath/hyperledger-fabric-desktop-demo/fabric/basic-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts';
+    //   var certPEM = readAllFiles(certPath)[0];
+    //
+    //   Promise.resolve(
+    //     this.fabric_client.createUser({
+    //         username: "Org1Admin",
+    //         mspid: "Org1MSP",
+    //         cryptoContent: {
+    //           privateKeyPEM: keyPEM,
+    //           signedCertPEM: certPEM,
+    //         }
+    //       }
+    //     )
+    //   )
+    // }
+    // ---------------admin finish ---------------
+
+    console.log("start to load member user.")
     return Fabric_Client.newDefaultKeyValueStore({ path: this.store_path
     }).then((state_store) => {
       // assign the store to the fabric client
@@ -52,17 +80,15 @@ class FabricClient {
       crypto_suite.setCryptoKeyStore(crypto_store);
       this.fabric_client.setCryptoSuite(crypto_suite);
 
-      // FIXME: user1 待修改为自定义参数
-      // FIXME: _getUser的登陆问题,可能仅需启动时一次
-      return this.fabric_client.getUserContext('user1', true);
+      return this.fabric_client.getUserContext(usrName, true);
     })
-
   }
+
 
   _setupChannelOnce(channelName) {
     // setup each channel once
-    let channel;
-    if (!this.channels[channelName]) {
+    let channel = this.channels[channelName];
+    if (!channel) {
       channel = this.fabric_client.newChannel(channelName);
       var peer = this.fabric_client.newPeer(this.config['peer']);
       channel.addPeer(peer);
@@ -92,7 +118,7 @@ class FabricClient {
     console.log(`start query, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`)
 
     let channel = this._setupChannelOnce(channelName);
-    this._getUser().then((user_from_store) => {
+    this._enrollUser().then((user_from_store) => {
       if (user_from_store && user_from_store.isEnrolled()) {
         console.log('Successfully loaded user1 from persistence, user:', user_from_store);
       } else {
@@ -164,7 +190,7 @@ class FabricClient {
     let tx_id;
     let fabric_client = this.fabric_client;
 
-    this._getUser().then((user_from_store) => {
+    this._enrollUser().then((user_from_store) => {
       if (user_from_store && user_from_store.isEnrolled()) {
         console.log('Successfully loaded user1 from persistence');
       } else {
@@ -286,9 +312,109 @@ class FabricClient {
 
   }
 
-  installCc() {}
+  // TODO: go链码与GOPATH/src的处理
+  /**
+   * 安装链码。
+   * 需要相应语言环境，如go语言。
+   * @param callback
+   * @param chaincodePath
+   * @param chaincodeName
+   * @param chaincodeVersion
+   */
+  installCc(callback, chaincodePath, chaincodeName, chaincodeVersion) {
+    let username = 'Org1Admin';
 
-  instantiateCc() {}
+    this._enrollUser(username).then((user_from_store) => {
+        console.log('Successfully loaded user from persistence, user:', user_from_store);
+
+        let request = {
+          targets:  [this.fabric_client.newPeer(this.config['peer'])], // peerAddress
+          chaincodePath: chaincodePath,
+          chaincodeId: chaincodeName,
+          chaincodeVersion: chaincodeVersion
+        };
+        return this.fabric_client.installChaincode(request);
+    }).then((results) => {
+      var proposalResponses = results[0];
+      var proposal = results[1];
+      let isProposalGood = false;
+      if (proposalResponses && proposalResponses[0].response &&
+        proposalResponses[0].response.status === 200) {
+        isProposalGood = true;
+        console.log('Transaction proposal was good:');
+      } else {
+        console.error('Transaction proposal was bad');
+      }
+
+      // 安装成功
+      let msg;
+      if (isProposalGood) {
+        msg = '安装链码成功';
+        console.log(msg);
+      } else {
+        msg = '安装链码失败'
+        console.error(msg);
+      }
+      callback(msg);
+    }, (err) => {
+      console.error('Failed to send install proposal due to error: ' + err.stack ? err.stack : err);
+      throw new Error('Failed to send install proposal due to error: ' + err.stack ? err.stack : err);
+    })
+  }
+
+
+  /**
+   * 实例化链码
+   * @param callback
+   * @param channelName
+   * @param chaincodeName
+   * @param chaincodeVersion
+   * @param args
+   */
+  instantiateCc(callback, channelName, chaincodeName, chaincodeVersion, args) {
+    let username = 'Org1Admin';
+    let channel = this._setupChannelOnce(channelName);
+    let tx_id;
+
+    this._enrollUser(username).then((user_from_store) => {
+      console.log('Successfully loaded user from persistence, user:', user_from_store);
+
+      tx_id = this.fabric_client.newTransactionID();
+      let request = {
+        targets:  [this.fabric_client.newPeer(this.config['peer'])], // peerAddress
+        chaincodeId: chaincodeName,
+        chaincodeVersion: chaincodeVersion,
+        args: args,
+        txId: tx_id
+      };
+
+      // 提案
+      return channel.sendInstantiateProposal(request);
+    }).then((results) => {
+      var proposalResponses = results[0];
+      var proposal = results[1];
+      let isProposalGood = false;
+      if (proposalResponses && proposalResponses[0].response && proposalResponses[0].response.status === 200) {
+        isProposalGood = true;
+        console.log('Transaction proposal was good:');
+      } else {
+        console.error('Transaction proposal was bad');
+      }
+
+      // 提案成功后，提交
+      let request = {
+        proposalResponses: proposalResponses,
+        proposal: proposal
+      };
+
+      return channel.sendTransaction(request);
+    }).then((results) => {
+      console.log("Complete instantiating chaincode.");
+      callback('实例化链码成功');
+    }).catch((err) => {
+      console.error("Fail to instantiate chaincode. Error message: " + err.stack ? err.stack : err);
+    })
+  }
 
   /**
    * 根据区块号，获取区块
@@ -299,7 +425,7 @@ class FabricClient {
   queryBlock(callback, blockNumber, channelName) {
     let channel = this._setupChannelOnce(channelName)
 
-    this._getUser().then((user) => {
+    this._enrollUser().then((user) => {
       return channel.queryBlock(blockNumber)
     }).then((block) => {
       console.log("block:", block, block.toString())
@@ -315,7 +441,7 @@ class FabricClient {
   queryInfo(callback, channelName) {
     let channel = this._setupChannelOnce(channelName)
 
-    this._getUser().then((user) => {
+    this._enrollUser().then((user) => {
       return channel.queryInfo()
     }).then((blockchainInfo) => {
       console.log("blockchainInfo:", blockchainInfo, blockchainInfo.toString())
