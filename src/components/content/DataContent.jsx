@@ -26,6 +26,8 @@ export default class DataContent extends React.Component {
       startTime:"2018-8-28",
       visible: false,
       currentId:0,
+      currentPage:0,
+      height:0,
     };
 
     this.showModal = this.showModal.bind(this);
@@ -33,8 +35,9 @@ export default class DataContent extends React.Component {
     this.handleCancel = this.handleCancel.bind(this);
     this.onQueryInfoCallback = this.onQueryInfoCallback.bind(this);
     this.onQueryBlockCallback = this.onQueryBlockCallback.bind(this);
+    this.onChange = this.onChange.bind(this);
 
-    var fc = getFabricClientSingleton();
+    const fc = getFabricClientSingleton();
     fc.queryInfo(this.onQueryInfoCallback,'mychannel');
   }
 
@@ -57,14 +60,30 @@ export default class DataContent extends React.Component {
     });
   }
 
+  onChange(current, pageSize) {
+    console.log(current, pageSize);
+    this.setState({
+      currentPage:current - 1
+    });
+    const fc = getFabricClientSingleton();
+    fc.queryInfo(this.onQueryInfoCallback,'mychannel');
+  }
+
   onQueryInfoCallback(result) {
     console.log(result);
     this.setState({
       low: result['height']['low'],
-      high: result['height']['high']
+      high: result['height']['high'],
+      height:result['height']['low'] - result['height']['high'] - 1,
+      data:Array().fill(null),
+      head:Array().fill(null)
     });
-    var fc = getFabricClientSingleton();
-    for(var i = this.state.high; i < this.state.low; i++){
+    const fc = getFabricClientSingleton();
+    console.log(this.state.data.length);
+    count = 0;
+    let start = this.state.low - 4*this.state.currentPage - 1;
+    let end = this.state.high > start - 4 ? this.state.high : start - 4;
+    for(let i = start; i > end; i--){
       fc.queryBlock(this.onQueryBlockCallback,i,'mychannel')
     }
   }
@@ -120,52 +139,72 @@ export default class DataContent extends React.Component {
 
   render() {
 
+    // const colums = [{
+    //   title:"ID",
+    //   dataIndex:"id",
+    //   key:"id",
+    //   sorter: (a, b) => a.id - b.id,
+    // },{
+    //   title:"交易时间",
+    //   dataIndex:"time",
+    //   key:"time"
+    // }];
+
+
+
     return (
       <div style={{ background: '#ECECEC', padding: '15px'}}>
 
-        <Row>
-          <Col span={12}>
-            <Card title={this.state.url} bordered={false}>{this.state.startTime}</Card>
-          </Col>
-          <Col span={4}>
-            <Card title="状态" bordered={false}>{this.state.status}</Card>
-          </Col>
-          <Col span={4}>
-            <Card title="类型" bordered={false}>{this.state.type}</Card>
-          </Col>
-          <Col span={4}>
-            <Card title="时长" bordered={false}>{this.state.runningTime}</Card>
-          </Col>
-        </Row>
+        <div style={{whiteSpace:'nowrap', textOverflow:'ellipsis'}}>
+          <Row>
+            <Col span={12}>
+              <Card title={this.state.url} bordered={false}>{this.state.startTime}</Card>
+            </Col>
+            <Col span={4}>
+              <Card title="状态" bordered={false}>{this.state.status}</Card>
+            </Col>
+            <Col span={4}>
+              <Card title="类型" bordered={false}>{this.state.type}</Card>
+            </Col>
+            <Col span={4}>
+              <Card title="时长" bordered={false}>{this.state.runningTime}</Card>
+            </Col>
+          </Row>
+
+          <p></p>
+          <Row gutter={16}>
+            <Col span={6}>
+              <Card title="peer 节点" bordered={false}>{this.state.peerNum}</Card>
+            </Col>
+            <Col span={6}>
+              <Card title="区块" bordered={false}>{this.state.blackNum}</Card>
+            </Col>
+            <Col span={6}>
+              <Card title="智能合约" bordered={false}>{this.state.intelligentContractNum}</Card>
+            </Col>
+            <Col span={6}>
+              <Card title="交易" bordered={false}>{this.state.transactionNum}</Card>
+            </Col>
+          </Row>
+        </div>
+
 
         <p></p>
         <Row gutter={16}>
-          <Col span={6}>
-            <Card title="peer 节点" bordered={false}>{this.state.peerNum}</Card>
-          </Col>
-          <Col span={6}>
-            <Card title="区块" bordered={false}>{this.state.blackNum}</Card>
-          </Col>
-          <Col span={6}>
-            <Card title="智能合约" bordered={false}>{this.state.intelligentContractNum}</Card>
-          </Col>
-          <Col span={6}>
-            <Card title="交易" bordered={false}>{this.state.transactionNum}</Card>
-          </Col>
-        </Row>
-
-        <p></p>
-        <Row gutter={16}>
-          <Col span={14}>
-            <div style={{ background: '#FFFFFF'}}>
-              <Table dataSource={this.state.head} pagination={{defaultPageSize:4}}>
+          <Col span={24}>
+            <div style={{ background: '#FFFFFF', padding: '10px'}}>
+              <Table bordered={true} dataSource={this.state.head} pagination={{defaultPageSize:4,showQuickJumper:true, onChange:this.onChange,total:this.state.height}}>
                 <ColumnGroup title="最近区块">
                   <Column
+                    defaultSortOrder='descend'
+                    align='center'
                     title="ID"
                     dataIndex="id"
                     key="id"
+                    sorter={(a, b) => a.id - b.id}
                   />
                   <Column
+                    align='center'
                     title="Hash"
                     key="hash"
                     render={(text, record) => (
@@ -175,11 +214,13 @@ export default class DataContent extends React.Component {
                     )}
                   />
                   <Column
+                    align='center'
                     title="交易数"
                     dataIndex="num"
                     key="num"
                   />
                   <Column
+                    align='center'
                     title="生成时间"
                     dataIndex="time"
                     key="time"
@@ -188,28 +229,30 @@ export default class DataContent extends React.Component {
               </Table>
             </div>
           </Col>
-          <Col span={10}>
-            <div style={{ background: '#FFFFFF',height:'400px'}}>
-              <Table dataSource={this.state.head} pagination={{defaultPageSize:4}}>
-                <ColumnGroup title="最近交易">
-                  <Column
-                    title="hash"
-                    key="hash"
-                    render={(text, record) => (
-                      <span>
-                        <a href='#'>{record.content}</a>
-                      </span>
-                    )}
-                  />
-                  <Column
-                    title="交易时间"
-                    dataIndex="time"
-                    key="time"
-                  />
-                </ColumnGroup>
-              </Table>
-            </div>
-          </Col>
+          {/*<Col span={10}>*/}
+            {/*<div style={{ background: '#FFFFFF', padding: '10px'}}>*/}
+              {/*<Table bordered={true} dataSource={this.state.head} pagination={{defaultPageSize:4}}>*/}
+                {/*<ColumnGroup title="最近交易">*/}
+                  {/*<Column*/}
+                    {/*align='center'*/}
+                    {/*title="Hash"*/}
+                    {/*key="hash"*/}
+                    {/*render={(text, record) => (*/}
+                      {/*<span>*/}
+                        {/*<a href='#'>{record.hash}</a>*/}
+                      {/*</span>*/}
+                    {/*)}*/}
+                  {/*/>*/}
+                  {/*<Column*/}
+                    {/*align='center'*/}
+                    {/*title="交易时间"*/}
+                    {/*dataIndex="time"*/}
+                    {/*key="time"*/}
+                  {/*/>*/}
+                {/*</ColumnGroup>*/}
+              {/*</Table>*/}
+            {/*</div>*/}
+          {/*</Col>*/}
         </Row>
 
         <Modal

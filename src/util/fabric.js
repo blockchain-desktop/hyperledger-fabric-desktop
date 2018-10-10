@@ -4,6 +4,18 @@ var util = require('util');
 var os = require('os');
 var fs=require('fs');
 
+function readAllFiles(dir) {
+  var files = fs.readdirSync(dir);
+  var certs = [];
+  files.forEach((file_name) => {
+    let file_path = path.join(dir,file_name);
+    console.debug(' looking at file ::'+file_path);
+    let data = fs.readFileSync(file_path);
+    certs.push(data);
+  });
+  return certs;
+}
+
 class FabricClient {
 
   constructor() {
@@ -114,6 +126,28 @@ class FabricClient {
       console.error('Failed to query successfully :: ' + err);
     });
 
+  }
+
+
+  importCer(keyPath,certPath){
+    //FIXME: 生成admin的逻辑，准备删除
+    //-------------------- admin start ---------
+    console.log("start to create admin user.")
+    var keyPEM = Buffer.from(fs.readFileSync(keyPath)).toString();
+    var certPEM = fs.readFileSync(certPath);
+
+    console.log(keyPEM);
+    console.log(certPEM);
+
+    this.fabric_client.createUser({
+      username: "Org1Admin",
+      mspid: "Org1MSP",
+      cryptoContent: {
+        privateKeyPEM: keyPEM,
+        signedCertPEM: certPEM,
+      }
+    })
+    //---------------admin finish ---------------
   }
 
   /**
