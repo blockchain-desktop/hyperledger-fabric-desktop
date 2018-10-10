@@ -16,15 +16,17 @@ const CollectionCreateForm = Form.create()(
       this.versionValidator=this.versionValidator.bind(this);
     }
     nameValidator(rule,value,callback){
-      if(!/^[A-Za-z0-9]+$/.test(value))
-       callback("只支持英文和数字，不支持中文及其他字符！");
+      if(!/^[A-Za-z0-9]+$/.test(value)){
+        callback("只支持英文和数字，不支持中文及其他字符！");
+      }
       callback();
     }
 
     versionValidator(rule,value,callback){
-        if(!/^\d+(.\d+)?$/.test(value))
-         callback("只支持数字和小数点！");
-        callback();
+      if(!/^\d+(.\d+)?$/.test(value)){
+        callback("只支持数字和小数点！");
+      }
+      callback();
     }
       render() {
         const { visible, onCancel, onCreate, form } = this.props;
