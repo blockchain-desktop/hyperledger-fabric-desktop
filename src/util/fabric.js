@@ -90,9 +90,9 @@ class FabricClient {
     let channel = this.channels[channelName];
     if (!channel) {
       channel = this.fabric_client.newChannel(channelName);
-      var peer = this.fabric_client.newPeer(this.config['peer']);
+      var peer = this.fabric_client.newPeer(this.config['peerUrl']);
       channel.addPeer(peer);
-      var order = this.fabric_client.newOrderer('grpc://localhost:7050') // FIXME: 作为参数传入
+      var order = this.fabric_client.newOrderer(this.config['ordererUrl']); // FIXME: 作为参数传入
       channel.addOrderer(order);
 
       this.channels[channelName] = channel;
@@ -166,7 +166,7 @@ class FabricClient {
     console.log(certPEM);
 
     this.fabric_client.createUser({
-      username: "Org1Admin",
+      username: this.config['username'],
       mspid: "Org1MSP",
       cryptoContent: {
         privateKeyPEM: keyPEM,
@@ -185,7 +185,7 @@ class FabricClient {
    * @param channelName {string}
    */
   invokeCc(callback, chaincodeId, fcn, args, channelName) {
-    console.log(`start invoke, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`)
+    console.log(`start invoke, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`);
     let channel = this._setupChannelOnce(channelName);
     let tx_id;
     let fabric_client = this.fabric_client;
