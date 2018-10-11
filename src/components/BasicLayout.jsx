@@ -6,8 +6,7 @@ import ChaincodeInstallContent from './content/ChaincodeInstallContent';
 
 const { Sider, Content } = Layout;
 
-var fs = require('fs');
-var write = require('../util/readAndWrite');
+const fs = require('fs');
 
 // 内容路由：在此配置内容key对应的内容类，切换主页面内容
 function ContentRoute(props) {
@@ -46,7 +45,7 @@ export default class BasicLayout extends React.Component {
     var config = JSON.parse(fs.readFileSync('config.json'));
     config['isSign'] = false;
     var content = JSON.stringify(config);
-    write.write(content,'config.json');
+    fs.writeFileSync('config.json',content);
 
   }
 
