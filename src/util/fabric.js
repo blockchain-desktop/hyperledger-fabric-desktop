@@ -6,28 +6,16 @@ var os = require('os');
 var fs=require('fs');
 
 
-function readAllFiles(dir) {
-  var files = fs.readdirSync(dir);
-  var certs = [];
-  files.forEach((file_name) => {
-    let file_path = path.join(dir,file_name);
-    console.debug(' looking at file ::'+file_path);
-    let data = fs.readFileSync(file_path);
-    certs.push(data);
-  });
-  return certs;
-}
-
 class FabricClient {
 
   constructor() {
     // TODO: 若配置更新，如何调整？
     let fabric_client = new Fabric_Client();
 
-    let config = JSON.parse(fs.readFileSync('config.json'));
+    let config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json')));
     console.log('config:', config);
 
-    let store_path = path.join(config['path']);
+    let store_path = path.join(__dirname, '../../', config['path']);
     console.log('Store path:'+store_path);
 
     this.fabric_client = fabric_client;
@@ -43,29 +31,6 @@ class FabricClient {
    */
   _enrollUser(userName) {
     let usrName = userName ? userName: 'user1'
-
-    // TODO: 生成admin的逻辑，待删除
-    // -------------------- admin start ---------
-    // if (usrName == 'Org1Admin') {
-    //   console.log("start to create admin user.")
-    //   var keyPath = '/Users/dengyi/Documents/Developments/nodepath/hyperledger-fabric-desktop-demo/fabric/basic-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/';
-    //   var keyPEM = Buffer.from(readAllFiles(keyPath)[0]).toString();
-    //   var certPath = '/Users/dengyi/Documents/Developments/nodepath/hyperledger-fabric-desktop-demo/fabric/basic-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts';
-    //   var certPEM = readAllFiles(certPath)[0];
-    //
-    //   Promise.resolve(
-    //     this.fabric_client.createUser({
-    //         username: "Org1Admin",
-    //         mspid: "Org1MSP",
-    //         cryptoContent: {
-    //           privateKeyPEM: keyPEM,
-    //           signedCertPEM: certPEM,
-    //         }
-    //       }
-    //     )
-    //   )
-    // }
-    // ---------------admin finish ---------------
 
     console.log("start to load member user.")
     return Fabric_Client.newDefaultKeyValueStore({ path: this.store_path
@@ -156,7 +121,6 @@ class FabricClient {
 
 
   importCer(keyPath,certPath){
-    //FIXME: 生成admin的逻辑，准备删除
     //-------------------- admin start ---------
     console.log("start to create admin user.")
     var keyPEM = Buffer.from(fs.readFileSync(keyPath)).toString();
@@ -328,7 +292,7 @@ class FabricClient {
         console.log('Successfully loaded user from persistence, user:', user_from_store);
 
         let request = {
-          targets:  [this.fabric_client.newPeer(this.config['peer'])], // peerAddress
+          targets:  [this.fabric_client.newPeer(this.config['peerUrl'])], // peerAddress
           chaincodePath: chaincodePath,
           chaincodeId: chaincodeName,
           chaincodeVersion: chaincodeVersion
@@ -381,7 +345,7 @@ class FabricClient {
 
       tx_id = this.fabric_client.newTransactionID();
       let request = {
-        targets:  [this.fabric_client.newPeer(this.config['peer'])], // peerAddress
+        targets:  [this.fabric_client.newPeer(this.config['peerUrl'])], // peerAddress
         chaincodeId: chaincodeName,
         chaincodeVersion: chaincodeVersion,
         args: args,
