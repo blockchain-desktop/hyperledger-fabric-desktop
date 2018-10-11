@@ -391,6 +391,7 @@ class FabricClient {
       callback('实例化链码成功');
     }).catch((err) => {
       console.error("Fail to instantiate chaincode. Error message: " + err.stack ? err.stack : err);
+      callback('实例化链码失败');
     })
   }
 
