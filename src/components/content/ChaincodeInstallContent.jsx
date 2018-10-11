@@ -1,11 +1,40 @@
 import React, { Component } from 'react';
 import { Button, Form, Input, Modal, Menu, Dropdown,Icon } from 'antd';
-import moment from 'moment'
+import moment from 'moment';
+import getFabricClientSingleton from '../../util/fabric'
 
 //弹出层窗口组件
 const FormItem = Form.Item;
 const CollectionCreateForm = Form.create()(
     class extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+
+        };
+      this.nameValidator=this.nameValidator.bind(this);
+      this.versionValidator=this.versionValidator.bind(this);
+    }
+    nameValidator(rule,value,callback){
+      if(!/^[A-Za-z0-9]+$/.test(value)){
+        callback("只支持英文和数字，不支持中文及其他字符！");
+      }
+      callback();
+    }
+
+    versionValidator(rule,value,callback){
+      if(!/^\d+(.\d+)?$/.test(value)){
+        callback("只支持数字和小数点！");
+      }
+      callback();
+    }
+
+    channelValidator(rule,value,callback){
+        if(!/^[A-Za-z0-9]+$/.test(value)){
+            callback("只支持英文和数字，不支持中文及其他字符！");
+        }
+        callback();
+    }
       render() {
         const { visible, onCancel, onCreate, form } = this.props;
         const { getFieldDecorator } = form;
@@ -21,20 +50,34 @@ const CollectionCreateForm = Form.create()(
             <Form layout="vertical">
               <FormItem label="名称">
                 {getFieldDecorator('name', {
-                  rules: [{ required: true, message: '请输入链码名称!' }],
+                  rules: [{ required: true, message: '请输入链码名称! ' },{validator:this.nameValidator}],
                 })(
-                  <Input />,
+                  <Input placeholder="链码名称"/>,
                             )}
               </FormItem>
               <FormItem label="版本">
                 {getFieldDecorator('version', {
-                  rules: [{ required: true, message: '请输入链码版本号!' }],
+                  rules: [{ required: true, message: '请输入链码版本号! ' },{validator:this.versionValidator}],
                 })(
-                  <Input />,
+                  <Input placeholder="链码版本"/>,
                             )}
               </FormItem>
+              <FormItem label="通道">
+                  {getFieldDecorator('channel', {
+                      rules: [{ required: true, message: '请输入通道名称! ' },{validator:this.channelValidator}],
+                  })(
+                      <Input placeholder="通道名称"/>,
+                  )}
+              </FormItem>
+              <FormItem label="路径">
+                  {getFieldDecorator('path', {
+                      rules: [{ required: true, message: '请输入链码文件路径!' }],
+                  })(
+                  <Input placeholder="文件路径"/>,
+                  )}
+              </FormItem>
               <FormItem label="描述">
-                {getFieldDecorator('description')(<Input type="textarea" />)}
+                {getFieldDecorator('description')(<Input placeholder="功能描述" type="textarea" />)}
               </FormItem>
             </Form>
           </Modal>
@@ -52,18 +95,37 @@ class ContractDiv extends React.Component {
        disable1: false,
        disable2: false,
        time:'',
+       result:'已新建智能合约'
     };
     this.handleMenuClick = this.handleMenuClick.bind(this);
+    this.handleInstallChaincodeCallBack=this.handleInstallChaincodeCallBack.bind(this);
+    this.handleInstantiateChaincodeCallBack=this.handleInstantiateChaincodeCallBack.bind(this);
   }
 
+  handleInstallChaincodeCallBack(result){
+     this.setState({result: result});
+     this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
+     this.setState({disable1: true});
+  }
+  handleInstantiateChaincodeCallBack(result){
+     this.setState({result:result});
+     this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
+     this.setState({disable2: true});
+  }
   handleMenuClick(e) {
+    var fc=getFabricClientSingleton();
     if (e.key == 1) {
-      this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
-      this.setState({disable1: true});
+      fc.installCc(this.handleInstallChaincodeCallBack,
+          this.props.citem.path,
+          this.props.citem.name,
+          this.props.citem.version)
     }
     if (e.key == 2) {
-      this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
-      this.setState({disable2: true});
+        fc.instantiateCc(this.handleInstantiateChaincodeCallBack,
+            this.props.citem.channel,
+            this.props.citem.name,
+            this.props.citem.version,
+            [""])
     }
     if (e.key == 3) {
       this.props.onDel();
@@ -133,7 +195,7 @@ class ContractDiv extends React.Component {
             {this.props.citem.description}
           </p>
           <p style={PStyle}>
-           <span> 已部署在172.20.11.116:2375 </span>
+           <span>{this.state.result}</span>
            <span style={timeSpanStyle}>{this.state.time}</span>
           </p>
         </div>

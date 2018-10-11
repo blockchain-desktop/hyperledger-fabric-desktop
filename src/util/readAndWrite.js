@@ -7,7 +7,7 @@ function write(content,strPath) {
     if(err){
       return console.log(err);
     }
-    console.log('success');
+    return console.log('success');
   })
 }
 

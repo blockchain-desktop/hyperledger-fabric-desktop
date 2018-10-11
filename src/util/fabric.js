@@ -90,9 +90,9 @@ class FabricClient {
     let channel = this.channels[channelName];
     if (!channel) {
       channel = this.fabric_client.newChannel(channelName);
-      var peer = this.fabric_client.newPeer(this.config['peer']);
+      var peer = this.fabric_client.newPeer(this.config['peerUrl']);
       channel.addPeer(peer);
-      var order = this.fabric_client.newOrderer('grpc://localhost:7050') // FIXME: 作为参数传入
+      var order = this.fabric_client.newOrderer(this.config['ordererUrl']); // FIXME: 作为参数传入
       channel.addOrderer(order);
 
       this.channels[channelName] = channel;
@@ -154,6 +154,28 @@ class FabricClient {
 
   }
 
+
+  importCer(keyPath,certPath){
+    //FIXME: 生成admin的逻辑，准备删除
+    //-------------------- admin start ---------
+    console.log("start to create admin user.")
+    var keyPEM = Buffer.from(fs.readFileSync(keyPath)).toString();
+    var certPEM = fs.readFileSync(certPath);
+
+    console.log(keyPEM);
+    console.log(certPEM);
+
+    this.fabric_client.createUser({
+      username: this.config['username'],
+      mspid: "Org1MSP",
+      cryptoContent: {
+        privateKeyPEM: keyPEM,
+        signedCertPEM: certPEM,
+      }
+    })
+    //---------------admin finish ---------------
+  }
+
   /**
    *  调用链码，写入账本
    * @param callback {function(string)}  回调函数，参数为字符串结果
@@ -163,7 +185,7 @@ class FabricClient {
    * @param channelName {string}
    */
   invokeCc(callback, chaincodeId, fcn, args, channelName) {
-    console.log(`start invoke, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`)
+    console.log(`start invoke, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`);
     let channel = this._setupChannelOnce(channelName);
     let tx_id;
     let fabric_client = this.fabric_client;

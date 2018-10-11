@@ -55,7 +55,7 @@ export default class ChaincodeInvokeContent extends React.Component {
   onClick(e) {
     this.setState({result: ''})
 
-    var fc = getFabricClientSingleton();
+    const fc = getFabricClientSingleton();
     if (this.state.type === 'query') {
       fc.queryCc(this.onClickCallback, this.state.chaincodeId, this.state.fcn, this.state.args, this.state.channel)
 
