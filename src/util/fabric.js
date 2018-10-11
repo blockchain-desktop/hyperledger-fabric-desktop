@@ -323,12 +323,12 @@ class FabricClient {
    */
   installCc(callback, chaincodePath, chaincodeName, chaincodeVersion) {
     let username = 'Org1Admin';
-
+    console.log(`${chaincodePath}, ${chaincodeName}, ${chaincodeVersion}`)
     this._enrollUser(username).then((user_from_store) => {
         console.log('Successfully loaded user from persistence, user:', user_from_store);
 
         let request = {
-          targets:  [this.fabric_client.newPeer(this.config['peer'])], // peerAddress
+          targets:  [this.fabric_client.newPeer(this.config['peerUrl'])], // peerAddress
           chaincodePath: chaincodePath,
           chaincodeId: chaincodeName,
           chaincodeVersion: chaincodeVersion
@@ -381,7 +381,7 @@ class FabricClient {
 
       tx_id = this.fabric_client.newTransactionID();
       let request = {
-        targets:  [this.fabric_client.newPeer(this.config['peer'])], // peerAddress
+        targets:  [this.fabric_client.newPeer(this.config['peerUrl'])], // peerAddress
         chaincodeId: chaincodeName,
         chaincodeVersion: chaincodeVersion,
         args: args,

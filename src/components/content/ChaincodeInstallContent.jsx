@@ -105,11 +105,21 @@ class ContractDiv extends React.Component {
   }
 
   handleInstallChaincodeCallBack(result){
+     if(result.indexOf("失败")!=-1)
+     {
+     this.setState({icontype:'exclamation-circle',iconcolor: '#FF4500'});
+     }
      this.setState({result: result});
      this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
      this.setState({disable1: true});
   }
   handleInstantiateChaincodeCallBack(result){
+      if(result.indexOf("失败")!=-1)
+      {
+       this.setState({icontype:'exclamation-circle',iconcolor: '#FF4500'});
+      }else{
+       this.setState({icontype:'check-circle',iconcolor: '#52c41a'});
+      }
      this.setState({result:result});
      this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
      this.setState({disable2: true});
@@ -124,13 +134,12 @@ class ContractDiv extends React.Component {
     }
     if (e.key == 2) {
         this.setState({icontype: 'loading',iconcolor: '#436EEE'});
-        this.setState({result: '正等待部署智能合约...'});
+        this.setState({result: '正在等待部署智能合约...'});
         fc.instantiateCc(this.handleInstantiateChaincodeCallBack,
             this.props.citem.channel,
             this.props.citem.name,
             this.props.citem.version,
             [""]);
-        this.state({icontype:'check-circle',iconcolor: '#52c41a'});
     }
     if (e.key == 3) {
       this.props.onDel();
