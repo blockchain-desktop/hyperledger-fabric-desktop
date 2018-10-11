@@ -287,7 +287,7 @@ class FabricClient {
    */
   installCc(callback, chaincodePath, chaincodeName, chaincodeVersion) {
     let username = 'Org1Admin';
-
+    console.log(`${chaincodePath}, ${chaincodeName}, ${chaincodeVersion}`)
     this._enrollUser(username).then((user_from_store) => {
         console.log('Successfully loaded user from persistence, user:', user_from_store);
 

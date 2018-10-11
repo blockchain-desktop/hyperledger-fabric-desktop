@@ -1,6 +1,6 @@
 // TODO: 登录页（秘钥导入页面）
 import React from 'react';
-import { Button, Input, Layout, Upload} from 'antd';
+import { Button, Input, Layout, Avatar} from 'antd';
 import getFabricClientSingleton from "../util/fabric";
 
 const path = require('path')
@@ -79,34 +79,38 @@ export default class DataContent extends React.Component {
     return (
 
         <Layout>
-          <Content style={{ margin: '24px 16px', padding: 24, background: '#fff' }}>
+          <Content style={{ margin: '24px 16px', padding: 24, background: '#fff' , width:380, height:540}}>
 
-            <div style={{ margin: '24px 0' }}>
-              &emsp;Peer地址：
-              <Input  type="text" value={this.state.peerUrl} style={{ width: '70%'  }} onChange={this.peerChange}/>
+            <div style={{ margin: '32px 0' }}>
+              <center><Avatar size={64} icon="user" /></center>
             </div>
 
             <div style={{ margin: '24px 0' }}>
-              Orderer地址：
-              <Input  type="text" value={this.state.ordererUrl} style={{ width: '70%'  }} onChange={this.ordererChange}/>
+              peer url：&ensp;&ensp;&ensp;
+              <Input  type="text" value={this.state.peerUrl} style={{ width: '75%'  }} onChange={this.peerChange}/>
             </div>
 
             <div style={{ margin: '24px 0' }}>
-              &emsp;username：
-              <Input  type="text" value={this.state.username} style={{ width: '70%'  }} onChange={this.usernameChange}/>
-            </div>
-
-            <div>
-              证书：
-              <Input type="file" id="cerFiles" style={{ width: '30%'  }} onChange={this.cerImport}/>
-            </div>
-
-            <div>
-              私钥：
-              <Input type="file" id="priFiles" style={{ width: '30%'  }} onChange={this.priImport}/>
+              orderer url：&thinsp;
+              <Input  type="text" value={this.state.ordererUrl} style={{ width: '75%'  }} onChange={this.ordererChange}/>
             </div>
 
             <div style={{ margin: '24px 0' }}>
+              username：&thinsp;&thinsp;
+              <Input  type="text" value={this.state.username} style={{ width: '75%'  }} onChange={this.usernameChange}/>
+            </div>
+
+            <div style={{ margin: '24px 0' }}>
+              certificate：&ensp;
+              <input type="file" id="cerFiles" style={{ width: '75%'  }} onChange={this.cerImport}/>
+            </div>
+
+            <div style={{ margin: '24px 0' }}>
+              private key：
+              <input type="file" id="priFiles" style={{ width: '75%'  }} onChange={this.priImport}/>
+            </div>
+
+            <div style={{ margin: '36px 0' }}>
               <Button type="primary" style={{ width: '100%' }} onClick={this.onClick}>登录</Button>
             </div>
 
