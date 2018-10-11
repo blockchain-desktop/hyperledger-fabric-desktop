@@ -95,7 +95,9 @@ class ContractDiv extends React.Component {
        disable1: false,
        disable2: false,
        time:'',
-       result:'已新建智能合约'
+       result:'已新建智能合约',
+       icontype:'check-circle',
+       iconcolor:'#52c41a'
     };
     this.handleMenuClick = this.handleMenuClick.bind(this);
     this.handleInstallChaincodeCallBack=this.handleInstallChaincodeCallBack.bind(this);
@@ -121,11 +123,14 @@ class ContractDiv extends React.Component {
           this.props.citem.version)
     }
     if (e.key == 2) {
+        this.setState({icontype: 'loading',iconcolor: '#436EEE'});
+        this.setState({result: '正等待部署智能合约...'});
         fc.instantiateCc(this.handleInstantiateChaincodeCallBack,
             this.props.citem.channel,
             this.props.citem.name,
             this.props.citem.version,
-            [""])
+            [""]);
+        this.state({icontype:'check-circle',iconcolor: '#52c41a'});
     }
     if (e.key == 3) {
       this.props.onDel();
@@ -146,7 +151,7 @@ class ContractDiv extends React.Component {
       float: 'left'
     };
     const contentStyle={
-      padding:'10px'
+      padding:'15px'
     };
     const PStyle={
       display:'block',
@@ -195,6 +200,7 @@ class ContractDiv extends React.Component {
             {this.props.citem.description}
           </p>
           <p style={PStyle}>
+           <span><Icon type={this.state.icontype} theme="outlined" style={{color:this.state.iconcolor}}/>&nbsp;</span>
            <span>{this.state.result}</span>
            <span style={timeSpanStyle}>{this.state.time}</span>
           </p>
@@ -217,7 +223,8 @@ class ListToDo extends React.Component {
   }
 
   handleDelete(){
-    var index=this.props.ckey;
+    var contract=this.props.citem;
+    var index=this.props.todo.indexOf(contract);
     this.props.todo.splice(index,1);
     this.props.onDelete(this.props.todo);
   }
@@ -227,7 +234,7 @@ class ListToDo extends React.Component {
       <div>
         {
         this.props.todo.map((item,i) => {
-           return <ContractDiv key={i} citem={item} ckey={i} onDel={this.handleDelete}/>
+           return <ContractDiv key={i} citem={item} onDel={this.handleDelete}/>
         })
         }
       </div>
