@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import { Button, Form, Input, Modal, Menu, Dropdown,Icon } from 'antd';
 import moment from 'moment';
-import getFabricClientSingleton from '../../util/fabric'
+import getFabricClientSingleton from '../../util/fabric';
+
+//数据持久化
+const Datastore= require('nedb')
+    , db = new Datastore({ filename: './src/components/content/persistence/data.db', autoload: true });;
 
 //弹出层窗口组件
 const FormItem = Form.Item;
@@ -103,7 +107,7 @@ class ContractDiv extends React.Component {
     this.handleInstallChaincodeCallBack=this.handleInstallChaincodeCallBack.bind(this);
     this.handleInstantiateChaincodeCallBack=this.handleInstantiateChaincodeCallBack.bind(this);
   }
-
+  //对安装链码进行操作
   handleInstallChaincodeCallBack(result){
      if(result.indexOf("失败")!=-1)
      {
@@ -114,6 +118,7 @@ class ContractDiv extends React.Component {
      this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
      this.setState({disable1: true});
   }
+  //对实例化链码进行操作
   handleInstantiateChaincodeCallBack(result){
       if(result.indexOf("失败")!=-1)
       {
@@ -283,9 +288,19 @@ export default class ChaincodeInstallContent extends React.Component {
       if (err) {
         return;
       }
+      //新增智能合约对象加入todolist数组
       var list=this.state.todolist;
       list.push(values);
       this.setState({todolist: list});
+      //新增智能合约对象数据持久化
+      var li={name: values.name,
+          version: values.version,
+          channel: values.channel,
+          path: values.path,
+          discription: values.description
+      };
+      db.insert(li,function (err,newdoc) {
+      });
 
       console.log('Received values of forms: ', values);
       form.resetFields();
