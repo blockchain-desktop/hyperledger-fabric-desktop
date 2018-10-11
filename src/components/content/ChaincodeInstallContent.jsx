@@ -108,6 +108,7 @@ class ContractDiv extends React.Component {
      if(result.indexOf("失败")!=-1)
      {
      this.setState({icontype:'exclamation-circle',iconcolor: '#FF4500'});
+     this.setState({disable1: false});
      }
      this.setState({result: result});
      this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
@@ -117,6 +118,7 @@ class ContractDiv extends React.Component {
       if(result.indexOf("失败")!=-1)
       {
        this.setState({icontype:'exclamation-circle',iconcolor: '#FF4500'});
+       this.setState({disable2: false});
       }else{
        this.setState({icontype:'check-circle',iconcolor: '#52c41a'});
       }
