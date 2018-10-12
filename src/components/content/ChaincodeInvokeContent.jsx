@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button, Input, Select, Radio} from 'antd';
-import getFabricClientSingleton from '../../util/fabric'
+import { Button, Input, Select, Radio } from 'antd';
+import getFabricClientSingleton from '../../util/fabric';
 
 const { TextArea } = Input;
-
+const { Option } = Select;
 
 export default class ChaincodeInvokeContent extends React.Component {
   constructor(props) {
@@ -11,11 +11,11 @@ export default class ChaincodeInvokeContent extends React.Component {
     this.state = {
       result: '',
       value: '',
-      channel:'mychannel',
+      channel: 'mychannel',
       chaincodeId: 'fabcar',   // queryCar chaincode function - requires 1 argument, ex: args: ['CAR4'],
       fcn: 'queryAllCars',    // queryAllCars chaincode function - requires no arguments , ex: args: [''],
       args: '',
-      type: 'query'
+      type: 'query',
     };
 
     this.onClick = this.onClick.bind(this);
@@ -27,43 +27,49 @@ export default class ChaincodeInvokeContent extends React.Component {
     this.onClickCallback = this.onClickCallback.bind(this);
   }
 
-  chaincodeIdChange(event){
-    this.setState({chaincodeId: event.target.value})
-  }
-
-  fcnChange(event){
-    this.setState({fcn: event.target.value})
-  }
-
-  argsChange(value){
-    if(value != null)
-      this.setState({args: value})
-  }
-
-  typeChange(event){
-    this.setState({type: event.target.value})
-  }
-
-  channelChange(event){
-    this.setState({channel: event.target.value})
-  }
-
-  onClickCallback(result) {
-    this.setState({result: result})
-  }
-
-  onClick(e) {
-    this.setState({result: ''})
+  onClick() {
+    this.setState({ result: '' });
 
     const fc = getFabricClientSingleton();
     if (this.state.type === 'query') {
-      fc.queryCc(this.onClickCallback, this.state.chaincodeId, this.state.fcn, this.state.args, this.state.channel)
-
+      fc.queryCc(this.onClickCallback,
+        this.state.chaincodeId,
+        this.state.fcn,
+        this.state.args,
+        this.state.channel);
     } else if (this.state.type === 'invoke') {
-      fc.invokeCc(this.onClickCallback, this.state.chaincodeId, this.state.fcn, this.state.args, this.state.channel)
+      fc.invokeCc(this.onClickCallback,
+        this.state.chaincodeId,
+        this.state.fcn,
+        this.state.args,
+        this.state.channel);
     } else {
-      console.error("Chaincode calling type is invalid.")
+      console.error('Chaincode calling type is invalid.');
     }
+  }
+
+  onClickCallback(result) {
+    this.setState({ result });
+  }
+
+  chaincodeIdChange(event) {
+    this.setState({ chaincodeId: event.target.value });
+  }
+
+  fcnChange(event) {
+    this.setState({ fcn: event.target.value });
+  }
+
+  argsChange(value) {
+    if (value != null) { this.setState({ args: value }); }
+  }
+
+  typeChange(event) {
+    this.setState({ type: event.target.value });
+  }
+
+  channelChange(event) {
+    this.setState({ channel: event.target.value });
   }
 
   render() {
@@ -72,17 +78,17 @@ export default class ChaincodeInvokeContent extends React.Component {
 
         <div style={{ margin: '24px 0' }}>
           通道名称：
-          <Input  type="text" value={this.state.channel} style={{ width: '70%'  }} onChange={this.channelChange}/>
+          <Input type="text" value={this.state.channel} style={{ width: '70%' }} onChange={this.channelChange} />
         </div>
 
         <div style={{ margin: '24px 0' }}>
           智能合约：
-          <Input  type="text" value={this.state.chaincodeId} style={{ width: '70%'  }} onChange={this.chaincodeIdChange}/>
+          <Input type="text" value={this.state.chaincodeId} style={{ width: '70%' }} onChange={this.chaincodeIdChange} />
         </div>
 
         <div style={{ margin: '24px 0' }}>
           函数名称：
-          <Input  type="text" value={this.state.fcn} style={{ width: '70%'  }} onChange={this.fcnChange}/>
+          <Input type="text" value={this.state.fcn} style={{ width: '70%' }} onChange={this.fcnChange} />
         </div>
 
         <div style={{ margin: '24px 0' }}>
@@ -101,7 +107,11 @@ export default class ChaincodeInvokeContent extends React.Component {
         </div>
 
         <div style={{ margin: '24px 0' }}>
-          <TextArea placeholder='result' value={this.state.result} autosize={{ minRows: 8, maxRows: 8 }} />
+          <TextArea
+            placeholder="result"
+            value={this.state.result}
+            autosize={{ minRows: 8, maxRows: 8 }}
+          />
         </div>
 
 
