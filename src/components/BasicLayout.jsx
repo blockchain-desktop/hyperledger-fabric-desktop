@@ -4,7 +4,7 @@ import { Layout, Menu, Icon, Button } from 'antd';
 import DataContent from './content/DataContent';
 import ChaincodeInvokeContent from './content/ChaincodeInvokeContent';
 import ChaincodeInstallContent from './content/ChaincodeInstallContent';
-
+const path = require('path');
 const { Sider, Content } = Layout;
 
 const fs = require('fs');
@@ -39,11 +39,10 @@ export default class BasicLayout extends React.Component {
 
   onClick() {
     this.props.onGetChildMessage(false);  // 调用父组件传来的函数，将数据作为参数传过去
-    const config = JSON.parse(fs.readFileSync('config.json'));
+    const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json')));
     config.isSign = false;
     const content = JSON.stringify(config);
-    fs.writeFileSync('config.json', content);
-  }
+    fs.writeFileSync(path.join(__dirname, '../../config.json'), content);
 
   switchContent(contentKey) {
     this.setState({ contentKey });

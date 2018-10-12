@@ -3,13 +3,14 @@ import BasicLayout from './components/BasicLayout';
 import UserLayout from './components/UserLayout';
 
 const fs = require('fs');
+const path = require('path');
 
 export default class App extends React.Component {
 
   constructor(props) {
     super(props);
 
-    const config = JSON.parse(fs.readFileSync('config.json'));
+    const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../config.json')));
     this.state = {
       flag: config.isSign,
     };

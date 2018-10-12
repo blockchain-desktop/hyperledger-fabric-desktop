@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import { Button, Form, Input, Modal, Menu, Dropdown,Icon } from 'antd';
 import moment from 'moment';
-import getFabricClientSingleton from '../../util/fabric'
+import getFabricClientSingleton from '../../util/fabric';
+
+//数据持久化
+const Datastore= require('nedb')
+    , db = new Datastore({ filename: './src/components/content/persistence/data.db', autoload: true });;
 
 //弹出层窗口组件
 const FormItem = Form.Item;
@@ -95,23 +99,50 @@ class ContractDiv extends React.Component {
        disable1: false,
        disable2: false,
        time:'',
-       result:'已新建智能合约'
+       result:'已新建智能合约',
+       icontype:'check-circle',
+       iconcolor:'#52c41a'
     };
     this.handleMenuClick = this.handleMenuClick.bind(this);
     this.handleInstallChaincodeCallBack=this.handleInstallChaincodeCallBack.bind(this);
     this.handleInstantiateChaincodeCallBack=this.handleInstantiateChaincodeCallBack.bind(this);
+    this.findArray=this.findArray.bind(this);
   }
-
+  //对安装链码进行操作
   handleInstallChaincodeCallBack(result){
+     if(result.indexOf("失败")!=-1)
+     {
+     this.setState({icontype:'exclamation-circle',iconcolor: '#FF4500'});
+     this.setState({disable1: false});
+     }
      this.setState({result: result});
      this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
      this.setState({disable1: true});
   }
+  //对实例化链码进行操作
   handleInstantiateChaincodeCallBack(result){
+      if(result.indexOf("失败")!=-1)
+      {
+       this.setState({icontype:'exclamation-circle',iconcolor: '#FF4500'});
+       this.setState({disable2: false});
+      }else{
+       this.setState({icontype:'check-circle',iconcolor: '#52c41a'});
+      }
      this.setState({result:result});
      this.setState({time: moment().format("YYYY-MM-DD HH:mm:ss")});
      this.setState({disable2: true});
   }
+
+  findArray(array,name,version,channel) {
+    for(var i=0;i<array.length;i++)
+    {
+      if(array[i].name==name&&array[i].version==version&&array[i].channel==channel){
+          return i;
+      }
+    }
+    return -1;
+   }
+
   handleMenuClick(e) {
     var fc=getFabricClientSingleton();
     if (e.key == 1) {
@@ -121,14 +152,27 @@ class ContractDiv extends React.Component {
           this.props.citem.version)
     }
     if (e.key == 2) {
+        this.setState({icontype: 'loading',iconcolor: '#436EEE'});
+        this.setState({result: '正在等待部署智能合约...'});
         fc.instantiateCc(this.handleInstantiateChaincodeCallBack,
             this.props.citem.channel,
             this.props.citem.name,
             this.props.citem.version,
-            [""])
+            [""]);
     }
     if (e.key == 3) {
-      this.props.onDel();
+      var contract={
+          name: this.props.citem.name,
+          version: this.props.citem.version,
+          channel:this.props.citem.channel,
+          path:this.props.citem.path,
+          description:this.props.citem.description
+      };
+
+      var index=this.findArray(this.props.ctodo,contract.name,contract.version,contract.channel);
+      console.log('the contratc index to delete:',index);
+      this.props.ctodo.splice(index,1);
+      this.props.cdelete(this.props.ctodo);
       console.log("you have remove the smartbill.");
     }
   }
@@ -146,7 +190,7 @@ class ContractDiv extends React.Component {
       float: 'left'
     };
     const contentStyle={
-      padding:'10px'
+      padding:'15px'
     };
     const PStyle={
       display:'block',
@@ -195,6 +239,7 @@ class ContractDiv extends React.Component {
             {this.props.citem.description}
           </p>
           <p style={PStyle}>
+           <span><Icon type={this.state.icontype} theme="outlined" style={{color:this.state.iconcolor}}/>&nbsp;</span>
            <span>{this.state.result}</span>
            <span style={timeSpanStyle}>{this.state.time}</span>
           </p>
@@ -212,14 +257,6 @@ class ContractDiv extends React.Component {
 class ListToDo extends React.Component {
   constructor(props) {
     super(props);
-
-    this.handleDelete=this.handleDelete.bind(this);
-  }
-
-  handleDelete(){
-    var index=this.props.ckey;
-    this.props.todo.splice(index,1);
-    this.props.onDelete(this.props.todo);
   }
 
   render() {
@@ -227,7 +264,7 @@ class ListToDo extends React.Component {
       <div>
         {
         this.props.todo.map((item,i) => {
-           return <ContractDiv key={i} citem={item} ckey={i} onDel={this.handleDelete}/>
+          return <ContractDiv key={i} citem={item} ctodo={this.props.todo} cdelete={this.props.onDelete}/>
         })
         }
       </div>
@@ -265,9 +302,21 @@ export default class ChaincodeInstallContent extends React.Component {
       if (err) {
         return;
       }
+      //新增智能合约对象加入todolist数组
       var list=this.state.todolist;
       list.push(values);
       this.setState({todolist: list});
+      console.log('the contract list:',this.state.todolist);
+      //新增智能合约对象数据持久化
+      var li={
+          name: values.name,
+          version: values.version,
+          channel: values.channel,
+          path: values.path,
+          discription: values.description
+      };
+      db.insert(li,function (err,newdoc) {
+      });
 
       console.log('Received values of forms: ', values);
       form.resetFields();

@@ -52,9 +52,10 @@
     "electron-compile": "^6.4.3",
     "electron-devtools-installer": "^2.1.0",
     "electron-squirrel-startup": "^1.0.0",
-    "fabric-client": "~1.1.0",
     "fabric-ca-client": "~1.1.0",
+    "fabric-client": "~1.1.0",
     "grpc": "^1.6.0",
+    "nedb": "^1.8.0",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-hot-loader": "^3.0.0-beta.6"
