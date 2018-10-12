@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button, Form, Input, Modal, Menu, Dropdown,Icon } from 'antd';
 import moment from 'moment';
 import getFabricClientSingleton from '../../util/fabric';
-//import getDb from '../../util/database';
+
 //数据持久化
 const  Datastore= require('nedb')
     , db = new Datastore({ filename: './src/components/content/persistence/data.db', autoload: true });;
