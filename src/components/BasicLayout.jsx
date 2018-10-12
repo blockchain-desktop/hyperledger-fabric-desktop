@@ -4,10 +4,11 @@ import { Layout, Menu, Icon, Button } from 'antd';
 import DataContent from './content/DataContent';
 import ChaincodeInvokeContent from './content/ChaincodeInvokeContent';
 import ChaincodeInstallContent from './content/ChaincodeInstallContent';
-const path = require('path');
+
 const { Sider, Content } = Layout;
 
 const fs = require('fs');
+const path = require('path');
 
 // 内容路由：在此配置内容key对应的内容类，切换主页面内容
 function ContentRoute(props) {
@@ -43,6 +44,7 @@ export default class BasicLayout extends React.Component {
     config.isSign = false;
     const content = JSON.stringify(config);
     fs.writeFileSync(path.join(__dirname, '../../config.json'), content);
+  }
 
   switchContent(contentKey) {
     this.setState({ contentKey });

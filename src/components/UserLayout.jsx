@@ -4,6 +4,7 @@ import { Button, Input, Layout, Avatar } from 'antd';
 import getFabricClientSingleton from '../util/fabric';
 
 const fs = require('fs');
+const path = require('path');
 
 const { Content } = Layout;
 
@@ -40,7 +41,7 @@ export default class DataContent extends React.Component {
     const content = JSON.stringify(data);
     console.log(content);
     this.props.onGetChildMessage(true);  // 调用父组件传来的函数，将数据作为参数传过去
-    fs.writeFileSync('config.json', content);
+    fs.writeFileSync(path.join(__dirname, '../../config.json'), content);
     const fc = getFabricClientSingleton();
     console.log(this.state.certPath);
     fc.importCer(this.state.keyPath, this.state.certPath);
