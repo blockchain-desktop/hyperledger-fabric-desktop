@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Button, Form, Input, Modal, Menu, Dropdown,Icon } from 'antd';
 import moment from 'moment';
 import getFabricClientSingleton from '../../util/fabric';
-
+//import getDb from '../../util/database';
 //数据持久化
-const Datastore= require('nedb')
+const  Datastore= require('nedb')
     , db = new Datastore({ filename: './src/components/content/persistence/data.db', autoload: true });;
 
 //弹出层窗口组件
@@ -144,6 +144,7 @@ class ContractDiv extends React.Component {
    }
 
   handleMenuClick(e) {
+    //安装链码操作
     var fc=getFabricClientSingleton();
     if (e.key == 1) {
       fc.installCc(this.handleInstallChaincodeCallBack,
@@ -152,6 +153,7 @@ class ContractDiv extends React.Component {
           this.props.citem.version)
     }
     if (e.key == 2) {
+        //实例化链码操作
         this.setState({icontype: 'loading',iconcolor: '#436EEE'});
         this.setState({result: '正在等待部署智能合约...'});
         fc.instantiateCc(this.handleInstantiateChaincodeCallBack,
@@ -161,6 +163,7 @@ class ContractDiv extends React.Component {
             [""]);
     }
     if (e.key == 3) {
+      //删除链码操作
       var contract={
           name: this.props.citem.name,
           version: this.props.citem.version,
@@ -168,11 +171,14 @@ class ContractDiv extends React.Component {
           path:this.props.citem.path,
           description:this.props.citem.description
       };
-
+      //从todolist对象集中删除链码对象
       var index=this.findArray(this.props.ctodo,contract.name,contract.version,contract.channel);
       console.log('the contratc index to delete:',index);
       this.props.ctodo.splice(index,1);
       this.props.cdelete(this.props.ctodo);
+      //删除持久化数据库中的记录
+      db.remove({ name: contract.name,version: contract.version,channel: contract.channel}, {}, function (err, numRemoved) {
+      });
       console.log("you have remove the smartbill.");
     }
   }
@@ -276,11 +282,18 @@ class ListToDo extends React.Component {
 export default class ChaincodeInstallContent extends React.Component {
   constructor(props) {
     super(props);
+    var arr = [];
+    var obj = this;
+    db.find({}, function (err, docs) {
+     for(var i in docs){
+        arr.push(docs[i]);
+     }
+     obj.setState({todolist: arr});
+    });
     this.state = {
-      visible: false,
-      todolist: [],
+       visible: false,
+       todolist: arr
     };
-
     this.showModal = this.showModal.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
@@ -317,7 +330,6 @@ export default class ChaincodeInstallContent extends React.Component {
       };
       db.insert(li,function (err,newdoc) {
       });
-
       console.log('Received values of forms: ', values);
       form.resetFields();
       this.setState({ visible: false });
@@ -342,7 +354,7 @@ export default class ChaincodeInstallContent extends React.Component {
       height: '200px',
       width: '240px',
       marginBottom: '20px',
-      marginRight: '20px',
+      marginRight: '10px',
       display: 'block',
       alignItems: 'center',
       float:'left'

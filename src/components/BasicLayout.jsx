@@ -3,6 +3,7 @@ import { Layout, Menu, Icon, Button } from 'antd';
 import DataContent from './content/DataContent';
 import ChaincodeInvokeContent from './content/ChaincodeInvokeContent';
 import ChaincodeInstallContent from './content/ChaincodeInstallContent';
+
 const path = require('path')
 const { Sider, Content } = Layout;
 
