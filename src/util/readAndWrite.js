@@ -1,14 +1,14 @@
+const fs = require('fs');
+const path = require('path');
 
-function write(content,strPath) {
-  var fs = require('fs');
-  var path = require('path');
-  var file = path.join(strPath);
-  fs.writeFile(file, content, function (err) {
-    if(err){
+function write(content, strPath) {
+  const file = path.join(strPath);
+  fs.writeFile(file, content, (err) => {
+    if (err) {
       return console.log(err);
     }
     return console.log('success');
-  })
+  });
 }
 
 

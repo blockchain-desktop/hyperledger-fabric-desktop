@@ -56,6 +56,9 @@ cd ../fabric/basic-network
 #### 开发客户端功能:
 使用网络、证书作为开发环境，进行electron项目的功能开发。
 
+### 代码检查
+提交代码前请先用`npm run lint` 对代码进行检查，修改代码规范的问题（`npm run lintFix [代码地址]` 命令可对代码一些问题进行自动修复）
+
 
 [附加说明可参考hyperledger fabric官方文档](https://hyperledger-fabric.readthedocs.io/en/release-1.1/write_first_app.html)  
 
