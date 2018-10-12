@@ -3,6 +3,8 @@ import { Layout, Menu, Icon, Button } from 'antd';
 import DataContent from './content/DataContent';
 import ChaincodeInvokeContent from './content/ChaincodeInvokeContent';
 import ChaincodeInstallContent from './content/ChaincodeInstallContent';
+import {deleteFabricClientSingleton} from '../util/fabric';
+
 const path = require('path')
 const { Sider, Content } = Layout;
 
@@ -46,7 +48,7 @@ export default class BasicLayout extends React.Component {
     config['isSign'] = false;
     var content = JSON.stringify(config);
     fs.writeFileSync(path.join(__dirname, '../../config.json'),content);
-
+    deleteFabricClientSingleton();
   }
 
 

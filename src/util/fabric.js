@@ -29,8 +29,8 @@ class FabricClient {
    * @returns {Promise<Client.User | never>}
    * @private
    */
-  _enrollUser(userName) {
-    let usrName = userName ? userName: 'user1'
+  _enrollUser() {
+   let usrName = this.config['username'];
 
     console.log("start to load member user.")
     return Fabric_Client.newDefaultKeyValueStore({ path: this.store_path
@@ -286,9 +286,8 @@ class FabricClient {
    * @param chaincodeVersion
    */
   installCc(callback, chaincodePath, chaincodeName, chaincodeVersion) {
-    let username = 'Org1Admin';
     console.log(`${chaincodePath}, ${chaincodeName}, ${chaincodeVersion}`)
-    this._enrollUser(username).then((user_from_store) => {
+    this._enrollUser().then((user_from_store) => {
         console.log('Successfully loaded user from persistence, user:', user_from_store);
 
         let request = {
@@ -336,11 +335,10 @@ class FabricClient {
    * @param args
    */
   instantiateCc(callback, channelName, chaincodeName, chaincodeVersion, args) {
-    let username = 'Org1Admin';
     let channel = this._setupChannelOnce(channelName);
     let tx_id;
 
-    this._enrollUser(username).then((user_from_store) => {
+    this._enrollUser().then((user_from_store) => {
       console.log('Successfully loaded user from persistence, user:', user_from_store);
 
       tx_id = this.fabric_client.newTransactionID();
@@ -418,7 +416,7 @@ class FabricClient {
 }
 
 
-var __fabricClient
+var __fabricClient;
 
 // FabricClient单例模式。后续考虑优化为多套身份，多个client
 export default function getFabricClientSingleton() {
@@ -426,4 +424,8 @@ export default function getFabricClientSingleton() {
     __fabricClient = new FabricClient();
   }
   return __fabricClient;
+}
+
+export function deleteFabricClientSingleton() {
+  __fabricClient = null;
 }
