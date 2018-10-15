@@ -1,26 +1,23 @@
-var Fabric_Client = require('fabric-client');
-var Fabric_CA_Client = require('fabric-ca-client');
-var path = require('path');
-var util = require('util');
-var os = require('os');
-var fs=require('fs');
+const FabricClientSDK = require('fabric-client');
+const path = require('path');
+const util = require('util');
+const fs = require('fs');
 
 
 class FabricClient {
-
   constructor() {
     // TODO: 若配置更新，如何调整？
-    let fabric_client = new Fabric_Client();
+    const fabricClient = new FabricClientSDK();
 
-    let config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json')));
+    const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json')));
     console.log('config:', config);
 
-    let store_path = path.join(__dirname, '../../', config['path']);
-    console.log('Store path:'+store_path);
+    const storePath = path.join(__dirname, '../../', config.path);
+    console.log(`Store path:${storePath}`);
 
-    this.fabric_client = fabric_client;
+    this.fabric_client = fabricClient;
     this.config = config;
-    this.store_path = store_path;
+    this.store_path = storePath;
     this.channels = {}; // {channelName: channel}
   }
 
@@ -30,23 +27,23 @@ class FabricClient {
    * @private
    */
   _enrollUser() {
-   let usrName = this.config['username'];
+    const usrName = this.config.username;
 
-    console.log("start to load member user.")
-    return Fabric_Client.newDefaultKeyValueStore({ path: this.store_path
-    }).then((state_store) => {
+    console.log('start to load member user.');
+    return FabricClientSDK.newDefaultKeyValueStore({ path: this.store_path,
+    }).then((stateStore) => {
       // assign the store to the fabric client
-      this.fabric_client.setStateStore(state_store);
-      var crypto_suite = Fabric_Client.newCryptoSuite();
+      this.fabric_client.setStateStore(stateStore);
+      const cryptoSuite = FabricClientSDK.newCryptoSuite();
 
       // use the same location for the state store (where the users' certificate are kept)
       // and the crypto store (where the users' keys are kept)
-      var crypto_store = Fabric_Client.newCryptoKeyStore({path: this.store_path});
-      crypto_suite.setCryptoKeyStore(crypto_store);
-      this.fabric_client.setCryptoSuite(crypto_suite);
+      const cryptoStore = FabricClientSDK.newCryptoKeyStore({ path: this.store_path });
+      cryptoSuite.setCryptoKeyStore(cryptoStore);
+      this.fabric_client.setCryptoSuite(cryptoSuite);
 
       return this.fabric_client.getUserContext(usrName, true);
-    })
+    });
   }
 
 
@@ -55,9 +52,9 @@ class FabricClient {
     let channel = this.channels[channelName];
     if (!channel) {
       channel = this.fabric_client.newChannel(channelName);
-      var peer = this.fabric_client.newPeer(this.config['peerUrl']);
+      const peer = this.fabric_client.newPeer(this.config.peerUrl);
       channel.addPeer(peer);
-      var order = this.fabric_client.newOrderer(this.config['ordererUrl']); // FIXME: 作为参数传入
+      const order = this.fabric_client.newOrderer(this.config.ordererUrl); // FIXME: 作为参数传入
       channel.addOrderer(order);
 
       this.channels[channelName] = channel;
@@ -67,8 +64,8 @@ class FabricClient {
     return channel;
   }
 
-  _argsNullHelper(args) {
-    return args ? args : []
+  static _argsNullHelper(args) {
+    return args || [];
   }
 
   /**
@@ -80,64 +77,63 @@ class FabricClient {
    * @param channelName {string}
    */
   queryCc(callback, chaincodeId, fcn, args, channelName) {
-    console.log(`start query, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`)
+    console.log(`start query, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`);
 
-    let channel = this._setupChannelOnce(channelName);
-    this._enrollUser().then((user_from_store) => {
-      if (user_from_store && user_from_store.isEnrolled()) {
-        console.log('Successfully loaded user1 from persistence, user:', user_from_store);
+    const channel = this._setupChannelOnce(channelName);
+    this._enrollUser().then((user) => {
+      if (user && user.isEnrolled()) {
+        console.log('Successfully loaded user1 from persistence, user:', user);
       } else {
         throw new Error('Failed to get user1.... run registerUser.js');
       }
 
       const request = {
-        chaincodeId: chaincodeId,
-        fcn: fcn,
-        args: this._argsNullHelper(args) // FIXME: caller should be responsible for checking input.
+        chaincodeId,
+        fcn,
+        args: FabricClient._argsNullHelper(args),
       };
 
       // send the query proposal to the peer
       return channel.queryByChaincode(request);
-    }).then((query_responses) => {
-      console.log("Query has completed, checking results");
-      // query_responses could have more than one  results if there multiple peers were used as targets
-      if (query_responses && query_responses.length == 1) {
-        if (query_responses[0] instanceof Error) {
-          console.error("error from query = ", query_responses[0]);
+    }).then((queryResponses) => {
+      console.log('Query has completed, checking results');
+      // queryResponses could have more than one results if there were multiple peers targets
+      if (queryResponses && queryResponses.length === 1) {
+        if (queryResponses[0] instanceof Error) {
+          console.error('error from query = ', queryResponses[0]);
         } else {
-          var result = query_responses[0].toString();
-          console.log("Response is ", result);
+          const result = queryResponses[0].toString();
+          console.log('Response is ', result);
 
           callback(result);
         }
       } else {
-        console.log("No payloads were returned from query");
+        console.log('No payloads were returned from query');
       }
     }).catch((err) => {
-      console.error('Failed to query successfully :: ' + err);
+      console.error(`Failed to query successfully :: ${err}`);
     });
-
   }
 
 
-  importCer(keyPath,certPath){
-    //-------------------- admin start ---------
-    console.log("start to create admin user.")
-    var keyPEM = Buffer.from(fs.readFileSync(keyPath)).toString();
-    var certPEM = fs.readFileSync(certPath);
+  importCer(keyPath, certPath) {
+    // -------------------- admin start ---------
+    console.log('start to create admin user.');
+    const keyPEM = Buffer.from(fs.readFileSync(keyPath)).toString();
+    const certPEM = fs.readFileSync(certPath);
 
     console.log(keyPEM);
     console.log(certPEM);
 
     this.fabric_client.createUser({
-      username: this.config['username'],
-      mspid: "Org1MSP",
+      username: this.config.username,
+      mspid: 'Org1MSP',
       cryptoContent: {
         privateKeyPEM: keyPEM,
         signedCertPEM: certPEM,
-      }
-    })
-    //---------------admin finish ---------------
+      },
+    });
+    // ---------------admin finish ---------------
   }
 
   /**
@@ -150,38 +146,36 @@ class FabricClient {
    */
   invokeCc(callback, chaincodeId, fcn, args, channelName) {
     console.log(`start invoke, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`);
-    let channel = this._setupChannelOnce(channelName);
-    let tx_id;
-    let fabric_client = this.fabric_client;
+    const channel = this._setupChannelOnce(channelName);
+    let txID;
+    const fabricClient = this.fabric_client;
 
-    this._enrollUser().then((user_from_store) => {
-      if (user_from_store && user_from_store.isEnrolled()) {
+    this._enrollUser().then((user) => {
+      if (user && user.isEnrolled()) {
         console.log('Successfully loaded user1 from persistence');
       } else {
         throw new Error('Failed to get user1.... run registerUser.js');
       }
 
       // get a transaction id object based on the current user assigned to fabric client
-      tx_id = fabric_client.newTransactionID();
-      console.log("Assigning transaction_id: ", tx_id._transaction_id);
+      txID = fabricClient.newTransactionID();
+      console.log('Assigning transaction_id: ', txID._transaction_id);
 
-      // createCar chaincode function - requires 5 args, ex: args: ['CAR12', 'Honda', 'Accord', 'Black', 'Tom'],
-      // changeCarOwner chaincode function - requires 2 args , ex: args: ['CAR10', 'Dave'],
       // must send the proposal to endorsing peers
-      var request = {
-        //targets: let default to the peer assigned to the client
-        chaincodeId: chaincodeId,
-        fcn: fcn,
-        args: this._argsNullHelper(args),
+      const request = {
+        // targets: let default to the peer assigned to the client
+        chaincodeId,
+        fcn,
+        args: FabricClient._argsNullHelper(args),
         chainId: channelName,
-        txId: tx_id
+        txId: txID,
       };
 
       // send the transaction proposal to the peers
       return channel.sendTransactionProposal(request);
     }).then((results) => {
-      var proposalResponses = results[0];
-      var proposal = results[1];
+      const proposalResponses = results[0];
+      const proposal = results[1];
       let isProposalGood = false;
       if (proposalResponses && proposalResponses[0].response &&
         proposalResponses[0].response.status === 200) {
@@ -196,84 +190,86 @@ class FabricClient {
           proposalResponses[0].response.status, proposalResponses[0].response.message));
 
         // build up the request for the orderer to have the transaction committed
-        var request = {
-          proposalResponses: proposalResponses,
-          proposal: proposal
+        const request = {
+          proposalResponses,
+          proposal,
         };
 
         // set the transaction listener and set a timeout of 30 sec
         // if the transaction did not get committed within the timeout period,
         // report a TIMEOUT status
-        var transaction_id_string = tx_id.getTransactionID(); //Get the transaction ID string to be used by the event processing
-        var promises = [];
+        const transactionIDString = txID.getTransactionID();
+        const promises = [];
 
-        var sendPromise = channel.sendTransaction(request);
-        promises.push(sendPromise); //we want the send transaction first, so that we know where to check status
+        // send transaction first, so that we know where to check status
+        const sendPromise = channel.sendTransaction(request);
+        promises.push(sendPromise);
 
         // get an eventhub once the fabric client has a user assigned. The user
         // is required bacause the event registration must be signed
-        let event_hub = fabric_client.newEventHub();
-        event_hub.setPeerAddr('grpc://localhost:7053'); // FIXME: 事件监听地址端口，需作为参数传入
+        const eventHub = fabricClient.newEventHub();
+        eventHub.setPeerAddr('grpc://localhost:7053'); // FIXME: 事件监听地址端口，需作为参数传入
 
         // using resolve the promise so that result status may be processed
         // under the then clause rather than having the catch clause process
         // the status
-        let txPromise = new Promise((resolve, reject) => {
-          let handle = setTimeout(() => {
-            event_hub.disconnect();
-            resolve({event_status : 'TIMEOUT'}); //we could use reject(new Error('Trnasaction did not complete within 30 seconds'));
+        const txPromise = new Promise((resolve, reject) => {
+          const handle = setTimeout(() => {
+            eventHub.disconnect();
+            resolve({ event_status: 'TIMEOUT' });
+            // could use reject(new Error('Trnasaction did not complete within 30 seconds'));
           }, 3000);
-          event_hub.connect();
-          event_hub.registerTxEvent(transaction_id_string, (tx, code) => {
+          eventHub.connect();
+          eventHub.registerTxEvent(transactionIDString, (tx, code) => {
             // this is the callback for transaction event status
             // first some clean up of event listener
             clearTimeout(handle);
-            event_hub.unregisterTxEvent(transaction_id_string);
-            event_hub.disconnect();
+            eventHub.unregisterTxEvent(transactionIDString);
+            eventHub.disconnect();
 
             // now let the application know what happened
-            var return_status = {event_status : code, tx_id : transaction_id_string};
+            const returnStatus = { event_status: code, tx_id: transactionIDString };
             if (code !== 'VALID') {
-              console.error('The transaction was invalid, code = ' + code);
-              resolve(return_status); // we could use reject(new Error('Problem with the tranaction, event status ::'+code));
+              console.error(`The transaction was invalid, code = ${code}`);
+              resolve(returnStatus);
+              // could use reject(new Error('Problem with the tranaction, event status ::'+code));
             } else {
-              console.log('The transaction has been committed on peer ' + event_hub._ep._endpoint.addr);
-              resolve(return_status);
+              console.log(`The transaction has been committed on peer ${eventHub._ep._endpoint.addr}`);
+              resolve(returnStatus);
             }
           }, (err) => {
-            //this is the callback if something goes wrong with the event registration or processing
-            reject(new Error('There was a problem with the eventhub ::'+err));
+            // this is the callback if something goes wrong
+            // with the event registration or processing
+            reject(new Error(`There was a problem with the eventhub ::${err}`));
           });
         });
         promises.push(txPromise);
 
         return Promise.all(promises);
-      } else {
-        console.error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
-        throw new Error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
       }
+      console.error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
+      throw new Error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
     }).then((results) => {
       console.log('Send transaction promise and event listener promise have completed');
       // check the results in the order the promises were added to the promise all list
       if (results && results[0] && results[0].status === 'SUCCESS') {
         console.log('Successfully sent transaction to the orderer.');
       } else {
-        console.error('Failed to order the transaction. Error code: ' + response.status);
+        console.error(`Failed to order the transaction. Error code: ${results[0].status}`);
       }
 
-      if(results && results[1] && results[1].event_status === 'VALID') {
+      if (results && results[1] && results[1].event_status === 'VALID') {
         console.log('Successfully committed the change to the ledger by the peer');
       } else {
-        console.log('Transaction failed to be committed to the ledger due to ::'+results[1].event_status);
+        console.log(`Transaction failed to be committed to the ledger due to ::${results[1].event_status}`);
       }
-      console.log("Invoke result:", results)
+      console.log('Invoke result:', results);
 
-      callback('调用成功') // TODO: invoke的结果获取
-
-    }).catch((err) => {
-      console.error('Failed to invoke successfully :: ' + err);
-    });
-
+      callback('调用成功'); // TODO: invoke的结果获取
+    })
+      .catch((err) => {
+        console.error(`Failed to invoke successfully :: ${err}`);
+      });
   }
 
   // TODO: go链码与GOPATH/src的处理
@@ -286,20 +282,19 @@ class FabricClient {
    * @param chaincodeVersion
    */
   installCc(callback, chaincodePath, chaincodeName, chaincodeVersion) {
-    console.log(`${chaincodePath}, ${chaincodeName}, ${chaincodeVersion}`)
-    this._enrollUser().then((user_from_store) => {
-        console.log('Successfully loaded user from persistence, user:', user_from_store);
+    console.log(`${chaincodePath}, ${chaincodeName}, ${chaincodeVersion}`);
+    this._enrollUser().then((user) => {
+      console.log('Successfully loaded user from persistence, user:', user);
 
-        let request = {
-          targets:  [this.fabric_client.newPeer(this.config['peerUrl'])], // peerAddress
-          chaincodePath: chaincodePath,
-          chaincodeId: chaincodeName,
-          chaincodeVersion: chaincodeVersion
-        };
-        return this.fabric_client.installChaincode(request);
+      const request = {
+        targets: [this.fabric_client.newPeer(this.config.peerUrl)], // peerAddress
+        chaincodePath,
+        chaincodeId: chaincodeName,
+        chaincodeVersion,
+      };
+      return this.fabric_client.installChaincode(request);
     }).then((results) => {
-      var proposalResponses = results[0];
-      var proposal = results[1];
+      const proposalResponses = results[0];
       let isProposalGood = false;
       if (proposalResponses && proposalResponses[0].response &&
         proposalResponses[0].response.status === 200) {
@@ -315,14 +310,14 @@ class FabricClient {
         msg = '安装链码成功';
         console.log(msg);
       } else {
-        msg = '安装链码失败'
+        msg = '安装链码失败';
         console.error(msg);
       }
       callback(msg);
     }, (err) => {
-      console.error('Failed to send install proposal due to error: ' + err.stack ? err.stack : err);
-      throw new Error('Failed to send install proposal due to error: ' + err.stack ? err.stack : err);
-    })
+      console.error(`Failed to send install proposal due to error: ${err.stack}` ? err.stack : err);
+      throw new Error(`Failed to send install proposal due to error: ${err.stack}` ? err.stack : err);
+    });
   }
 
 
@@ -335,48 +330,48 @@ class FabricClient {
    * @param args
    */
   instantiateCc(callback, channelName, chaincodeName, chaincodeVersion, args) {
-    let channel = this._setupChannelOnce(channelName);
-    let tx_id;
+    const channel = this._setupChannelOnce(channelName);
+    let txID;
 
-    this._enrollUser().then((user_from_store) => {
-      console.log('Successfully loaded user from persistence, user:', user_from_store);
+    this._enrollUser().then((user) => {
+      console.log('Successfully loaded user from persistence, user:', user);
 
-      tx_id = this.fabric_client.newTransactionID();
-      let request = {
-        targets:  [this.fabric_client.newPeer(this.config['peerUrl'])], // peerAddress
+      txID = this.fabric_client.newTransactionID();
+      const request = {
+        targets: [this.fabric_client.newPeer(this.config.peerUrl)], // peerAddress
         chaincodeId: chaincodeName,
-        chaincodeVersion: chaincodeVersion,
-        args: args,
-        txId: tx_id
+        chaincodeVersion,
+        args,
+        txId: txID,
       };
 
       // 提案
       return channel.sendInstantiateProposal(request);
     }).then((results) => {
-      var proposalResponses = results[0];
-      var proposal = results[1];
-      let isProposalGood = false;
-      if (proposalResponses && proposalResponses[0].response && proposalResponses[0].response.status === 200) {
-        isProposalGood = true;
-        console.log('Transaction proposal was good:');
-      } else {
-        console.error('Transaction proposal was bad');
+      const proposalResponses = results[0];
+      const proposal = results[1];
+      const isGood = proposalResponses && proposalResponses[0].response
+        && proposalResponses[0].response.status === 200;
+
+      if (!isGood) {
+        throw new Error('Transaction proposal was bad');
       }
 
+      console.log('Transaction proposal was good:');
       // 提案成功后，提交
-      let request = {
-        proposalResponses: proposalResponses,
-        proposal: proposal
+      const request = {
+        proposalResponses,
+        proposal,
       };
-
       return channel.sendTransaction(request);
     }).then((results) => {
-      console.log("Complete instantiating chaincode.");
+      console.log('Complete instantiating chaincode.', results);
       callback('实例化链码成功');
-    }).catch((err) => {
-      console.error("Fail to instantiate chaincode. Error message: " + err.stack ? err.stack : err);
-      callback('实例化链码失败');
     })
+      .catch((err) => {
+        console.error(`Fail to instantiate chaincode. Error message: ${err.stack}` ? err.stack : err);
+        callback('实例化链码失败');
+      });
   }
 
   /**
@@ -386,14 +381,12 @@ class FabricClient {
    * @param channelName
    */
   queryBlock(callback, blockNumber, channelName) {
-    let channel = this._setupChannelOnce(channelName)
+    const channel = this._setupChannelOnce(channelName);
 
-    this._enrollUser().then((user) => {
-      return channel.queryBlock(blockNumber)
-    }).then((block) => {
-      console.log("block:", block, block.toString())
-      callback(block)
-    })
+    this._enrollUser().then(() => channel.queryBlock(blockNumber)).then((block) => {
+      console.log('block:', block, block.toString());
+      callback(block);
+    });
   }
 
   /**
@@ -402,21 +395,17 @@ class FabricClient {
    * @param channelName
    */
   queryInfo(callback, channelName) {
-    let channel = this._setupChannelOnce(channelName)
+    const channel = this._setupChannelOnce(channelName);
 
-    this._enrollUser().then((user) => {
-      return channel.queryInfo()
-    }).then((blockchainInfo) => {
-      console.log("blockchainInfo:", blockchainInfo, blockchainInfo.toString())
-      callback(blockchainInfo)
-    })
-
+    this._enrollUser().then(() => channel.queryInfo()).then((blockchainInfo) => {
+      console.log('blockchainInfo:', blockchainInfo, blockchainInfo.toString());
+      callback(blockchainInfo);
+    });
   }
-
 }
 
 
-var __fabricClient;
+let __fabricClient;
 
 // FabricClient单例模式。后续考虑优化为多套身份，多个client
 export default function getFabricClientSingleton() {
