@@ -3,7 +3,7 @@
 ## 快速入门
 TODO: 介绍客户端的使用
 
-### 系统架构
+### 项目结构
 - doc 项目文档
 - fabric 后端网络配置相关文件
   - basic-network 基本网络配置文件
@@ -49,15 +49,15 @@ cd ../fabric/basic-network
 * docker：17.06.2-ce 版本及以上
 * docker-compose：1.14.0 版本及以上
 
-开发技术栈：Electron, React, Ant Design, Fabric-Node-sdk
-
+开发技术栈：Electron, React, Ant Design, Fabric-Node-sdk  
 推荐IDE：WebStorm、VSCode
 
 #### 开发客户端功能:
 使用网络、证书作为开发环境，进行electron项目的功能开发。
 
 ### 代码检查
-提交代码前请先用`npm run lint` 对代码进行检查，修改代码规范的问题（`npm run lintFix [代码地址]` 命令可对代码一些问题进行自动修复）
+提交代码前请先用`npm run lint` 对代码进行检查，
+修改代码规范的问题（`npm run lintFix [代码地址]` 命令可对代码一些问题进行自动修复）
 
 
 [附加说明可参考hyperledger fabric官方文档](https://hyperledger-fabric.readthedocs.io/en/release-1.1/write_first_app.html)  
