@@ -49,7 +49,6 @@
   },
   "dependencies": {
     "antd": "^3.9.2",
-    "babel-eslint": "^10.0.1",
     "electron-compile": "^6.4.3",
     "electron-devtools-installer": "^2.1.0",
     "electron-squirrel-startup": "^1.0.0",
@@ -62,7 +61,7 @@
     "react-hot-loader": "^3.0.0-beta.6"
   },
   "devDependencies": {
-    "babel-eslint": "^8.2.6",
+    "babel-eslint": "^10.0.1",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-es2015-classes": "^6.24.1",
     "babel-preset-env": "^1.7.0",
