@@ -119,18 +119,13 @@ class FabricClient {
   importCer(keyPath, certPath) {
     // -------------------- admin start ---------
     console.log('start to create admin user.');
-    const keyPEM = Buffer.from(fs.readFileSync(keyPath)).toString();
-    const certPEM = fs.readFileSync(certPath);
-
-    console.log(keyPEM);
-    console.log(certPEM);
 
     this.fabric_client.createUser({
       username: this.config.username,
       mspid: 'Org1MSP',
       cryptoContent: {
-        privateKeyPEM: keyPEM,
-        signedCertPEM: certPEM,
+        privateKey: keyPath,
+        signedCert: certPath,
       },
     });
     // ---------------admin finish ---------------

@@ -28,6 +28,7 @@ export default class DataContent extends React.Component {
       currentId: 0,
       currentPage: 0,
       height: 0,
+      timer: null,
     };
 
     this.showModal = this.showModal.bind(this);
@@ -41,6 +42,21 @@ export default class DataContent extends React.Component {
     fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
   }
 
+  componentDidMount() {
+    this.state.timer = setInterval(() => {
+      console.log('1111111');
+      const fc = getFabricClientSingleton();
+      fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
+    }, 5000);
+  }
+
+  componentWillUnmount() {
+    if (this.state.timer != null) {
+      clearInterval(this.state.timer);
+    }
+  }
+
+
   onChange(current, pageSize) {
     console.log(current, pageSize);
     this.setState({
@@ -49,6 +65,7 @@ export default class DataContent extends React.Component {
     const fc = getFabricClientSingleton();
     fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
   }
+
 
   onQueryInfoCallback(result) {
     console.log(result);
