@@ -2,6 +2,8 @@ import React from 'react';
 import { Card, Col, Row, Table, Modal } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
 
+const logger = require('electron-log');
+
 const { Column, ColumnGroup } = Table;
 
 let count = 0;
@@ -44,7 +46,6 @@ export default class DataContent extends React.Component {
 
   componentDidMount() {
     this.state.timer = setInterval(() => {
-      console.log('1111111');
       const fc = getFabricClientSingleton();
       fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
     }, 5000);
@@ -58,7 +59,7 @@ export default class DataContent extends React.Component {
 
 
   onChange(current, pageSize) {
-    console.log(current, pageSize);
+    logger.info(current, pageSize);
     this.setState({
       currentPage: current - 1,
     });
@@ -68,7 +69,7 @@ export default class DataContent extends React.Component {
 
 
   onQueryInfoCallback(result) {
-    console.log(result);
+    logger.info(result);
     this.setState({
       low: result.height.low,
       high: result.height.high,
@@ -77,7 +78,7 @@ export default class DataContent extends React.Component {
       head: [],
     });
     const fc = getFabricClientSingleton();
-    console.log(this.state.data.length);
+    logger.info(this.state.data.length);
     count = 0;
     const start = this.state.low - (4 * this.state.currentPage) - 1;
     const end = this.state.high > start - 4 ? this.state.high : start - 4;
@@ -117,7 +118,7 @@ export default class DataContent extends React.Component {
       const data = this.state.data.slice();
       data[result.header.number] = tempData;
       this.setState({ data });
-      console.log(this.state.data);
+      logger.info(this.state.data);
 
       const tempHead = {
         key: count++,
@@ -129,7 +130,7 @@ export default class DataContent extends React.Component {
       const head = this.state.head.slice();
       head[tempHead.key] = tempHead;
       this.setState({ head });
-      console.log(this.state.head);
+      logger.info(this.state.head);
     }
   }
 

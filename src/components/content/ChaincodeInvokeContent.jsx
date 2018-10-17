@@ -2,6 +2,8 @@ import React from 'react';
 import { Button, Input, Select, Radio } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
 
+const logger = require('electron-log');
+
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -12,8 +14,8 @@ export default class ChaincodeInvokeContent extends React.Component {
       result: '',
       value: '',
       channel: 'mychannel',
-      chaincodeId: 'fabcar',   // queryCar chaincode function - requires 1 argument, ex: args: ['CAR4'],
-      fcn: 'queryAllCars',    // queryAllCars chaincode function - requires no arguments , ex: args: [''],
+      chaincodeId: 'fabcar',
+      fcn: 'queryAllCars',
       args: '',
       type: 'query',
     };
@@ -44,7 +46,7 @@ export default class ChaincodeInvokeContent extends React.Component {
         this.state.args,
         this.state.channel);
     } else {
-      console.error('Chaincode calling type is invalid.');
+      logger.error('Chaincode calling type is invalid.');
     }
   }
 

@@ -8,6 +8,8 @@ const Datastore = require('nedb');
 
 const db = new Datastore({ filename: './src/components/content/persistence/data.db', autoload: true });
 
+const logger = require('electron-log');
+
 // 弹出层窗口组件
 const FormItem = Form.Item;
 
@@ -200,9 +202,9 @@ class ContractDiv extends React.Component {
         version: contract.version,
         channel: contract.channel }, {}, (err) => {
           if (err) {
-            console.log('the opertion of remove document failed! ');
+            logger.info('the opertion of remove document failed! ');
           } else {
-            console.log('you have remove the smartbill!');
+            logger.info('you have remove the smartbill!');
           }
         });
     }
@@ -315,13 +317,13 @@ export default class ChaincodeInstallContent extends React.Component {
     const obj = this;
     db.find({}, (err, docs) => {
       if (err) {
-        console.log('the operation of find documents failed!');
+        logger.info('the operation of find documents failed!');
       }
       for (let i = 0; i < docs.length; i++) {
         arr.push(docs[i]);
       }
       arr.sort(ChaincodeInstallContent.sortkey);
-      console.log('the arr: ', arr);
+      logger.info('the arr: ', arr);
       obj.setState({ todolist: arr });
     });
     this.state = {
@@ -366,12 +368,12 @@ export default class ChaincodeInstallContent extends React.Component {
       const list = this.state.todolist;
       list.push(li);
       this.setState({ todolist: list });
-      console.log('the contract list:', this.state.todolist);
+      logger.info('the contract list:', this.state.todolist);
 
       // 新增智能合约对象数据持久化
       db.insert(li, (error) => {
         if (error) {
-          console.log('The operation of insert into database failed');
+          logger.info('The operation of insert into database failed');
         }
       });
       form.resetFields();

@@ -3,6 +3,8 @@ import React from 'react';
 import { Button, Input, Layout, Avatar } from 'antd';
 import getFabricClientSingleton from '../util/fabric';
 
+const logger = require('electron-log');
+
 const fs = require('fs');
 const path = require('path');
 
@@ -39,12 +41,12 @@ export default class DataContent extends React.Component {
       path: 'src/components/content/resources/key/',
     };
     const content = JSON.stringify(data);
-    console.log(content);
+    logger.info(content);
     // 调用父组件传来的函数，将数据作为参数传过去
     this.props.onGetChildMessage(true);
     fs.writeFileSync(path.join(__dirname, '../../config.json'), content);
     const fc = getFabricClientSingleton();
-    console.log(this.state.certPath);
+    logger.info(this.state.certPath);
     fc.importCer(this.state.keyPath, this.state.certPath);
   }
 
