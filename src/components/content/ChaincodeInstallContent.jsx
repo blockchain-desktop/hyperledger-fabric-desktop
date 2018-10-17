@@ -103,10 +103,10 @@ class ContractDiv extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      disable1: false,
-      disable2: false,
-      time: '',
-      result: '已新建智能合约',
+      disable1: this.props.citem.disable1,
+      disable2: this.props.citem.disable2,
+      time: this.props.citem.time,
+      result: this.props.citem.result,
       icontype: 'check-circle',
       iconcolor: '#52c41a',
     };
@@ -116,25 +116,47 @@ class ContractDiv extends React.Component {
   }
   // 对安装链码进行操作
   handleInstallChaincodeCallBack(result) {
-    if (result.indexOf('失败') !== -1) {
+    if (result.indexOf('失败') > -1) {
       this.setState({ icontype: 'exclamation-circle', iconcolor: '#FF4500' });
       this.setState({ disable1: false });
+      this.setState({ result });
+      this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
+    } else {
+      // 安装链码成功
+      this.setState({ icontype: 'check-circle', iconcolor: '#52c41a' });
+      this.setState({ disable1: true });
+      this.setState({ result });
+      this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
+      // 更新持久化数据库
+      db.update({ name: this.props.citem.name,
+        version: this.props.citem.version,
+        channel: this.props.citem.channel },
+          { $set: { disable1: true, result: '安装链码成功', time: this.state.time } },
+          {}, () => {
+          });
     }
-    this.setState({ result });
-    this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
-    this.setState({ disable1: true });
   }
   // 对实例化链码进行操作
   handleInstantiateChaincodeCallBack(result) {
-    if (result.indexOf('失败') !== -1) {
+    if (result.indexOf('失败') > -1) {
       this.setState({ icontype: 'exclamation-circle', iconcolor: '#FF4500' });
       this.setState({ disable2: false });
+      this.setState({ result });
+      this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
     } else {
+      // 实例化链码成功
       this.setState({ icontype: 'check-circle', iconcolor: '#52c41a' });
+      this.setState({ disable2: true });
+      this.setState({ result });
+      this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
+      // 更新持久化数据库
+      db.update({ name: this.props.citem.name,
+        version: this.props.citem.version,
+        channel: this.props.citem.channel },
+            { $set: { disable1: true, disable2: true, result: '实例化链码成功', time: this.state.time } },
+            {}, () => {
+            });
     }
-    this.setState({ result });
-    this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
-    this.setState({ disable2: true });
   }
 
 
@@ -150,7 +172,7 @@ class ContractDiv extends React.Component {
     if (e.key === '2') {
         // 实例化链码操作
       this.setState({ icontype: 'loading', iconcolor: '#1E90FF' });
-      this.setState({ result: '正在等待部署智能合约...' });
+      this.setState({ result: '正在部署智能合约...' });
       fc.instantiateCc(this.handleInstantiateChaincodeCallBack,
             this.props.citem.channel,
             this.props.citem.name,
@@ -179,9 +201,10 @@ class ContractDiv extends React.Component {
         channel: contract.channel }, {}, (err) => {
           if (err) {
             console.log('the opertion of remove document failed! ');
+          } else {
+            console.log('you have remove the smartbill!');
           }
         });
-      console.log('you have remove the smartbill!');
     }
   }
 
@@ -333,6 +356,10 @@ export default class ChaincodeInstallContent extends React.Component {
         path: values.path,
         discription: values.description,
         key: moment().format('YYYYMMDDhmmss'),
+        disable1: false,
+        disable2: false,
+        result: '已新建智能合约',
+        time: '',
       };
 
       // 新增智能合约对象加入todolist数组
@@ -347,7 +374,6 @@ export default class ChaincodeInstallContent extends React.Component {
           console.log('The operation of insert into database failed');
         }
       });
-      console.log('Received values of forms: ', values);
       form.resetFields();
       this.setState({ visible: false });
     });
