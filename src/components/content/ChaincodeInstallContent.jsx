@@ -357,7 +357,7 @@ export default class ChaincodeInstallContent extends React.Component {
         channel: values.channel,
         path: values.path,
         discription: values.description,
-        key: moment().format('YYYYMMDDhmmss'),
+        key: moment().format('YYYYMMDDHHmmss'),
         disable1: false,
         disable2: false,
         result: '已新建智能合约',
