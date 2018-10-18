@@ -1,3 +1,5 @@
+// Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
+
 import React from 'react';
 // import PropTypes from 'prop-types';
 import { Layout, Menu, Icon, Button } from 'antd';

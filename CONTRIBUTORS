@@ -1,0 +1,20 @@
+# This is the official list of people who have contributed
+# code to the hyperledger-fabric-desktop repository.
+# The AUTHORS file lists the copyright holders; this file
+# lists people.  For example, Yonyou employees are listed here
+# but not in AUTHORS, because Yonyou holds the copyright.
+
+# Names should be added to this file like so:
+#     Individual's name <submission email address>
+#     Individual's name <submission email address> <email2> <emailN>
+#
+# An entry with multiple email addresses specifies that the
+# first address should be used in the submit logs.
+
+# Please append your name at the end of the list. We recommend
+# you to use English name, although the name can be written in
+# any language if you like.
+
+DENG, Yi <michael.yi.deng@gmail.com>
+
+

@@ -1,3 +1,5 @@
+// Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
+
 import { app, BrowserWindow } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';

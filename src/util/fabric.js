@@ -1,3 +1,5 @@
+// Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
+
 const FabricClientSDK = require('fabric-client');
 const path = require('path');
 const util = require('util');

@@ -1,3 +1,5 @@
+// Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
+
 // TODO: 登录页（秘钥导入页面）
 import React from 'react';
 import { Button, Input, Layout, Avatar } from 'antd';

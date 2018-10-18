@@ -1,3 +1,5 @@
+// Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
+
 import React from 'react';
 import { Col, Row, Table, Modal } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
