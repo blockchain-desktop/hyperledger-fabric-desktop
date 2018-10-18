@@ -390,11 +390,6 @@ export default class ChaincodeInstallContent extends React.Component {
   }
 
   render() {
-    const mainDivStyle = {
-      minHeight: '600px',
-      minWidth: '600px',
-    };
-
     const plusDivStyle = {
       height: '200px',
       width: '240px',
@@ -413,7 +408,7 @@ export default class ChaincodeInstallContent extends React.Component {
     };
 
     return (
-      <div style={mainDivStyle}>
+      <div style={{ minHeight: '900px' }}>
         <div style={plusDivStyle}>
           <Button icon="plus" style={buttonStyle} onClick={this.showModal}>添加合约</Button>
           <CollectionCreateForm

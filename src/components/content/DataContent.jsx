@@ -169,7 +169,7 @@ export default class DataContent extends React.Component {
 
   render() {
     return (
-      <div style={{ background: '#ECECEC', padding: '2px' }}>
+      <div style={{ background: '#fff', padding: '2px', minHeight: '900px' }}>
         {/* <div style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}> */}
         {/* <div> */}
         {/* <Row> */}
@@ -204,7 +204,7 @@ export default class DataContent extends React.Component {
         {/* </Row> */}
         {/* </div> */}
 
-        <div style={{ padding: '5px', backgroundColor: '#ffffff', overflow: 'hidden' }}>
+        <div style={{ padding: '5px', backgroundColor: '#fff', overflow: 'hidden' }}>
           <Row>
             <Col span={24}>
               <Table
