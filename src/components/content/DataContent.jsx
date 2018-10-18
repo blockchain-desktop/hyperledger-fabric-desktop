@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Col, Row, Table, Modal } from 'antd';
+import { Col, Row, Table, Modal } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
 
 const logger = require('electron-log');
@@ -73,17 +73,27 @@ export default class DataContent extends React.Component {
     this.setState({
       low: result.height.low,
       high: result.height.high,
-      height: result.height.low - result.height.high - 1,
-      data: [],
-      head: [],
+      height: Math.ceil(result.height.low / 4) * 4,
     });
     const fc = getFabricClientSingleton();
     logger.info(this.state.data.length);
     count = 0;
     const start = this.state.low - (4 * this.state.currentPage) - 1;
-    const end = this.state.high > start - 4 ? this.state.high : start - 4;
-    for (let i = start; i > end; i--) {
-      fc.queryBlock(this.onQueryBlockCallback, i, 'mychannel');
+    for (let i = start; i > start - 4; i--) {
+      if (this.state.high >= i) {
+        const tempHead = {
+          key: count++,
+          id: '',
+          hash: '',
+          num: '',
+          time: '',
+        };
+        const head = this.state.head.slice();
+        head[tempHead.key] = tempHead;
+        this.setState({ head });
+      } else {
+        fc.queryBlock(this.onQueryBlockCallback, i, 'mychannel');
+      }
     }
   }
 
@@ -94,6 +104,7 @@ export default class DataContent extends React.Component {
       for (let i = 0; i < result.data.data.length; i++) {
         const tempTransaction = {
           tx: result.data.data[i.toString()].payload.header.channel_header.tx_id,
+          hash: result.header.data_hash,
           creatorMSP: result.data.data[i.toString()].payload.data.actions['0'].header.creator.Mspid,
           endorser: result.data.data[i.toString()].payload.data.actions['0'].header.creator.Mspid,
           chaincodeName: result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.chaincode_id.name,
@@ -123,7 +134,7 @@ export default class DataContent extends React.Component {
       const tempHead = {
         key: count++,
         id: result.header.number,
-        hash: result.header.data_hash,
+        hash: (result.header.data_hash).substring(0, 16) + '...',
         num: result.data.data.length,
         time: result.data.data['0'].payload.header.channel_header.timestamp,
       };
@@ -157,43 +168,43 @@ export default class DataContent extends React.Component {
   render() {
     return (
       <div style={{ background: '#ECECEC', padding: '2px' }}>
-        <div style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-          <div>
-          <Row>
-            <Col span={12} >
-              <Card title={this.state.url} bordered={false} >{this.state.startTime}</Card>
-            </Col>
-            <Col span={4} >
-              <Card title="状态" bordered={false} >{this.state.status}</Card>
-            </Col>
-            <Col span={4} >
-              <Card title="类型" bordered={false} >{this.state.type}</Card>
-            </Col>
-            <Col span={4} >
-              <Card title="时长" bordered={false} >{this.state.runningTime}</Card>
-            </Col>
-          </Row>
-          </div>
-          <div style={{margin:'2px 0'}}>
-          <Row gutter={2}>
-            <Col span={6}>
-              <Card title="peer 节点" bordered={false} >{this.state.peerNum}</Card>
-            </Col>
-            <Col span={6}>
-              <Card title="区块" bordered={false} > {this.state.blackNum}</Card>
-            </Col>
-            <Col span={6} >
-              <Card title="智能合约" bordered={false} >{this.state.intelligentContractNum}</Card>
-            </Col>
-            <Col span={6} >
-              <Card title="交易" bordered={false} >{this.state.transactionNum}</Card>
-            </Col>
-          </Row>
-        </div>
+        {/* <div style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}> */}
+        {/* <div> */}
+        {/* <Row> */}
+        {/* <Col span={12} > */}
+        {/* <Card title={this.state.url} bordered={false} >{this.state.startTime}</Card> */}
+        {/* </Col> */}
+        {/* <Col span={4} > */}
+        {/* <Card title="状态" bordered={false} >{this.state.status}</Card> */}
+        {/* </Col> */}
+        {/* <Col span={4} > */}
+        {/* <Card title="类型" bordered={false} >{this.state.type}</Card> */}
+        {/* </Col> */}
+        {/* <Col span={4} > */}
+        {/* <Card title="时长" bordered={false} >{this.state.runningTime}</Card> */}
+        {/* </Col> */}
+        {/* </Row> */}
+        {/* </div> */}
+        {/* <div style={{ margin: '2px 0' }}> */}
+        {/* <Row gutter={2}> */}
+        {/* <Col span={6}> */}
+        {/* <Card title="peer 节点" bordered={false} >{this.state.peerNum}</Card> */}
+        {/* </Col> */}
+        {/* <Col span={6}> */}
+        {/* <Card title="区块" bordered={false} > {this.state.blackNum}</Card> */}
+        {/* </Col> */}
+        {/* <Col span={6} > */}
+        {/* <Card title="智能合约" bordered={false} >{this.state.intelligentContractNum}</Card> */}
+        {/* </Col> */}
+        {/* <Col span={6} > */}
+        {/* <Card title="交易" bordered={false} >{this.state.transactionNum}</Card> */}
+        {/* </Col> */}
+        {/* </Row> */}
+        {/* </div> */}
 
-        <div style={{ padding: '5px' ,backgroundColor: '#ffffff',overflow:'hidden' }}>
-        <Row>
-          <Col span={24}>
+        <div style={{ padding: '5px', backgroundColor: '#ffffff', overflow: 'hidden' }}>
+          <Row>
+            <Col span={24}>
               <Table
                 bordered
                 dataSource={this.state.head}
@@ -236,9 +247,8 @@ export default class DataContent extends React.Component {
                   />
                 </ColumnGroup>
               </Table>
-          </Col>
-        </Row>
-        </div>
+            </Col>
+          </Row>
         </div>
 
         <Modal
@@ -249,6 +259,7 @@ export default class DataContent extends React.Component {
           footer={null}
           width="60%"
         >
+          <strong>Hash:</strong>{this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].hash : ''}<br />
           <strong>Tx:</strong>{this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].tx : ''}<br />
           <strong>Creator MSP:</strong>{this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].creatorMSP : ''}<br />
           <strong>Endorser:</strong>{this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].endorser : ''}<br />
