@@ -156,46 +156,44 @@ export default class DataContent extends React.Component {
 
   render() {
     return (
-      <div style={{ background: '#ECECEC', padding: '15px' }}>
-
+      <div style={{ background: '#ECECEC', padding: '2px' }}>
         <div style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+          <div>
           <Row>
-            <Col span={12}>
-              <Card title={this.state.url} bordered={false}>{this.state.startTime}</Card>
+            <Col span={12} >
+              <Card title={this.state.url} bordered={false} >{this.state.startTime}</Card>
             </Col>
-            <Col span={4}>
-              <Card title="状态" bordered={false}>{this.state.status}</Card>
+            <Col span={4} >
+              <Card title="状态" bordered={false} >{this.state.status}</Card>
             </Col>
-            <Col span={4}>
-              <Card title="类型" bordered={false}>{this.state.type}</Card>
+            <Col span={4} >
+              <Card title="类型" bordered={false} >{this.state.type}</Card>
             </Col>
-            <Col span={4}>
-              <Card title="时长" bordered={false}>{this.state.runningTime}</Card>
+            <Col span={4} >
+              <Card title="时长" bordered={false} >{this.state.runningTime}</Card>
             </Col>
           </Row>
-
-          <p />
-          <Row gutter={16}>
+          </div>
+          <div style={{margin:'2px 0'}}>
+          <Row gutter={2}>
             <Col span={6}>
-              <Card title="peer 节点" bordered={false}>{this.state.peerNum}</Card>
+              <Card title="peer 节点" bordered={false} >{this.state.peerNum}</Card>
             </Col>
             <Col span={6}>
-              <Card title="区块" bordered={false}>{this.state.blackNum}</Card>
+              <Card title="区块" bordered={false} > {this.state.blackNum}</Card>
             </Col>
-            <Col span={6}>
-              <Card title="智能合约" bordered={false}>{this.state.intelligentContractNum}</Card>
+            <Col span={6} >
+              <Card title="智能合约" bordered={false} >{this.state.intelligentContractNum}</Card>
             </Col>
-            <Col span={6}>
-              <Card title="交易" bordered={false}>{this.state.transactionNum}</Card>
+            <Col span={6} >
+              <Card title="交易" bordered={false} >{this.state.transactionNum}</Card>
             </Col>
           </Row>
         </div>
 
-
-        <p />
-        <Row gutter={16}>
+        <div style={{ padding: '5px' ,backgroundColor: '#ffffff',overflow:'hidden' }}>
+        <Row>
           <Col span={24}>
-            <div style={{ background: '#FFFFFF', padding: '10px' }}>
               <Table
                 bordered
                 dataSource={this.state.head}
@@ -238,9 +236,10 @@ export default class DataContent extends React.Component {
                   />
                 </ColumnGroup>
               </Table>
-            </div>
           </Col>
         </Row>
+        </div>
+        </div>
 
         <Modal
           title="Block Detail"
@@ -263,7 +262,6 @@ export default class DataContent extends React.Component {
           {JSON.stringify(this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].writes['0'] : '')}<br />
           {JSON.stringify(this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].writes['1'] : '')}<br />
         </Modal>
-
       </div>
     );
   }

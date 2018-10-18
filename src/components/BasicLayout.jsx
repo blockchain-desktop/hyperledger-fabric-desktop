@@ -60,7 +60,7 @@ export default class BasicLayout extends React.Component {
           collapsible
           collapsed={this.state.collapsed}
           onCollapse={this.onCollapse}
-          style={{ minHeight: 1920 }}
+          style={{minHeight: '1366px'}}
         >
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
@@ -77,11 +77,10 @@ export default class BasicLayout extends React.Component {
               <span>智能合约安装</span>
             </Menu.Item>
           </Menu>
-          <div style={{ margin: '500px 50px' }}>
-            <Button type="primary" style={{ width: '80%' }} onClick={this.onClick}>退出</Button>
+          <div style={{ margin: '500px 50px'  }}>
+              <Button type="primary" style={{ width: '80%' }} onClick={this.onClick}>退出</Button>
           </div>
         </Sider>
-
         <Layout>
           <Content style={{ margin: '24px 16px', padding: 24, background: '#fff' }}>
             <ContentRoute contentKey={this.state.contentKey} />
