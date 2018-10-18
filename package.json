@@ -51,16 +51,16 @@
     "antd": "^3.9.2",
     "electron-compile": "^6.4.3",
     "electron-devtools-installer": "^2.1.0",
+    "electron-log": "^3.0.0-beta",
     "electron-squirrel-startup": "^1.0.0",
     "fabric-ca-client": "~1.1.0",
     "fabric-client": "~1.1.0",
     "grpc": "^1.6.0",
+    "log4js": "^3.0.6",
     "nedb": "^1.8.0",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
-    "react-hot-loader": "^3.0.0-beta.6",
-    "log4js": "^3.0.6",
-    "electron-log": "3.0.0-beta"
+    "react-hot-loader": "^3.0.0-beta.6"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

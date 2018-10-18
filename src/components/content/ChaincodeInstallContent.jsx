@@ -16,85 +16,84 @@ const logger = require('electron-log');
 const FormItem = Form.Item;
 
 const CollectionCreateForm = Form.create()(
-    class extends React.Component {
-      static nameValidator(rule, value, callback) {
-        if (!/^[A-Za-z0-9]+$/.test(value)) {
-          callback('只支持英文和数字，不支持中文及其他字符！');
-        }
-        callback();
+  class extends React.Component {
+    static nameValidator(rule, value, callback) {
+      if (!/^[A-Za-z0-9]+$/.test(value)) {
+        callback('只支持英文和数字，不支持中文及其他字符！');
       }
-      static versionValidator(rule, value, callback) {
-        if (!/^\d+(.\d+)?$/.test(value)) {
-          callback('只支持数字和小数点！');
-        }
-        callback();
+      callback();
+    }
+    static versionValidator(rule, value, callback) {
+      if (!/^\d+(.\d+)?$/.test(value)) {
+        callback('只支持数字和小数点！');
       }
-      static channelValidator(rule, value, callback) {
-        if (!/^[A-Za-z0-9]+$/.test(value)) {
-          callback('只支持英文和数字，不支持中文及其他字符！');
-        }
-        callback();
+      callback();
+    }
+    static channelValidator(rule, value, callback) {
+      if (!/^[A-Za-z0-9]+$/.test(value)) {
+        callback('只支持英文和数字，不支持中文及其他字符！');
       }
-      constructor(props) {
-        super(props);
-        this.state = {
+      callback();
+    }
+    constructor(props) {
+      super(props);
+      this.state = {
 
-        };
-      }
-      render() {
-        const { visible, onCancel, onCreate, form } = this.props;
-        const { getFieldDecorator } = form;
-        return (
-          <Modal
-            visible={visible}
-            title="新建智能合约"
-            okText="新建"
-            cancelText="取消"
-            onCancel={onCancel}
-            onOk={onCreate}
-          >
-            <Form layout="vertical">
-              <FormItem label="名称">
-                {getFieldDecorator('name', {
-                  rules: [{ required: true, message: '请输入链码名称! ' }, { validator: CollectionCreateForm.nameValidator }],
-                })(
-                  <Input placeholder="链码名称" />,
-                            )}
-              </FormItem>
-              <FormItem label="版本">
-                {getFieldDecorator('version', {
-                  rules: [{ required: true, message: '请输入链码版本号! ' }, { validator: CollectionCreateForm.versionValidator }],
-                })(
-                  <Input placeholder="链码版本" />,
-                            )}
-              </FormItem>
-              <FormItem label="通道">
-                {getFieldDecorator('channel', {
-                  rules: [{ required: true, message: '请输入通道名称! ' }, { validator: CollectionCreateForm.channelValidator }],
-                })(
-                  <Input placeholder="通道名称" />,
-                  )}
-              </FormItem>
-              <FormItem label="路径">
-                {getFieldDecorator('path', {
-                  rules: [{ required: true, message: '请输入链码文件路径!' }],
-                })(
-                  <Input placeholder="文件路径" />,
-                  )}
-              </FormItem>
-              <FormItem label="描述">
-                {getFieldDecorator('description')(<Input placeholder="功能描述" type="textarea" />)}
-              </FormItem>
-            </Form>
-          </Modal>
-        );
-      }
-    },
+      };
+    }
+    render() {
+      const { visible, onCancel, onCreate, form } = this.props;
+      const { getFieldDecorator } = form;
+      return (
+        <Modal
+          visible={visible}
+          title="新建智能合约"
+          okText="新建"
+          cancelText="取消"
+          onCancel={onCancel}
+          onOk={onCreate}
+        >
+          <Form layout="vertical">
+            <FormItem label="名称">
+              {getFieldDecorator('name', {
+                rules: [{ required: true, message: '请输入链码名称! ' }, { validator: CollectionCreateForm.nameValidator }],
+              })(
+                <Input placeholder="链码名称" />,
+              )}
+            </FormItem>
+            <FormItem label="版本">
+              {getFieldDecorator('version', {
+                rules: [{ required: true, message: '请输入链码版本号! ' }, { validator: CollectionCreateForm.versionValidator }],
+              })(
+                <Input placeholder="链码版本" />,
+              )}
+            </FormItem>
+            <FormItem label="通道">
+              {getFieldDecorator('channel', {
+                rules: [{ required: true, message: '请输入通道名称! ' }, { validator: CollectionCreateForm.channelValidator }],
+              })(
+                <Input placeholder="通道名称" />,
+              )}
+            </FormItem>
+            <FormItem label="路径">
+              {getFieldDecorator('path', {
+                rules: [{ required: true, message: '请输入链码文件路径!' }],
+              })(
+                <Input placeholder="文件路径" />,
+              )}
+            </FormItem>
+            <FormItem label="描述">
+              {getFieldDecorator('description')(<Input placeholder="功能描述" type="textarea" />)}
+            </FormItem>
+          </Form>
+        </Modal>
+      );
+    }
+  },
 );
 
 // 智能合约窗口子组件
 class ContractDiv extends React.Component {
-
   static findArray(array, name, version, channel) {
     for (let i = 0; i < array.length; i++) {
       if (array[i].name === name && array[i].version === version && array[i].channel === channel) {
@@ -135,9 +134,9 @@ class ContractDiv extends React.Component {
       db.update({ name: this.props.citem.name,
         version: this.props.citem.version,
         channel: this.props.citem.channel },
-          { $set: { disable1: true, result: '安装链码成功', time: this.state.time } },
-          {}, () => {
-          });
+      { $set: { disable1: true, result: '安装链码成功', time: this.state.time } },
+      {}, () => {
+      });
     }
   }
   // 对实例化链码进行操作
@@ -157,9 +156,9 @@ class ContractDiv extends React.Component {
       db.update({ name: this.props.citem.name,
         version: this.props.citem.version,
         channel: this.props.citem.channel },
-            { $set: { disable1: true, disable2: true, result: '实例化链码成功', time: this.state.time } },
-            {}, () => {
-            });
+      { $set: { disable1: true, disable2: true, result: '实例化链码成功', time: this.state.time } },
+      {}, () => {
+      });
     }
   }
 
@@ -169,19 +168,19 @@ class ContractDiv extends React.Component {
     const fc = getFabricClientSingleton();
     if (e.key === '1') {
       fc.installCc(this.handleInstallChaincodeCallBack,
-          this.props.citem.path,
-          this.props.citem.name,
-          this.props.citem.version);
+        this.props.citem.path,
+        this.props.citem.name,
+        this.props.citem.version);
     }
     if (e.key === '2') {
-        // 实例化链码操作
+      // 实例化链码操作
       this.setState({ icontype: 'loading', iconcolor: '#1E90FF' });
       this.setState({ result: '正在部署智能合约...' });
       fc.instantiateCc(this.handleInstantiateChaincodeCallBack,
-            this.props.citem.channel,
-            this.props.citem.name,
-            this.props.citem.version,
-            ['']);
+        this.props.citem.channel,
+        this.props.citem.name,
+        this.props.citem.version,
+        ['']);
     }
     if (e.key === '3') {
       // 删除链码操作
@@ -194,21 +193,21 @@ class ContractDiv extends React.Component {
       };
       // 从todolist对象集中删除链码对象
       const index = ContractDiv.findArray(this.props.ctodo,
-                                   contract.name,
-                                   contract.version,
-                                   contract.channel);
+        contract.name,
+        contract.version,
+        contract.channel);
       this.props.ctodo.splice(index, 1);
       this.props.cdelete(this.props.ctodo);
       // 删除持久化数据库中的记录
       db.remove({ name: contract.name,
         version: contract.version,
         channel: contract.channel }, {}, (err) => {
-          if (err) {
-            logger.info('the opertion of remove document failed! ');
-          } else {
-            logger.info('you have remove the smartbill!');
-          }
-        });
+        if (err) {
+          logger.info('the opertion of remove document failed! ');
+        } else {
+          logger.info('you have remove the smartbill!');
+        }
+      });
     }
   }
 
@@ -261,7 +260,7 @@ class ContractDiv extends React.Component {
         <Menu.Item key="2" disabled={this.state.disable2}>部署</Menu.Item>
         <Menu.Item key="3" >删除</Menu.Item>
       </Menu>
-        );
+    );
     return (
       <div style={ConTractDivStyle}>
         <div style={contentStyle}>
@@ -290,18 +289,17 @@ class ContractDiv extends React.Component {
 
 // 智能合约窗口父组件
 class ListToDo extends React.Component {
-
   render() {
     return (
       <div>
         {
-        this.props.todo.map(item =>
-          (<ContractDiv
-            key={item.key}
-            citem={item}
-            ctodo={this.props.todo}
-            cdelete={this.props.onDelete}
-          />))
+          this.props.todo.map(item =>
+            (<ContractDiv
+              key={item.key}
+              citem={item}
+              ctodo={this.props.todo}
+              cdelete={this.props.onDelete}
+            />))
         }
       </div>
     );
