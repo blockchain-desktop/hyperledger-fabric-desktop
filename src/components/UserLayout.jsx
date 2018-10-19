@@ -4,11 +4,11 @@
 import React from 'react';
 import { Button, Input, Layout, Avatar } from 'antd';
 import getFabricClientSingleton from '../util/fabric';
+import { getConfigDBSingleton } from '../util/createDB';
 
 const logger = require('electron-log');
 
-const fs = require('fs');
-const path = require('path');
+const db = getConfigDBSingleton();
 
 const { Content } = Layout;
 
@@ -35,18 +35,15 @@ export default class DataContent extends React.Component {
 
 
   onClick() {
-    const data = {
-      isSign: true,
-      peerUrl: this.state.peerUrl,
-      ordererUrl: this.state.ordererUrl,
-      username: this.state.username,
-      path: 'src/components/content/resources/key/',
-    };
-    const content = JSON.stringify(data);
-    logger.info(content);
-    // 调用父组件传来的函数，将数据作为参数传过去
+    db.update({ id: 0 },
+      { $set: { isSign: true,
+        peerUrl: this.state.peerUrl,
+        ordererUrl: this.state.ordererUrl,
+        username: this.state.username,
+        path: 'src/components/content/resources/key/' } },
+      {}, () => {
+      });
     this.props.onGetChildMessage(true);
-    fs.writeFileSync(path.join(__dirname, '../../config.json'), content);
     const fc = getFabricClientSingleton();
     logger.info(this.state.certPath);
     fc.importCer(this.state.keyPath, this.state.certPath);

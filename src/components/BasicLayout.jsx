@@ -6,12 +6,14 @@ import { Layout, Menu, Icon, Button } from 'antd';
 import DataContent from './content/DataContent';
 import ChaincodeInvokeContent from './content/ChaincodeInvokeContent';
 import ChaincodeInstallContent from './content/ChaincodeInstallContent';
-import {deleteFabricClientSingleton} from '../util/fabric';
+import { deleteFabricClientSingleton } from '../util/fabric';
+
+import { getConfigDBSingleton } from '../util/createDB';
+
+const db = getConfigDBSingleton();
 
 const { Sider, Content } = Layout;
 
-const fs = require('fs');
-const path = require('path');
 
 // 内容路由：在此配置内容key对应的内容类，切换主页面内容
 function ContentRoute(props) {
@@ -42,11 +44,11 @@ export default class BasicLayout extends React.Component {
   }
 
   onClick() {
-    this.props.onGetChildMessage(false);  // 调用父组件传来的函数，将数据作为参数传过去
-    const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json')));
-    config.isSign = false;
-    const content = JSON.stringify(config);
-    fs.writeFileSync(path.join(__dirname, '../../config.json'), content);
+    this.props.onGetChildMessage(false);
+    db.update({ id: 0 },
+      { $set: { isSign: false } },
+      {}, () => {
+      });
     deleteFabricClientSingleton();
   }
 

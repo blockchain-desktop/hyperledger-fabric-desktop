@@ -4,11 +4,9 @@ import React from 'react';
 import { Button, Form, Input, Modal, Menu, Dropdown, Icon } from 'antd';
 import moment from 'moment';
 import getFabricClientSingleton from '../../util/fabric';
+import { getChaincodeDBSingleton } from '../../util/createDB';
 
-// 数据持久化
-const Datastore = require('nedb');
-
-const db = new Datastore({ filename: './src/components/content/persistence/data.db', autoload: true });
+const db = getChaincodeDBSingleton();
 
 const logger = require('electron-log');
 

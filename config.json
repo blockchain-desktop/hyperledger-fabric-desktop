@@ -1,1 +1,1 @@
-{"isSign":false,"peerUrl":"grpc://localhost:7051","ordererUrl":"grpc://localhost:7050","username":"Org1Admin","path":"src/components/content/resources/key/"}
+{"id":0,"isSign":true,"peerUrl":"grpc://localhost:7051","ordererUrl":"grpc://localhost:7050","username":"Org1Admin","path":"src/components/content/resources/key/"}

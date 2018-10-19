@@ -1,9 +1,14 @@
 // Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
 
+import { getConfigDBSingleton } from './createDB';
+
 const FabricClientSDK = require('fabric-client');
 const path = require('path');
 const util = require('util');
 const fs = require('fs');
+const Q = require('q');
+
+const db = getConfigDBSingleton();
 
 const logger = require('electron-log');
 
@@ -11,9 +16,16 @@ class FabricClient {
   constructor() {
     // TODO: 若配置更新，如何调整？
     const fabricClient = new FabricClientSDK();
+    // let config;
+    //
+    // db.find({}, (err, data) => {
+    //   console.log(data[0]);
+    //   config = data[0];
+    //   console.log('config', config);
+    // });
 
     const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json')));
-    logger.info('config:', config);
+    logger.warn('config:', config);
 
     const storePath = path.join(__dirname, '../../', config.path);
     logger.info(`Store path:${storePath}`);
@@ -23,6 +35,7 @@ class FabricClient {
     this.store_path = storePath;
     this.channels = {}; // {channelName: channel}
   }
+
 
   /**
    *

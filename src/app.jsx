@@ -1,21 +1,30 @@
 // Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
 
 import React from 'react';
+
 import BasicLayout from './components/BasicLayout';
 import UserLayout from './components/UserLayout';
 
-const fs = require('fs');
-const path = require('path');
+import { getConfigDBSingleton } from './util/createDB';
+
+const db = getConfigDBSingleton();
+
 
 export default class App extends React.Component {
 
   constructor(props) {
     super(props);
 
-    const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../config.json')));
+    db.find({}, (err, data) => {
+      this.setState({
+        flag: data[0].isSign,
+      });
+    });
+
     this.state = {
-      flag: config.isSign,
+      flag: true,
     };
+
 
     this.getChildMessage = this.getChildMessage.bind(this);
   }
