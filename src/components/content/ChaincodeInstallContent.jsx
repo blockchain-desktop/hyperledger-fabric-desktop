@@ -128,6 +128,7 @@ class ContractDiv extends React.Component {
       this.setState({ disable1: true });
       this.setState({ result });
       this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
+      this.setState({ signal: '1' });
       // 更新持久化数据库
       db.update({ name: this.props.citem.name,
         version: this.props.citem.version,
@@ -140,17 +141,16 @@ class ContractDiv extends React.Component {
   // 对实例化链码进行操作
   handleInstantiateChaincodeCallBack(result) {
     if (result.indexOf('失败') > -1) {
+      this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
       this.setState({ icontype: 'exclamation-circle', iconcolor: '#FF4500' });
       this.setState({ disable2: false });
       this.setState({ result });
-      this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
     } else {
       // 实例化链码成功
+      this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
       this.setState({ icontype: 'check-circle', iconcolor: '#52c41a' });
       this.setState({ disable2: true });
       this.setState({ result });
-      this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
-      // 更新持久化数据库
       db.update({ name: this.props.citem.name,
         version: this.props.citem.version,
         channel: this.props.citem.channel },
@@ -162,9 +162,11 @@ class ContractDiv extends React.Component {
 
 
   handleMenuClick(e) {
-    // 安装链码操作
     const fc = getFabricClientSingleton();
     if (e.key === '1') {
+      // 安装链码操作
+      this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
+      this.setState({ result: '正在安装智能合约...' });
       fc.installCc(this.handleInstallChaincodeCallBack,
         this.props.citem.path,
         this.props.citem.name,
@@ -172,7 +174,7 @@ class ContractDiv extends React.Component {
     }
     if (e.key === '2') {
       // 实例化链码操作
-      this.setState({ icontype: 'loading', iconcolor: '#1E90FF' });
+      this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
       this.setState({ result: '正在部署智能合约...' });
       fc.instantiateCc(this.handleInstantiateChaincodeCallBack,
         this.props.citem.channel,
