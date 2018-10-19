@@ -78,10 +78,8 @@ export default class DataContent extends React.Component {
 
   render() {
     return (
-
-      <Layout>
+      <Layout >
         <Content style={{margin: '32px 16px',padding: '24px', background: '#fff', width: '50%', height: '100%',minHeight:'900px' }}>
-
           <div style={{ margin: '32px 0' }}>
             <center><Avatar size={64} icon="user" /></center>
           </div>

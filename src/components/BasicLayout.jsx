@@ -57,12 +57,13 @@ export default class BasicLayout extends React.Component {
 
   render() {
     return (
-      <Layout >
+      <Layout style={{ webkitappregion: 'drag' }}>
         <Sider
           trigger={<Icon type="logout" />}
           collapsible
           collapsed={this.state.collapsed}
           onCollapse={this.onCollapse}
+          style={{ paddingTop: '24px' }}
         >
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
@@ -80,15 +81,15 @@ export default class BasicLayout extends React.Component {
             </Menu.Item>
           </Menu>
           {/* <div style={{position:'relative',left:'20px',top:'50%'}}> */}
-          {/* <Button type="primary" style={{ width: '80%' }} onClick={this.onClick}>退出</Button> */}
+          {/* <Button type="primary" style={{ width: '80%' }}
+            onClick={this.onClick}>退出</Button> */}
           {/* </div> */}
         </Sider>
         <Layout>
-          <Content style={{ margin: '24px 16px', padding: '24px', background: '#fff', height: '100%' }}>
+          <Content style={{ background: '#fff', height: '100%', margin: '24px 16px', padding: '12px' }}>
             <ContentRoute contentKey={this.state.contentKey} />
           </Content>
         </Layout>
-
       </Layout>
     );
   }

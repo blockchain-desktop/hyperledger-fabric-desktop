@@ -21,6 +21,7 @@ const createWindow = async () => {
     minHeight: 600,
     maxWidth: 1400,
     maxHeight: 900,
+    titleBarStyle: 'hidden',
   });
 
   // and load the index.html of the app.
