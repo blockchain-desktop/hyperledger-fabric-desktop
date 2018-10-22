@@ -77,10 +77,13 @@ export default class DataContent extends React.Component {
       high: result.height.high,
       height: Math.ceil(result.height.low / 4) * 4,
     });
+    logger.warn(this.state.high);
+    logger.warn(this.state.low);
     const fc = getFabricClientSingleton();
     logger.info(this.state.data.length);
     count = 0;
     const start = this.state.low - (4 * this.state.currentPage) - 1;
+    fc.queryBlock(this.onQueryBlockCallback, 0, 'mychannel');
     for (let i = start; i > start - 4; i--) {
       if (this.state.high >= i) {
         const tempHead = {
@@ -100,6 +103,7 @@ export default class DataContent extends React.Component {
   }
 
   onQueryBlockCallback(result) {
+    console.warn(result);
     if (result.header.number !== 0) {
       const tempData = {
       };
@@ -131,6 +135,7 @@ export default class DataContent extends React.Component {
       const data = this.state.data.slice();
       data[result.header.number] = tempData;
       this.setState({ data });
+      console.log(this.state.data);
       logger.info(this.state.data);
 
       const tempHead = {
@@ -272,8 +277,9 @@ export default class DataContent extends React.Component {
           {JSON.stringify(this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].reads['0'] : '')}<br />
           {JSON.stringify(this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].reads['1'] : '')}<br />
           <strong>Writes:</strong><br />
-          {JSON.stringify(this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].writes['0'] : '')}<br />
-          {JSON.stringify(this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].writes['1'] : '')}<br />
+          {/* FIXME: 二进制出现乱码.以下仅仅把乱码去除,后续还需重新解析 */}
+          {(JSON.stringify(this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].writes['0'] : '')).replace(/[\\]/g, '').replace(/[�]/g, '')}<br />
+          {(JSON.stringify(this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].writes['1'] : '')).replace(/[\\]/g, '').replace(/[�]/g, '')}<br />
         </Modal>
       </div>
     );
