@@ -2,7 +2,7 @@
 
 import React from 'react';
 // import PropTypes from 'prop-types';
-import { Layout, Menu, Icon, Button } from 'antd';
+import { Layout, Menu, Icon } from 'antd';
 import DataContent from './content/DataContent';
 import ChaincodeInvokeContent from './content/ChaincodeInvokeContent';
 import ChaincodeInstallContent from './content/ChaincodeInstallContent';
@@ -31,7 +31,7 @@ export default class BasicLayout extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      collapsed: false,
+      collapsed: true,
       contentKey: 1,
     };
     this.onCollapse = this.onCollapse.bind(this);
@@ -39,8 +39,8 @@ export default class BasicLayout extends React.Component {
     this.onClick = this.onClick.bind(this);
   }
 
-  onCollapse(collapsed) {
-    this.setState({ collapsed });
+  onCollapse() {
+    this.onClick();
   }
 
   onClick() {
@@ -61,19 +61,20 @@ export default class BasicLayout extends React.Component {
     return (
       <Layout >
         <Sider
+          trigger={<Icon type="logout" />}
           collapsible
           collapsed={this.state.collapsed}
           onCollapse={this.onCollapse}
-          style={{minHeight: '600px'}}
+          style={{ paddingTop: '24px' }}
         >
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
             <Menu.Item key="1" onClick={() => this.switchContent(1)}>
-              <Icon type="user" />
+              <Icon type="snippets" theme="outlined" />
               <span>区块链数据看板</span>
             </Menu.Item>
             <Menu.Item key="2" onClick={() => this.switchContent(2)}>
-              <Icon type="video-camera" />
+              <Icon type="file-search" theme="outlined" />
               <span>智能合约调用</span>
             </Menu.Item>
             <Menu.Item key="3" onClick={() => this.switchContent(3)}>
@@ -81,12 +82,13 @@ export default class BasicLayout extends React.Component {
               <span>智能合约安装</span>
             </Menu.Item>
           </Menu>
-          <div style={{position:'relative',left:'20px',top:'50%'}}>
-              <Button type="primary" style={{ width: '80%' }} onClick={this.onClick}>退出</Button>
-          </div>
+          {/* <div style={{position:'relative',left:'20px',top:'50%'}}> */}
+          {/* <Button type="primary" style={{ width: '80%' }}
+            onClick={this.onClick}>退出</Button> */}
+          {/* </div> */}
         </Sider>
         <Layout>
-          <Content style={{ margin: '24px 16px', padding: 24, background: '#fff' }}>
+          <Content style={{ background: '#fff', height: '100%', margin: '24px 16px', padding: '12px' }}>
             <ContentRoute contentKey={this.state.contentKey} />
           </Content>
         </Layout>

@@ -78,7 +78,7 @@ export default class ChaincodeInvokeContent extends React.Component {
 
   render() {
     return (
-      <div>
+      <div style={{ minHeight: '900px' }}>
 
         <div style={{ margin: '24px 0' }}>
           通道名称：
@@ -114,7 +114,7 @@ export default class ChaincodeInvokeContent extends React.Component {
           <TextArea
             placeholder="result"
             value={this.state.result}
-            autosize={{ minRows: 8, maxRows: 8 }}
+            autosize={{ minRows: 6, maxRows: 6 }}
           />
         </div>
 

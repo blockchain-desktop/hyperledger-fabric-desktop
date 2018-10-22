@@ -75,16 +75,14 @@ export default class DataContent extends React.Component {
 
   render() {
     return (
-
-      <Layout>
-        <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', width: 380, height: 540 }}>
-
+      <Layout >
+        <Content style={{margin: '32px 16px',padding: '24px', background: '#fff', width: '50%', height: '100%',minHeight:'900px' }}>
           <div style={{ margin: '32px 0' }}>
             <center><Avatar size={64} icon="user" /></center>
           </div>
 
           <div style={{ margin: '24px 0' }}>
-            peer url：&ensp;&ensp;&ensp;
+            peer url：&thinsp;&thinsp;
             <Input type="text" value={this.state.peerUrl} style={{ width: '75%' }} onChange={this.peerChange} />
           </div>
 
@@ -99,7 +97,7 @@ export default class DataContent extends React.Component {
           </div>
 
           <div style={{ margin: '24px 0' }}>
-            certificate：&ensp;
+            certificate：
             <input type="file" id="cerFiles" style={{ width: '75%' }} onChange={this.cerImport} />
           </div>
 
@@ -108,7 +106,7 @@ export default class DataContent extends React.Component {
             <input type="file" id="priFiles" style={{ width: '75%' }} onChange={this.priImport} />
           </div>
 
-          <div style={{ margin: '36px 0' }}>
+          <div style={{ margin: '24px 0' }}>
             <Button type="primary" style={{ width: '100%' }} onClick={this.onClick}>登录</Button>
           </div>
 
