@@ -77,13 +77,10 @@ export default class DataContent extends React.Component {
       high: result.height.high,
       height: Math.ceil(result.height.low / 4) * 4,
     });
-    logger.warn(this.state.high);
-    logger.warn(this.state.low);
     const fc = getFabricClientSingleton();
     logger.info(this.state.data.length);
     count = 0;
     const start = this.state.low - (4 * this.state.currentPage) - 1;
-    fc.queryBlock(this.onQueryBlockCallback, 0, 'mychannel');
     for (let i = start; i > start - 4; i--) {
       if (this.state.high >= i) {
         const tempHead = {
