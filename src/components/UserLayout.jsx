@@ -159,6 +159,9 @@ export default class DataContent extends React.Component {
       textAlign: 'center',
       lineHeight: '30px',
       cursor:'pointer',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      overflow:'hidden',
     };
     const spanStyle = {
       display: 'inlineBlock',

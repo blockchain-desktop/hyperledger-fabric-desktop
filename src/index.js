@@ -20,6 +20,7 @@ const createWindow = async () => {
     minWidth: 800,
     minHeight: 600,
     titleBarStyle: 'hidden',
+    backgroundColor: '#fff',
   });
 
   // and load the index.html of the app.
