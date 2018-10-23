@@ -1,3 +1,9 @@
+body{
+    overflow: hidden;
+    margin: 0;
+    -webkit-app-region: drag
+}
+
 button {
     -webkit-app-region: no-drag;
 }

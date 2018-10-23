@@ -5,7 +5,7 @@ import React from 'react';
 import { Button, Input, Layout, Icon } from 'antd';
 import getFabricClientSingleton from '../util/fabric';
 import { getConfigDBSingleton } from '../util/createDB';
-//import styles from './content/styles/css/UserLayoutCss.css';
+//import '../../resources/styles/css/UserLayout.css' ;
 
 const path = require('path');
 const fs = require('fs');
