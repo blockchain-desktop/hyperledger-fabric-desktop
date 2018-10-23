@@ -50,7 +50,7 @@ export default class DataContent extends React.Component {
     this.state.timer = setInterval(() => {
       const fc = getFabricClientSingleton();
       fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
-    }, 5000);
+    }, 500000);
   }
 
   componentWillUnmount() {
@@ -108,21 +108,21 @@ export default class DataContent extends React.Component {
         const tempTransaction = {
           tx: result.data.data[i.toString()].payload.header.channel_header.tx_id,
           hash: result.header.data_hash,
-          creatorMSP: result.data.data[i.toString()].payload.data.actions['0'].header.creator.Mspid,
-          endorser: result.data.data[i.toString()].payload.data.actions['0'].header.creator.Mspid,
-          chaincodeName: result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.chaincode_id.name,
+          creatorMSP: result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].header.creator.Mspid : '',
+          endorser: result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].header.creator.Mspid : '',
+          chaincodeName: result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.chaincode_id.name : '',
           type: result.data.data[i.toString()].payload.header.channel_header.typeString,
           time: result.data.data[i.toString()].payload.header.channel_header.timestamp,
           reads: {
-            0: result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset['0'].rwset.reads,
+            0: result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset['0'].rwset.reads : '',
           },
           writes: {
-            0: result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset['0'].rwset.writes,
+            0: result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset['0'].rwset.writes : '',
           },
         };
-        if (result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset.length > 1) {
-          tempTransaction.reads[1] = result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset['1'].rwset.reads;
-          tempTransaction.writes[1] = result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset['1'].rwset.writes;
+        if ((result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset.length : 0) > 1) {
+          tempTransaction.reads[1] = result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset['1'].rwset.reads : '';
+          tempTransaction.writes[1] = result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset['1'].rwset.writes : '';
         } else {
           tempTransaction.reads[1] = '';
           tempTransaction.writes[1] = '';
