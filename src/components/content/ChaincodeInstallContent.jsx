@@ -50,37 +50,39 @@ const CollectionCreateForm = Form.create()(
           cancelText="取消"
           onCancel={onCancel}
           onOk={onCreate}
+          centered
+          width="480"
         >
           <Form layout="vertical">
-            <FormItem label="名称">
+            <FormItem label="名称" style={{ margin: '4px' }}>
               {getFieldDecorator('name', {
                 rules: [{ required: true, message: '请输入链码名称! ' }, { validator: CollectionCreateForm.nameValidator }],
               })(
                 <Input placeholder="链码名称" />,
               )}
             </FormItem>
-            <FormItem label="版本">
+            <FormItem label="版本" style={{ margin: '4px' }}>
               {getFieldDecorator('version', {
                 rules: [{ required: true, message: '请输入链码版本号! ' }, { validator: CollectionCreateForm.versionValidator }],
               })(
                 <Input placeholder="链码版本" />,
               )}
             </FormItem>
-            <FormItem label="通道">
+            <FormItem label="通道" style={{ margin: '4px' }}>
               {getFieldDecorator('channel', {
                 rules: [{ required: true, message: '请输入通道名称! ' }, { validator: CollectionCreateForm.channelValidator }],
               })(
                 <Input placeholder="通道名称" />,
               )}
             </FormItem>
-            <FormItem label="路径">
+            <FormItem label="路径" style={{ margin: '4px' }}>
               {getFieldDecorator('path', {
                 rules: [{ required: true, message: '请输入链码文件路径!' }],
               })(
                 <Input placeholder="文件路径" />,
               )}
             </FormItem>
-            <FormItem label="描述">
+            <FormItem label="描述" style={{ margin: '4px' }}>
               {getFieldDecorator('description')(<Input placeholder="功能描述" type="textarea" />)}
             </FormItem>
           </Form>

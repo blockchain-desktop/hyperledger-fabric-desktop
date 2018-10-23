@@ -5,6 +5,7 @@ import React from 'react';
 import { Button, Input, Layout, Icon } from 'antd';
 import getFabricClientSingleton from '../util/fabric';
 import { getConfigDBSingleton } from '../util/createDB';
+//import styles from './content/styles/css/UserLayoutCss.css';
 
 const path = require('path');
 const fs = require('fs');
@@ -15,9 +16,9 @@ const db = getConfigDBSingleton();
 
 const { Content } = Layout;
 
-const path = require('path');
+const bcgd = path.join(__dirname,'../../resources/styles/image/blc.jpg');
 
-const bcgd = path.join(__dirname,'content/styles/image/blc.jpg');
+//const styles = path.join(__dirname,'content/styles/css/UserLayoutCss.css');
 
 export default class DataContent extends React.Component {
   constructor(props) {
@@ -117,7 +118,7 @@ export default class DataContent extends React.Component {
       backgroundImage: 'url('+bcgd+')',
     };
     const contentStyle = {
-      padding: '80px 26px',
+      padding: '30px 26px',
       backgroundColor: '#fff',
       width: '400px',
       height: 'auto',
@@ -129,7 +130,6 @@ export default class DataContent extends React.Component {
       display: 'block',
       alignItems: 'center',
       padding: '24px 0',
-      margin: '24px 0',
     };
     const cerfileStyle = {
       width: '0.1px',
@@ -153,18 +153,19 @@ export default class DataContent extends React.Component {
       borderRadius: '4px',
       display: 'block',
       float: 'right',
-      width: '220px',
+      width: '200px',
       height: '32px',
       verticalAlign: 'middle',
       textAlign: 'center',
       lineHeight: '30px',
+      cursor:'pointer',
     };
     const spanStyle = {
       display: 'inlineBlock',
       fontSize: '1.2em',
     };
     const InputStyle = {
-      width: '220px',
+      width: '200px',
       display: 'block',
       float: 'right',
     };
@@ -177,30 +178,35 @@ export default class DataContent extends React.Component {
 
         <div style={contentStyle}>
           <Content>
-            <div style={{ LoginStyle }}>
+            <div style={LoginStyle }>
               <span style={{ fontSize: '38px' }}>Fabric Desktop</span>
             </div>
-            <div style={{ margin: '36px 8px 29px 8px' }}>
-              <span style={spanStyle}>peer &thinsp;&thinsp;url:</span>
-              <Input type="text" style={InputStyle} value={this.state.peerUrl} onChange={this.peerChange} />
+
+            <div style={{ margin: '10px 8px 27px 8px' }}>
+              <span style={spanStyle}> peer grpc url：</span>
+              <Input type="text" style={InputStyle} value={this.state.peerGrpcUrl}  onChange={this.peerGrpcUrlChange} />
             </div>
-            <div style={{ margin: '29px 8px' }}>
+            <div style={{ margin: '27px 8px' }}>
+              <span style={spanStyle}>peer event url：</span>
+              <Input type="text" style={InputStyle} value={this.state.peerEventUrl}  onChange={this.peerEventUrlChange} />
+            </div>
+            <div style={{ margin: '27px 8px' }}>
               <span style={spanStyle}>orderer url:</span>
               <Input type="text" style={InputStyle} value={this.state.ordererUrl} onChange={this.ordererChange} />
             </div>
-            <div style={{ margin: '29px 8px' }}>
+            <div style={{ margin: '27px 8px' }}>
               <span style={spanStyle}>username:</span>
               <Input type="text" style={InputStyle} value={this.state.username} onChange={this.usernameChange} />
             </div>
-            <div style={{ margin: '29px 8px' }}>
+            <div style={{ margin: '27px 8px' }}>
               <span style={spanStyle}>certificate：</span>
               <input type="file" id="cerFiles" name="cerFiles" style={cerfileStyle}onChange={this.cerImport} />
-              <label htmlFor="cerFiles" style={labelStyle}><Icon type="upload" theme="outlined" />&thinsp;{this.state.certlabel} </label>
+              <label htmlFor="cerFiles" style={labelStyle} ><Icon type="upload" theme="outlined" />&thinsp;{this.state.certlabel} </label>
             </div>
-            <div style={{ margin: '29px 8px' }}>
+            <div style={{ margin: '27px 8px' }}>
               <span style={spanStyle}>private key：</span>
               <input type="file" id="priFiles" name="priFiles" style={prifilesStyle} onChange={this.priImport} />
-              <label htmlFor="priFiles" style={labelStyle}><Icon type="upload" theme="outlined" />&thinsp;{this.state.keylabel}</label>
+              <label htmlFor="priFiles" style={labelStyle} ><Icon type="upload" theme="outlined" />&thinsp;{this.state.keylabel}</label>
             </div>
             <div style={{ margin: '32px 8px' }}>
               <Button type="primary" style={{ width: '100%' }} onClick={this.onClick}>登录</Button>
@@ -208,7 +214,6 @@ export default class DataContent extends React.Component {
           </Content>
         </div>
       </Layout>
-
 
     );
   }
