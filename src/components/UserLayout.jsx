@@ -6,6 +6,9 @@ import { Button, Input, Layout, Avatar } from 'antd';
 import getFabricClientSingleton from '../util/fabric';
 import { getConfigDBSingleton } from '../util/createDB';
 
+const path = require('path');
+const fs = require('fs');
+
 const logger = require('electron-log');
 
 const db = getConfigDBSingleton();
@@ -17,7 +20,8 @@ export default class DataContent extends React.Component {
     super(props);
 
     this.state = {
-      peerUrl: 'grpc://localhost:7051',
+      peerGrpcUrl: 'grpc://localhost:7051',
+      peerEventUrl: 'grpc://localhost:7053',
       ordererUrl: 'grpc://localhost:7050',
       username: 'Org1Admin',
       certPath: '',
@@ -26,7 +30,8 @@ export default class DataContent extends React.Component {
 
 
     this.onClick = this.onClick.bind(this);
-    this.peerChange = this.peerChange.bind(this);
+    this.peerGrpcUrlChange = this.peerGrpcUrlChange.bind(this);
+    this.peerEventUrlChange = this.peerEventUrlChange.bind(this);
     this.cerImport = this.cerImport.bind(this);
     this.priImport = this.priImport.bind(this);
     this.ordererChange = this.ordererChange.bind(this);
@@ -35,12 +40,23 @@ export default class DataContent extends React.Component {
 
 
   onClick() {
+    const data = {
+      isSign: true,
+      peerGrpcUrl: this.state.peerGrpcUrl,
+      peerEventUrl: this.state.peerEventUrl,
+      ordererUrl: this.state.ordererUrl,
+      username: this.state.username,
+      path: 'resources/key/',
+    };
+    const content = JSON.stringify(data);
+    fs.writeFileSync(path.join(__dirname, '../../config.json'), content);
     db.update({ id: 0 },
       { $set: { isSign: true,
-        peerUrl: this.state.peerUrl,
+        peerGrpcUrl: this.state.peerGrpcUrl,
+        peerEventUrl: this.state.peerEventUrl,
         ordererUrl: this.state.ordererUrl,
         username: this.state.username,
-        path: 'src/components/content/resources/key/' } },
+        path: 'resources/key/' } },
       {}, () => {
       });
     this.props.onGetChildMessage(true);
@@ -49,8 +65,12 @@ export default class DataContent extends React.Component {
     fc.importCer(this.state.keyPath, this.state.certPath);
   }
 
-  peerChange(event) {
-    this.setState({ peerUrl: event.target.value });
+  peerGrpcUrlChange(event) {
+    this.setState({ peerGrpcUrl: event.target.value });
+  }
+
+  peerEventUrlChange(event) {
+    this.setState({ peerEventUrl: event.target.value });
   }
 
   cerImport() {
@@ -76,14 +96,19 @@ export default class DataContent extends React.Component {
   render() {
     return (
       <Layout >
-        <Content style={{margin: '32px 16px', padding: '24px', background: '#fff', width: '50%', height: '100%',minHeight:'900px' }}>
+        <Content style={{ margin: '32px 16px', padding: '24px', background: '#fff', width: '50%', height: '100%', minHeight: '900px' }}>
           <div style={{ margin: '32px 0' }}>
             <center><Avatar size={64} icon="user" /></center>
           </div>
 
           <div style={{ margin: '24px 0' }}>
-            peer url：&thinsp;&thinsp;
-            <Input type="text" value={this.state.peerUrl} style={{ width: '75%' }} onChange={this.peerChange} />
+            peer grpc url：&thinsp;&thinsp;
+            <Input type="text" value={this.state.peerGrpcUrl} style={{ width: '70%' }} onChange={this.peerGrpcUrlChange} />
+          </div>
+
+          <div style={{ margin: '24px 0' }}>
+            peer event url：&thinsp;&thinsp;
+            <Input type="text" value={this.state.peerEventUrl} style={{ width: '70%' }} onChange={this.peerEventUrlChange} />
           </div>
 
           <div style={{ margin: '24px 0' }}>

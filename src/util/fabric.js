@@ -10,10 +10,11 @@ const logger = require('electron-log');
 class FabricClient {
   constructor() {
     // TODO: 若配置更新，如何调整？
+
+    // FIXME: 解决异步问题,将配置从config.db里面读取
     const fabricClient = new FabricClientSDK();
 
     const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json')));
-    logger.warn('config:', config);
 
     const storePath = path.join(__dirname, '../../', config.path);
     logger.info(`Store path:${storePath}`);
@@ -56,9 +57,9 @@ class FabricClient {
     let channel = this.channels[channelName];
     if (!channel) {
       channel = this.fabric_client.newChannel(channelName);
-      const peer = this.fabric_client.newPeer(this.config.peerUrl);
+      const peer = this.fabric_client.newPeer(this.config.peerGrpcUrl);
       channel.addPeer(peer);
-      const order = this.fabric_client.newOrderer(this.config.ordererUrl); // FIXME: 作为参数传入
+      const order = this.fabric_client.newOrderer(this.config.ordererUrl);
       channel.addOrderer(order);
 
       this.channels[channelName] = channel;
@@ -207,7 +208,7 @@ class FabricClient {
         // get an eventhub once the fabric client has a user assigned. The user
         // is required bacause the event registration must be signed
         const eventHub = fabricClient.newEventHub();
-        eventHub.setPeerAddr('grpc://localhost:7053'); // FIXME: 事件监听地址端口，需作为参数传入
+        eventHub.setPeerAddr(this.config.peerEventUrl);
 
         // using resolve the promise so that result status may be processed
         // under the then clause rather than having the catch clause process
@@ -286,7 +287,7 @@ class FabricClient {
       logger.info('Successfully loaded user from persistence, user:', user);
 
       const request = {
-        targets: [this.fabric_client.newPeer(this.config.peerUrl)], // peerAddress
+        targets: [this.fabric_client.newPeer(this.config.peerGrpcUrl)], // peerAddress
         chaincodePath,
         chaincodeId: chaincodeName,
         chaincodeVersion,
@@ -337,7 +338,7 @@ class FabricClient {
 
       txID = this.fabric_client.newTransactionID();
       const request = {
-        targets: [this.fabric_client.newPeer(this.config.peerUrl)], // peerAddress
+        targets: [this.fabric_client.newPeer(this.config.peerGrpcUrl)], // peerAddress
         chaincodeId: chaincodeName,
         chaincodeVersion,
         args,
