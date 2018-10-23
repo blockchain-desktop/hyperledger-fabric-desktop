@@ -118,7 +118,7 @@ export default class DataContent extends React.Component {
       backgroundImage: 'url('+bcgd+')',
     };
     const contentStyle = {
-      padding: '30px 26px',
+      padding: '40px 26px 30px 26px',
       backgroundColor: '#fff',
       width: '400px',
       height: 'auto',
