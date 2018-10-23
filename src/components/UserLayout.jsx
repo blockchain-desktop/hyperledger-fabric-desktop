@@ -5,7 +5,7 @@ import React from 'react';
 import { Button, Input, Layout, Icon } from 'antd';
 import getFabricClientSingleton from '../util/fabric';
 import { getConfigDBSingleton } from '../util/createDB';
-//import '../../resources/styles/css/UserLayout.css' ;
+
 
 const path = require('path');
 const fs = require('fs');
@@ -175,7 +175,7 @@ export default class DataContent extends React.Component {
     return (
       <Layout style={LayoutStyle}>
 
-        <div style={backgroundStyle} >
+        <div  style={backgroundStyle}>
           <image src={bcgd} alt=" "/>
         </div>
 
