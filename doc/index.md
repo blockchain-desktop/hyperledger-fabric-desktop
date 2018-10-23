@@ -9,8 +9,9 @@ TODO: 介绍客户端的使用
   - basic-network 基本网络配置文件
   - chaincode 链码相关文件
   - fabcar  链码操作脚本文件
-- src    前端客户端相关文件
-  - components 开发前端客户端主要文件
+- resources 客户端资源文件  
+- src    前端客户端主要文件
+  - components 前端客户端界面文件
   - util 链码调用接口文件
   
 ### 运行环境 
