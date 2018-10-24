@@ -115,6 +115,7 @@ export default class ChaincodeInvokeContent extends React.Component {
             placeholder="result"
             value={this.state.result}
             autosize={{ minRows: 6, maxRows: 6 }}
+            readOnly
           />
         </div>
 
