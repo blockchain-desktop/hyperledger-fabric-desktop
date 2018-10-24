@@ -51,7 +51,7 @@ const CollectionCreateForm = Form.create()(
           onCancel={onCancel}
           onOk={onCreate}
           centered
-          width="480"
+          width="480px"
         >
           <Form layout="vertical">
             <FormItem label="名称" style={{ margin: '5px' }}>
@@ -272,7 +272,7 @@ class ContractDiv extends React.Component {
               <span style={versionSpanStyle}>{this.props.citem.version}</span>
             </p>
             <p style={PStyle}>
-              {this.props.citem.description}
+              <span>{this.props.citem.description}</span>
             </p>
             <p style={PStyle}>
               <span><Icon type={this.state.icontype} theme="outlined" style={{ color: this.state.iconcolor }} />&nbsp;</span>

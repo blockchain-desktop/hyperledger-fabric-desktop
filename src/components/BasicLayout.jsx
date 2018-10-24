@@ -65,7 +65,7 @@ export default class BasicLayout extends React.Component {
           collapsible
           collapsed={this.state.collapsed}
           onCollapse={this.onCollapse}
-          style={{ paddingTop: '24px' }}
+          style={{ paddingTop: '21px' }}
         >
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
