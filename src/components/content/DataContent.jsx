@@ -50,7 +50,7 @@ export default class DataContent extends React.Component {
     this.state.timer = setInterval(() => {
       const fc = getFabricClientSingleton();
       fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
-    }, 500000);
+    }, 5000);
   }
 
   componentWillUnmount() {
@@ -206,7 +206,7 @@ export default class DataContent extends React.Component {
         {/* </Row> */}
         {/* </div> */}
 
-        <div style={{ padding: '5px', backgroundColor: '#fff', overflow: 'hidden' }}>
+        <div style={{ padding: '10px', backgroundColor: '#fff', overflow: 'hidden' }}>
           <Row>
             <Col span={24}>
               <Table
@@ -262,6 +262,7 @@ export default class DataContent extends React.Component {
           onCancel={this.handleCancel}
           footer={null}
           width="60%"
+          centered
         >
           <strong>Hash:</strong>{this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].hash : ''}<br />
           <strong>Tx:</strong>{this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].tx : ''}<br />
