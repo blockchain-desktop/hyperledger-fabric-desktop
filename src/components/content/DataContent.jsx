@@ -169,8 +169,18 @@ export default class DataContent extends React.Component {
 
 
   render() {
+    const outerDivStyle = {
+      background: '#fff',
+      padding: '2px',
+      minHeight: '900px',
+    };
+    const tableDivStyle = {
+      padding: '10px',
+      backgroundColor: '#fff',
+      overflow: 'hidden',
+    };
     return (
-      <div style={{ background: '#fff', padding: '2px', minHeight: '900px' }}>
+      <div style={outerDivStyle}>
         {/* <div style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}> */}
         {/* <div> */}
         {/* <Row> */}
@@ -205,7 +215,7 @@ export default class DataContent extends React.Component {
         {/* </Row> */}
         {/* </div> */}
 
-        <div style={{ padding: '10px', backgroundColor: '#fff', overflow: 'hidden' }}>
+        <div style={tableDivStyle}>
           <Row>
             <Col span={24}>
               <Table

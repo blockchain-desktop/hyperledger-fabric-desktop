@@ -131,6 +131,9 @@ export default class DataContent extends React.Component {
       alignItems: 'center',
       padding: '24px 0',
     };
+    const fontStyle = {
+      fontSize: '38px',
+    };
     const cerfileStyle = {
       width: '0.1px',
       height: '0.1px',
@@ -173,6 +176,18 @@ export default class DataContent extends React.Component {
       display: 'block',
       float: 'right',
     };
+    const firstDivStyle = {
+      margin: '10px 8px 27px 8px',
+    };
+    const divStyle = {
+      margin: '27px 8px',
+    };
+    const lastDivStyle = {
+      margin: '32px 8px',
+    };
+    const buttonStyle = {
+      width: '100%',
+    };
     return (
       <Layout style={LayoutStyle}>
 
@@ -183,37 +198,37 @@ export default class DataContent extends React.Component {
         <div style={contentStyle}>
           <Content>
             <div style={LoginStyle}>
-              <span style={{ fontSize: '38px' }}>Fabric Desktop</span>
+              <span style={fontStyle}>Fabric Desktop</span>
             </div>
 
-            <div style={{ margin: '10px 8px 27px 8px' }}>
+            <div style={firstDivStyle}>
               <span style={spanStyle}> peer grpc url：</span>
               <Input type="text" style={InputStyle} value={this.state.peerGrpcUrl} onChange={this.peerGrpcUrlChange} />
             </div>
-            <div style={{ margin: '27px 8px' }}>
+            <div style={divStyle}>
               <span style={spanStyle}>peer event url：</span>
               <Input type="text" style={InputStyle} value={this.state.peerEventUrl} onChange={this.peerEventUrlChange} />
             </div>
-            <div style={{ margin: '27px 8px' }}>
+            <div style={divStyle}>
               <span style={spanStyle}>orderer url:</span>
               <Input type="text" style={InputStyle} value={this.state.ordererUrl} onChange={this.ordererChange} />
             </div>
-            <div style={{ margin: '27px 8px' }}>
+            <div style={divStyle}>
               <span style={spanStyle}>username:</span>
               <Input type="text" style={InputStyle} value={this.state.username} onChange={this.usernameChange} />
             </div>
-            <div style={{ margin: '27px 8px' }}>
+            <div style={divStyle}>
               <span style={spanStyle}>certificate：</span>
               <input type="file" id="cerFiles" name="cerFiles" style={cerfileStyle}onChange={this.cerImport} />
               <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 9px 0 0' }} />&thinsp;{this.state.certlabel} </label>
             </div>
-            <div style={{ margin: '27px 8px' }}>
+            <div style={divStyle}>
               <span style={spanStyle}>private key：</span>
               <input type="file" id="priFiles" name="priFiles" style={prifilesStyle} onChange={this.priImport} />
               <label htmlFor="priFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 9px 0 0' }} />&thinsp;{this.state.keylabel}</label>
             </div>
-            <div style={{ margin: '32px 8px' }}>
-              <Button type="primary" style={{ width: '100%' }} onClick={this.onClick}>登录</Button>
+            <div style={lastDivStyle}>
+              <Button type="primary" style={buttonStyle} onClick={this.onClick}>登录</Button>
             </div>
           </Content>
         </div>
