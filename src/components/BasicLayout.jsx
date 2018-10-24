@@ -58,6 +58,12 @@ export default class BasicLayout extends React.Component {
 
 
   render() {
+    const contentStyle = {
+      background: '#fff',
+      height: '100%',
+      margin: '24px 16px',
+      padding: '12px',
+    };
     return (
       <Layout >
         <Sider
@@ -65,7 +71,7 @@ export default class BasicLayout extends React.Component {
           collapsible
           collapsed={this.state.collapsed}
           onCollapse={this.onCollapse}
-          style={{ paddingTop: '24px' }}
+          style={{ paddingTop: '21px' }}
         >
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
@@ -82,17 +88,12 @@ export default class BasicLayout extends React.Component {
               <span>智能合约安装</span>
             </Menu.Item>
           </Menu>
-          {/* <div style={{position:'relative',left:'20px',top:'50%'}}> */}
-          {/* <Button type="primary" style={{ width: '80%' }}
-            onClick={this.onClick}>退出</Button> */}
-          {/* </div> */}
         </Sider>
         <Layout>
-          <Content style={{ background: '#fff', height: '100%', margin: '24px 16px', padding: '12px' }}>
+          <Content style={contentStyle}>
             <ContentRoute contentKey={this.state.contentKey} />
           </Content>
         </Layout>
-
       </Layout>
     );
   }

@@ -50,7 +50,7 @@ export default class DataContent extends React.Component {
     this.state.timer = setInterval(() => {
       const fc = getFabricClientSingleton();
       fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
-    }, 5000);
+    }, 500000);
   }
 
   componentWillUnmount() {
@@ -100,7 +100,7 @@ export default class DataContent extends React.Component {
   }
 
   onQueryBlockCallback(result) {
-    console.warn(result);
+    logger.info(result);
     if (result.header.number !== 0) {
       const tempData = {
       };
@@ -132,7 +132,6 @@ export default class DataContent extends React.Component {
       const data = this.state.data.slice();
       data[result.header.number] = tempData;
       this.setState({ data });
-      console.log(this.state.data);
       logger.info(this.state.data);
 
       const tempHead = {
@@ -170,8 +169,18 @@ export default class DataContent extends React.Component {
 
 
   render() {
+    const outerDivStyle = {
+      background: '#fff',
+      padding: '2px',
+      minHeight: '900px',
+    };
+    const tableDivStyle = {
+      padding: '10px',
+      backgroundColor: '#fff',
+      overflow: 'hidden',
+    };
     return (
-      <div style={{ background: '#fff', padding: '2px', minHeight: '900px' }}>
+      <div style={outerDivStyle}>
         {/* <div style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}> */}
         {/* <div> */}
         {/* <Row> */}
@@ -206,7 +215,7 @@ export default class DataContent extends React.Component {
         {/* </Row> */}
         {/* </div> */}
 
-        <div style={{ padding: '10px', backgroundColor: '#fff', overflow: 'hidden' }}>
+        <div style={tableDivStyle}>
           <Row>
             <Col span={24}>
               <Table

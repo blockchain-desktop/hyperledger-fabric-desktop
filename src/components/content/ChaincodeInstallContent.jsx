@@ -42,6 +42,9 @@ const CollectionCreateForm = Form.create()(
     render() {
       const { visible, onCancel, onCreate, form } = this.props;
       const { getFieldDecorator } = form;
+      const formItemStyle = {
+        margin: '5px',
+      };
       return (
         <Modal
           visible={visible}
@@ -51,39 +54,39 @@ const CollectionCreateForm = Form.create()(
           onCancel={onCancel}
           onOk={onCreate}
           centered
-          width="480"
+          width="480px"
         >
           <Form layout="vertical">
-            <FormItem label="名称" style={{ margin: '5px' }}>
+            <FormItem label="名称" style={formItemStyle}>
               {getFieldDecorator('name', {
                 rules: [{ required: true, message: '请输入链码名称! ' }, { validator: CollectionCreateForm.nameValidator }],
               })(
                 <Input placeholder="链码名称" />,
               )}
             </FormItem>
-            <FormItem label="版本" style={{ margin: '5px' }}>
+            <FormItem label="版本" style={formItemStyle}>
               {getFieldDecorator('version', {
                 rules: [{ required: true, message: '请输入链码版本号! ' }, { validator: CollectionCreateForm.versionValidator }],
               })(
                 <Input placeholder="链码版本" />,
               )}
             </FormItem>
-            <FormItem label="通道" style={{ margin: '5px' }}>
+            <FormItem label="通道" style={formItemStyle}>
               {getFieldDecorator('channel', {
                 rules: [{ required: true, message: '请输入通道名称! ' }, { validator: CollectionCreateForm.channelValidator }],
               })(
                 <Input placeholder="通道名称" />,
               )}
             </FormItem>
-            <FormItem label="路径" style={{ margin: '5px' }}>
+            <FormItem label="路径" style={formItemStyle}>
               {getFieldDecorator('path', {
                 rules: [{ required: true, message: '请输入链码文件路径!' }],
               })(
                 <Input placeholder="文件路径" />,
               )}
             </FormItem>
-            <FormItem label="描述" style={{ margin: '5px' }}>
-              {getFieldDecorator('description')(<Input placeholder="功能描述" type="textarea" />)}
+            <FormItem label="描述" style={formItemStyle}>
+              {getFieldDecorator('description')(<Input placeholder="功能描述" />)}
             </FormItem>
           </Form>
         </Modal>
@@ -272,7 +275,7 @@ class ContractDiv extends React.Component {
               <span style={versionSpanStyle}>{this.props.citem.version}</span>
             </p>
             <p style={PStyle}>
-              {this.props.citem.description}
+              <span>{this.props.citem.description}</span>
             </p>
             <p style={PStyle}>
               <span><Icon type={this.state.icontype} theme="outlined" style={{ color: this.state.iconcolor }} />&nbsp;</span>
@@ -358,7 +361,7 @@ export default class ChaincodeInstallContent extends React.Component {
         version: values.version,
         channel: values.channel,
         path: values.path,
-        discription: values.description,
+        description: values.description,
         key: moment().format('YYYYMMDDHHmmss'),
         disable1: false,
         disable2: false,
@@ -392,6 +395,9 @@ export default class ChaincodeInstallContent extends React.Component {
   }
 
   render() {
+    const outerDivStyle = {
+      minHeight: '900px',
+    };
     const plusDivStyle = {
       height: '200px',
       width: '240px',
@@ -401,7 +407,6 @@ export default class ChaincodeInstallContent extends React.Component {
       alignItems: 'center',
       float: 'left',
     };
-
     const buttonStyle = {
       margin: 'auto',
       display: 'block',
@@ -410,7 +415,7 @@ export default class ChaincodeInstallContent extends React.Component {
     };
 
     return (
-      <div style={{ minHeight: '900px' }}>
+      <div style={outerDivStyle}>
         <div style={plusDivStyle}>
           <Button icon="plus" style={buttonStyle} onClick={this.showModal}>添加合约</Button>
           <CollectionCreateForm

@@ -77,32 +77,44 @@ export default class ChaincodeInvokeContent extends React.Component {
   }
 
   render() {
+    const outerDivStyle = {
+      minHeight: '900px',
+    };
+    const divStyle = {
+      margin: '24px 0',
+    };
+    const inputStyle = {
+      width: '70%',
+    };
+    const buttonStyle = {
+      width: '100%',
+    }
     return (
-      <div style={{ minHeight: '900px' }}>
+      <div style={outerDivStyle}>
 
-        <div style={{ margin: '24px 0' }}>
+        <div style={divStyle}>
           通道名称：
-          <Input type="text" value={this.state.channel} style={{ width: '70%' }} onChange={this.channelChange} />
+          <Input type="text" value={this.state.channel} style={inputStyle} onChange={this.channelChange} />
         </div>
 
-        <div style={{ margin: '24px 0' }}>
+        <div style={divStyle}>
           智能合约：
-          <Input type="text" value={this.state.chaincodeId} style={{ width: '70%' }} onChange={this.chaincodeIdChange} />
+          <Input type="text" value={this.state.chaincodeId} style={inputStyle} onChange={this.chaincodeIdChange} />
         </div>
 
-        <div style={{ margin: '24px 0' }}>
+        <div style={divStyle}>
           函数名称：
-          <Input type="text" value={this.state.fcn} style={{ width: '70%' }} onChange={this.fcnChange} />
+          <Input type="text" value={this.state.fcn} style={inputStyle} onChange={this.fcnChange} />
         </div>
 
-        <div style={{ margin: '24px 0' }}>
+        <div style={divStyle}>
           &emsp;&emsp;参数：
-          <Select mode="tags" style={{ width: '70%' }} placeholder="parameter" onChange={this.argsChange}>
+          <Select mode="tags" style={inputStyle} placeholder="parameter" onChange={this.argsChange}>
             <Option value="null">null</Option>
           </Select>
         </div>
 
-        <div style={{ margin: '24px 0' }}>
+        <div style={divStyle}>
           &emsp;&emsp;方法：
           <Radio.Group value={this.state.type} buttonStyle="solid" onChange={this.typeChange}>
             <Radio.Button value="query">查询(query)</Radio.Button>
@@ -110,17 +122,17 @@ export default class ChaincodeInvokeContent extends React.Component {
           </Radio.Group>
         </div>
 
-        <div style={{ margin: '24px 0' }}>
+        <div style={divStyle}>
           <TextArea
             placeholder="result"
             value={this.state.result}
             autosize={{ minRows: 6, maxRows: 6 }}
+            readOnly
           />
         </div>
 
-
-        <div style={{ margin: '24px 0' }}>
-          <Button type="primary" style={{ width: '100%' }} onClick={this.onClick}>发送</Button>
+        <div style={divStyle}>
+          <Button type="primary" style={buttonStyle} onClick={this.onClick}>发送</Button>
         </div>
 
       </div>
