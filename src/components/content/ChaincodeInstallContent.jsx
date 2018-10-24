@@ -83,7 +83,7 @@ const CollectionCreateForm = Form.create()(
               )}
             </FormItem>
             <FormItem label="描述" style={{ margin: '5px' }}>
-              {getFieldDecorator('description')(<Input placeholder="功能描述" type="textarea" />)}
+              {getFieldDecorator('description')(<Input placeholder="功能描述" />)}
             </FormItem>
           </Form>
         </Modal>
@@ -358,7 +358,7 @@ export default class ChaincodeInstallContent extends React.Component {
         version: values.version,
         channel: values.channel,
         path: values.path,
-        discription: values.description,
+        description: values.description,
         key: moment().format('YYYYMMDDHHmmss'),
         disable1: false,
         disable2: false,

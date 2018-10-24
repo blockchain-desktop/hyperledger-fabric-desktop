@@ -16,9 +16,9 @@ const db = getConfigDBSingleton();
 
 const { Content } = Layout;
 
-const bcgd = path.join(__dirname,'../../resources/styles/image/blc.jpg');
+const bcgd = path.join(__dirname, '../../resources/styles/image/blc.jpg');
 
-//const styles = path.join(__dirname,'content/styles/css/UserLayoutCss.css');
+// const styles = path.join(__dirname,'content/styles/css/UserLayoutCss.css');
 
 export default class DataContent extends React.Component {
   constructor(props) {
@@ -115,7 +115,7 @@ export default class DataContent extends React.Component {
       minHeight: '900px',
       display: 'block',
       position: 'absolute',
-      backgroundImage: 'url('+bcgd+')',
+      backgroundImage: 'url(' + bcgd + ')',
     };
     const contentStyle = {
       padding: '40px 26px 30px 26px',
@@ -158,10 +158,11 @@ export default class DataContent extends React.Component {
       verticalAlign: 'middle',
       textAlign: 'center',
       lineHeight: '30px',
-      cursor:'pointer',
+      cursor: 'pointer',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
-      overflow:'hidden',
+      overflow: 'hidden',
+      padding: '0 9px',
     };
     const spanStyle = {
       display: 'inlineBlock',
@@ -175,23 +176,23 @@ export default class DataContent extends React.Component {
     return (
       <Layout style={LayoutStyle}>
 
-        <div  style={backgroundStyle}>
-          <image src={bcgd} alt=" "/>
+        <div style={backgroundStyle}>
+          <image src={bcgd} alt=" background image" />
         </div>
 
         <div style={contentStyle}>
           <Content>
-            <div style={LoginStyle }>
+            <div style={LoginStyle}>
               <span style={{ fontSize: '38px' }}>Fabric Desktop</span>
             </div>
 
             <div style={{ margin: '10px 8px 27px 8px' }}>
               <span style={spanStyle}> peer grpc url：</span>
-              <Input type="text" style={InputStyle} value={this.state.peerGrpcUrl}  onChange={this.peerGrpcUrlChange} />
+              <Input type="text" style={InputStyle} value={this.state.peerGrpcUrl} onChange={this.peerGrpcUrlChange} />
             </div>
             <div style={{ margin: '27px 8px' }}>
               <span style={spanStyle}>peer event url：</span>
-              <Input type="text" style={InputStyle} value={this.state.peerEventUrl}  onChange={this.peerEventUrlChange} />
+              <Input type="text" style={InputStyle} value={this.state.peerEventUrl} onChange={this.peerEventUrlChange} />
             </div>
             <div style={{ margin: '27px 8px' }}>
               <span style={spanStyle}>orderer url:</span>
@@ -204,12 +205,12 @@ export default class DataContent extends React.Component {
             <div style={{ margin: '27px 8px' }}>
               <span style={spanStyle}>certificate：</span>
               <input type="file" id="cerFiles" name="cerFiles" style={cerfileStyle}onChange={this.cerImport} />
-              <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{color:'#0083FA'}}/>&thinsp;{this.state.certlabel} </label>
+              <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 9px 0 0' }} />&thinsp;{this.state.certlabel} </label>
             </div>
             <div style={{ margin: '27px 8px' }}>
               <span style={spanStyle}>private key：</span>
               <input type="file" id="priFiles" name="priFiles" style={prifilesStyle} onChange={this.priImport} />
-              <label htmlFor="priFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{color:'#0083FA'}}/>&thinsp;{this.state.keylabel}</label>
+              <label htmlFor="priFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 9px 0 0' }} />&thinsp;{this.state.keylabel}</label>
             </div>
             <div style={{ margin: '32px 8px' }}>
               <Button type="primary" style={{ width: '100%' }} onClick={this.onClick}>登录</Button>
