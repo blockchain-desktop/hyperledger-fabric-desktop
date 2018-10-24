@@ -31,8 +31,8 @@ export default class DataContent extends React.Component {
       username: 'Org1Admin',
       certPath: '',
       keyPath: '',
-      certlabel: 'choose a certificate',
-      keylabel: 'choose a privary key',
+      certlabel: '  choose a certificate ',
+      keylabel: ' choose a privary key',
     };
 
 
@@ -158,10 +158,11 @@ export default class DataContent extends React.Component {
       verticalAlign: 'middle',
       textAlign: 'center',
       lineHeight: '30px',
-      cursor:'pointer',
+      cursor: 'pointer',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
-      overflow:'hidden',
+      overflow: 'hidden',
+      padding: '0 11px',
     };
     const spanStyle = {
       display: 'inlineBlock',
@@ -175,8 +176,8 @@ export default class DataContent extends React.Component {
     return (
       <Layout style={LayoutStyle}>
 
-        <div  style={backgroundStyle}>
-          <image src={bcgd} alt=" "/>
+        <div style={backgroundStyle}>
+          <image src={bcgd} alt=" " />
         </div>
 
         <div style={contentStyle}>
@@ -187,11 +188,11 @@ export default class DataContent extends React.Component {
 
             <div style={{ margin: '10px 8px 27px 8px' }}>
               <span style={spanStyle}> peer grpc url：</span>
-              <Input type="text" style={InputStyle} value={this.state.peerGrpcUrl}  onChange={this.peerGrpcUrlChange} />
+              <Input type="text" style={InputStyle} value={this.state.peerGrpcUrl} onChange={this.peerGrpcUrlChange} />
             </div>
             <div style={{ margin: '27px 8px' }}>
               <span style={spanStyle}>peer event url：</span>
-              <Input type="text" style={InputStyle} value={this.state.peerEventUrl}  onChange={this.peerEventUrlChange} />
+              <Input type="text" style={InputStyle} value={this.state.peerEventUrl} onChange={this.peerEventUrlChange} />
             </div>
             <div style={{ margin: '27px 8px' }}>
               <span style={spanStyle}>orderer url:</span>
@@ -204,12 +205,12 @@ export default class DataContent extends React.Component {
             <div style={{ margin: '27px 8px' }}>
               <span style={spanStyle}>certificate：</span>
               <input type="file" id="cerFiles" name="cerFiles" style={cerfileStyle}onChange={this.cerImport} />
-              <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{color:'#0083FA'}}/>&thinsp;{this.state.certlabel} </label>
+              <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA' }} />&nbsp;{this.state.certlabel}&nbsp;&nbsp;</label>
             </div>
             <div style={{ margin: '27px 8px' }}>
               <span style={spanStyle}>private key：</span>
               <input type="file" id="priFiles" name="priFiles" style={prifilesStyle} onChange={this.priImport} />
-              <label htmlFor="priFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{color:'#0083FA'}}/>&thinsp;{this.state.keylabel}</label>
+              <label htmlFor="priFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA' }} />&nbsp;{this.state.keylabel}&nbsp;&nbsp;</label>
             </div>
             <div style={{ margin: '32px 8px' }}>
               <Button type="primary" style={{ width: '100%' }} onClick={this.onClick}>登录</Button>

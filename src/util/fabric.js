@@ -25,7 +25,6 @@ class FabricClient {
     this.channels = {}; // {channelName: channel}
   }
 
-
   /**
    *
    * @returns {Promise<Client.User | never>}
@@ -33,7 +32,6 @@ class FabricClient {
    */
   _enrollUser() {
     const usrName = this.config.username;
-
     logger.info('start to load member user.');
     return FabricClientSDK.newDefaultKeyValueStore({ path: this.store_path,
     }).then((stateStore) => {
@@ -87,7 +85,7 @@ class FabricClient {
     const channel = this._setupChannelOnce(channelName);
     this._enrollUser().then((user) => {
       if (user && user.isEnrolled()) {
-        logger.info('Successfully loaded user1 from persistence, user:', user);
+        logger.info('Successfully loaded user1 from persistence, user:', user.toString());
       } else {
         throw new Error('Failed to get user1.... run registerUser.js');
       }
@@ -284,7 +282,7 @@ class FabricClient {
   installCc(callback, chaincodePath, chaincodeName, chaincodeVersion) {
     logger.info(`${chaincodePath}, ${chaincodeName}, ${chaincodeVersion}`);
     this._enrollUser().then((user) => {
-      logger.info('Successfully loaded user from persistence, user:', user);
+      logger.info('Successfully loaded user from persistence, user:', user.toString());
 
       const request = {
         targets: [this.fabric_client.newPeer(this.config.peerGrpcUrl)], // peerAddress
@@ -334,7 +332,7 @@ class FabricClient {
     let txID;
 
     this._enrollUser().then((user) => {
-      logger.info('Successfully loaded user from persistence, user:', user);
+      logger.info('Successfully loaded user from persistence, user:', user.toString());
 
       txID = this.fabric_client.newTransactionID();
       const request = {
