@@ -3,6 +3,7 @@
 ## 快速入门
 1. 预览
 2. 开始使用客户端
+3. 联系我们
 
 ### 1. 预览
 客户端为开箱即用的，跨平台的(适用Windows, Mac, Linux），超级账本（hyperledger fabric）的图形化界面
@@ -15,7 +16,7 @@
 下载客户端
 
 #### 2.2 开始使用
-双击打开客户端，开始使用。
+双击打开客户端，现在开始使用客户端，客户端包含四个部分：
 
 1. 用户登录
 2. 数据看板
@@ -64,10 +65,20 @@ Admin@org1.example.com-cert.pem, 选择private key文件为keystore文件夹下�
 输入链码名称、版本号、通道名称、链码文件路径和功能描述，其中，链码名称、版本号、通道名称、
 链码文件路径为必填项，功能描述非必填项。点击添加，即可添加新的智能合约。
 
+注意：如果链码文件是GO语言类型，fabric默认在GOPATH路径下src文件夹下寻找链码文件，并且路径不需要
+具体到链码文件，只需要具体到链码文件的上一层目录，您可参考下面的例子填入正确的路径，
+
+如：我要安装的链码文件的完整路径为：`/Users/chuancey/go/src/github.com/hyperledger/fabric-dev-network/chaincode/fabcar/go/fabcar.go`
+我的GOPATH为`/Users/chuancey/go`，所以我填入的正确路径为：`github.com/hyperledger/fabric-dev-network/chaincode/fabcar/go`
+
+是不是觉得这样填入链码文件路径比较麻烦？不用着急，我们已经提出了[issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues/16)
+,我们会把这个问题解决的，但是还需要点时间。
+
 ![链码安装弹窗](./img/ccoperate.png)
 
 并且您可在新的智能合约窗口中进行相关智能合约操作，如安装、部署、删除操作。
 
+### 3. 联系我们
 
-
-
+如果您在使用上有任何问题，欢迎提出[issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)，
+我们会及时处理，并对您的反馈报以真挚的感谢！
