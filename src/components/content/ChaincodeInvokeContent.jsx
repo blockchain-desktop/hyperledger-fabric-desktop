@@ -15,9 +15,9 @@ export default class ChaincodeInvokeContent extends React.Component {
     this.state = {
       result: '',
       value: '',
-      channel: 'mychannel',
-      chaincodeId: 'fabcar',
-      fcn: 'queryAllCars',
+      channel: '',
+      chaincodeId: '',
+      fcn: '',
       args: '',
       type: 'query',
     };
@@ -94,17 +94,17 @@ export default class ChaincodeInvokeContent extends React.Component {
 
         <div style={divStyle}>
           通道名称：
-          <Input type="text" value={this.state.channel} style={inputStyle} onChange={this.channelChange} />
+          <Input type="text" value={this.state.channel} placeholder="mychannel" style={inputStyle} onChange={this.channelChange} />
         </div>
 
         <div style={divStyle}>
           智能合约：
-          <Input type="text" value={this.state.chaincodeId} style={inputStyle} onChange={this.chaincodeIdChange} />
+          <Input type="text" value={this.state.chaincodeId} placeholder="fabcar" style={inputStyle} onChange={this.chaincodeIdChange} />
         </div>
 
         <div style={divStyle}>
           函数名称：
-          <Input type="text" value={this.state.fcn} style={inputStyle} onChange={this.fcnChange} />
+          <Input type="text" value={this.state.fcn} placeholder="queryAllCars" style={inputStyle} onChange={this.fcnChange} />
         </div>
 
         <div style={divStyle}>
