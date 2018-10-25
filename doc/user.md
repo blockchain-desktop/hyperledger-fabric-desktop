@@ -32,11 +32,11 @@
 普通user两种，有一点需要我们谨记的是，admin可安装和调用链码，而普通user只可调用链码。
 
 如：我们在本地运行fabric网络后，peer grpc url 填 grpc://localhost:7051, peer event url 填 grpc://localhost:7053，
-orderer url 填 grpc://localhost:7050, username 填 Org1Admin，选择certificate文件为admincerts文件夹下的
+orderer url 填 grpc://localhost:7050, username 填 Org1Admin，选择certificate文件为signcerts文件夹下的
 Admin@org1.example.com-cert.pem, 选择private key文件为keystore文件夹下的cd96d5260ad4757551ed4a5a991e62130f8008a0bf996e4e4b84cd097a747fec_sk文件
 点击登录。
 
-![certificate & private key](./img/cer&pri.png)
+![certificate & private key](./img/cerpri.png)
 
 ##### 2.2.2 数据看板
 在数据看板中，我们可以查询链码相关信息。
