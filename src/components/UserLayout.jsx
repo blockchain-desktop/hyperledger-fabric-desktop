@@ -220,12 +220,12 @@ export default class DataContent extends React.Component {
             <div style={divStyle}>
               <span style={spanStyle}>certificate：</span>
               <input type="file" id="cerFiles" name="cerFiles" style={cerfileStyle}onChange={this.cerImport} />
-              <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 9px 0 0' }} />&thinsp;{this.state.certlabel} </label>
+              <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.certlabel} </label>
             </div>
             <div style={divStyle}>
               <span style={spanStyle}>private key：</span>
               <input type="file" id="priFiles" name="priFiles" style={prifilesStyle} onChange={this.priImport} />
-              <label htmlFor="priFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 9px 0 0' }} />&thinsp;{this.state.keylabel}</label>
+              <label htmlFor="priFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.keylabel}</label>
             </div>
             <div style={lastDivStyle}>
               <Button type="primary" style={buttonStyle} onClick={this.onClick}>登录</Button>
