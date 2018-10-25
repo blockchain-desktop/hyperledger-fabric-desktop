@@ -30,7 +30,8 @@
         ]
       },
       "electronPackagerConfig": {
-        "packageManager": "npm"
+        "packageManager": "npm",
+        "icon": "resources/styles/image/logo/logo.icns"
       },
       "electronWinstallerConfig": {
         "name": "hyperledger_fabric_desktop"
