@@ -31,6 +31,7 @@
       },
       "electronPackagerConfig": {
         "packageManager": "npm",
+        "ignore":".idea|resources/styles/image/logo/logo.ai",
         "icon": "resources/styles/image/logo/logo.icns"
       },
       "electronWinstallerConfig": {
