@@ -8,4 +8,5 @@ out
 fabric/fabcar/hfc-key-store
 fabric/fabcar/node_modules
 
-src/components/content/persistence
+resources/persistence/chaincode.db
+
