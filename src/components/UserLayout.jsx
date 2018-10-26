@@ -112,9 +112,9 @@ export default class DataContent extends React.Component {
     const backgroundStyle = {
       width: '400px',
       height: 'auto',
-      minHeight: '900px',
       display: 'block',
       position: 'absolute',
+      minHeight: '900px',
       backgroundImage: 'url(' + bcgd + ')',
     };
     const contentStyle = {

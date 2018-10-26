@@ -79,6 +79,7 @@ export default class ChaincodeInvokeContent extends React.Component {
   render() {
     const outerDivStyle = {
       minHeight: '900px',
+      padding: '0 15px',
     };
     const divStyle = {
       margin: '24px 0',

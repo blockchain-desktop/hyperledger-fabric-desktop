@@ -221,7 +221,7 @@ class ContractDiv extends React.Component {
       height: '200px',
       width: '240px',
       marginBottom: '20px',
-      marginRight: '10px',
+      marginRight: '20px',
       display: 'block',
       alignItems: 'center',
       border: '1px solid rgb(217, 217, 217)',
@@ -397,12 +397,13 @@ export default class ChaincodeInstallContent extends React.Component {
   render() {
     const outerDivStyle = {
       minHeight: '900px',
+      padding: '20px',
     };
     const plusDivStyle = {
       height: '200px',
       width: '240px',
       marginBottom: '20px',
-      marginRight: '10px',
+      marginRight: '20px',
       display: 'block',
       alignItems: 'center',
       float: 'left',
