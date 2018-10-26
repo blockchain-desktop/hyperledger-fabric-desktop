@@ -88,7 +88,7 @@ export default class ChaincodeInvokeContent extends React.Component {
     };
     const buttonStyle = {
       width: '100%',
-    }
+    };
     return (
       <div style={outerDivStyle}>
 

@@ -33,6 +33,7 @@ export default class DataContent extends React.Component {
       currentPage: 0,
       height: 0,
       timer: null,
+      pageSize: 4,
     };
 
     this.showModal = this.showModal.bind(this);
@@ -50,7 +51,7 @@ export default class DataContent extends React.Component {
     this.state.timer = setInterval(() => {
       const fc = getFabricClientSingleton();
       fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
-    }, 500000);
+    }, 3000);
   }
 
   componentWillUnmount() {
@@ -75,13 +76,13 @@ export default class DataContent extends React.Component {
     this.setState({
       low: result.height.low,
       high: result.height.high,
-      height: Math.ceil(result.height.low / 4) * 4,
+      height: Math.ceil(result.height.low / this.state.pageSize) * this.state.pageSize,
     });
     const fc = getFabricClientSingleton();
     logger.info(this.state.data.length);
     count = 0;
-    const start = this.state.low - (4 * this.state.currentPage) - 1;
-    for (let i = start; i > start - 4; i--) {
+    const start = this.state.low - (this.state.pageSize * this.state.currentPage) - 1;
+    for (let i = start; i > start - this.state.pageSize; i--) {
       if (this.state.high >= i) {
         const tempHead = {
           key: count++,
@@ -222,7 +223,7 @@ export default class DataContent extends React.Component {
                 bordered
                 dataSource={this.state.head}
                 pagination={{
-                  defaultPageSize: 4,
+                  defaultPageSize: this.state.pageSize,
                   showQuickJumper: true,
                   onChange: this.onChange,
                   total: this.state.height }}
