@@ -149,7 +149,7 @@ react+jsx+es6下如何导入外来`.css`文件，如果可行，那么就这样�
 
 1. 任何人：任何问题、开发事项，请在github提[issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)
 2. 开发者：交流处理[issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)，
-    确定处理人。开发完成后close issue。
+    确定处理人。开发完成后close issue。test
 3. 维护者：处理协调[issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)
     与[project](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/projects)
     的进展
