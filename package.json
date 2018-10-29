@@ -1,6 +1,6 @@
 {
   "name": "hyperledger-fabric-desktop",
-  "productName": "hyperledger-fabric-desktop",
+  "productName": "Fabric Desktop",
   "version": "0.1.0",
   "description": "My Electron application description",
   "main": "src/index.js",
@@ -31,7 +31,7 @@
       },
       "electronPackagerConfig": {
         "packageManager": "npm",
-        "ignore":".idea|resources/styles/image/logo/logo.ai",
+        "ignore": ".idea|resources/styles/image/logo/logo.ai",
         "icon": "resources/styles/image/logo/logo.icns"
       },
       "electronWinstallerConfig": {
