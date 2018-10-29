@@ -46,7 +46,7 @@
   - basic-network  基本网络配置文件
   - chaincode  链码相关文件
   - fabcar  链码操作脚本文件
-- resources 前端客户端资源文件  
+- resources 前端客户端资源文件
 - src     前端客户端主要文件
   - components    前端客户端界面文件
   - util 链码调用接口文件
@@ -64,7 +64,7 @@
 * docker：17.06.2-ce 版本及以上
 * docker-compose：1.14.0 版本及以上
 
-开发技术栈：Electron, React, Ant Design, Fabric-Node-sdk  
+开发技术栈：Electron, React, Ant Design, Fabric-Node-sdk
 推荐开发IDE：WebStorm 或 VSCode
 
 #### 4.2 安装依赖项
@@ -157,3 +157,12 @@ react+jsx+es6下如何导入外来`.css`文件，如果可行，那么就这样�
 目前,我们依托于Github进行客户端的开发和维护工作，如果您想贡献您的代码，那么恭喜您，您不需要额外申请账号和学
 习其他工具，您可以直接贡献您的代码啦，不过这个前提是，您得拥有Github相关使用知识，不过我们相信，这对一个开发
 者来说并不是一个问题。
+
+### 6. 开发者开发流程
+1. 将项目fork到自己的github仓库中
+2. 将项目clone到自己本地仓库
+3. 创建一个feature分支, 并在其上进行开发
+4. 开发完成后,提交前使用`npm run lintFix []`检查是否错误
+5. 将代码合并到主分支,提交到自己的github仓库
+6. 新建一个pull request, 向管理员提交pull request
+7. 等待管理员评审
