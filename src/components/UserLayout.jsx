@@ -33,6 +33,7 @@ export default class DataContent extends React.Component {
       keyPath: '',
       certlabel: '  choose a certificate ',
       keylabel: ' choose a privary key',
+      tlslabel: ' choose a tls key',
     };
 
 
@@ -87,6 +88,12 @@ export default class DataContent extends React.Component {
     this.setState({ certlabel: cerArray[cerArray.length - 1] });
   }
 
+  tlsImport() {
+    const selectedFile = document.getElementById('tlsFiles').files[0];// 获取读取的File对象
+    this.setState({ tlsPath: selectedFile.path });
+    const tlsArray = selectedFile.path.split('/');
+    this.setState({ tlslabel: tlsArray[tlsArray.length - 1] });
+  }
 
   priImport() {
     const selectedFile = document.getElementById('priFiles').files[0];// 获取读取的File对象
@@ -135,6 +142,14 @@ export default class DataContent extends React.Component {
       fontSize: '38px',
     };
     const cerfileStyle = {
+      width: '0.1px',
+      height: '0.1px',
+      opacity: 0,
+      overflow: 'hidden',
+      position: 'absolute',
+      zIndex: -1,
+    };
+    const tlsfileStyle = {
       width: '0.1px',
       height: '0.1px',
       opacity: 0,
@@ -221,6 +236,11 @@ export default class DataContent extends React.Component {
               <span style={spanStyle}>certificate：</span>
               <input type="file" id="cerFiles" name="cerFiles" style={cerfileStyle}onChange={this.cerImport} />
               <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.certlabel} </label>
+            </div>
+            <div style={divStyle}>
+              <span style={spanStyle}>tls key：</span>
+              <input type="file" id="tlsFiles" name="tlsFiles" style={tlsfileStyle}onChange={this.tlsImport} />
+              <label htmlFor="tlsFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlslabel} </label>
             </div>
             <div style={divStyle}>
               <span style={spanStyle}>private key：</span>
