@@ -2,7 +2,7 @@ node_modules
 out
 .eslintcache
 .idea
-resources/persistence/
+resources/persistence
 
 # fabric network
 fabric/fabcar/hfc-key-store

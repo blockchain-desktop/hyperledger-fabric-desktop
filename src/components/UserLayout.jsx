@@ -191,9 +191,7 @@ export default class DataContent extends React.Component {
     return (
       <Layout style={LayoutStyle}>
 
-        <div style={backgroundStyle}>
-          <image src={bcgd} alt=" background image" />
-        </div>
+        <div style={backgroundStyle} />
 
         <div style={contentStyle}>
           <Content>
