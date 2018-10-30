@@ -1,5 +1,7 @@
 # 超级账本fabric客户端
 [项目地址](https://github.com/blockchain-desktop/hyperledger-fabric-desktop)  
+[软件包下载地址](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/releases)  
+
 * 产品定位：开箱即用的，跨Windows, Mac, Linux平台的，超级账本fabric区块链客户端。
 图形化界面降低使用门槛，用户私钥留存本地。
 * 技术栈：Electron, React, Ant Design, Fabric-Node-sdk  
@@ -21,5 +23,5 @@
 
 ## 开发路线
 * v0.1.0: 基础功能（数据看板、链码调用、链码安装）；项目规范。
-* v0.2.0：新开发通道相关功能，完善基础功能。
+* v0.2.0: 新开发通道相关功能，完善基础功能。
 
