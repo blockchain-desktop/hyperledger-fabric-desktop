@@ -1,6 +1,6 @@
 {
   "name": "hyperledger-fabric-desktop",
-  "productName": "Fabric Desktop",
+  "productName": "Fabric-Desktop",
   "version": "0.1.0",
   "description": "My Electron application description",
   "main": "src/index.js",
