@@ -1,8 +1,7 @@
 # 超级账本fabric客户端
 
 * 产品定位：客户端为开箱即用的，跨平台的(适用Windows, Mac, Linux），超级账本（hyperledger fabric）的图形化界面
-客户端。客户端主要解决了Hyperledger Cello、Hyperledger Explorer中用户私钥非用户留存的问题，将用户
-私钥留存用户本地，并具有数据看板、链码调用、链码安装等核心功能。
+客户端。客户端主要解决了Hyperledger Cello、Hyperledger Explorer中用户私钥非用户留存的问题，将用户私钥留存用户本地，并具有数据看板、链码调用、链码安装等核心功能。
 * 技术栈：Electron, React, Ant Design, Fabric-Node-sdk  
 
 ## 项目资源
