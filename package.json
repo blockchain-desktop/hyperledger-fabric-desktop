@@ -10,7 +10,13 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --cache --color --ext .jsx,.js src",
-    "lintFix": "eslint --fix"
+    "lintFix": "eslint --fix",
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(js|jsx)?$": "babel-jest"
+    }
   },
   "keywords": [],
   "author": "dengyi",
@@ -76,6 +82,8 @@
     "eslint-config-airbnb": "^15",
     "eslint-plugin-import": "^2",
     "eslint-plugin-jsx-a11y": "^5",
-    "eslint-plugin-react": "^7"
+    "eslint-plugin-react": "^7",
+    "jest": "^23.6.0",
+    "babel-jest": "^23.6.0"
   }
 }
