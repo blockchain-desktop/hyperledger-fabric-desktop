@@ -2,10 +2,18 @@
 Any kind of contribution is encouraged,e.g., software feedback or code contribution.
 
 ### Raising an Issue
-- Anyone: For any problem and question, raise an [issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues) on github.
-- Developer: For bug reports and feature requests, raise an [issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)
-  and assign to yourself or someone else, close after finished.
-- Maintainer: Process and coordinate the [issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues) and the [project](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/projects).
+
+If you have a question on using Hyperledger fabric desktop:
+
+- raise an [issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)
+
+If you have found a defect or want to raise a feature requests:
+
+- raise an [issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)
+
+If you want to contribute to the develop of Hyperledger fabric desktop:
+
+- refer to Submitting a Pull Request
 
 ### Submitting a Pull Request
 

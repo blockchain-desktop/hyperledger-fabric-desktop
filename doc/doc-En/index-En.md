@@ -11,6 +11,7 @@ Hyperledger Fabric Desktop provides the following major features:
 3. Graphical user interface, easy to install, easy to use.
 4. Users Keep the user's private key locally which Hyperledger Cello,Hyperledger Explorer can not implement.
 5. Multiple functions,e.g.,Block Dashboard, Chaincode Install, Chaincode Invoke,etc.
+6. Technology stack:Electron, React, Ant Design, Fabric-Node-sdk.
 
 # Getting Started
 

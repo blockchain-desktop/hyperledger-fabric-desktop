@@ -48,7 +48,7 @@ It's recommended that the Development IDE is WebStorm or VSCode.
 
 #### Set up your Dev Environment
 
-Development technology stack:
+Technology stack:
 
 - Electron
 - React
