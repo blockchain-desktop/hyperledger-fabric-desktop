@@ -66,7 +66,7 @@ available at http://creativecommons.org/licenses/by/4.0/.
 
 1. 任何人：任何问题、开发事项，请在github提[issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)
 2. 开发者：交流处理[issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)，
-    确定处理人。开发完成后close issue。
+    确定处理人，开发完成后关闭issue。
 3. 维护者：处理协调[issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)
     与[project](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/projects)
     的进展
