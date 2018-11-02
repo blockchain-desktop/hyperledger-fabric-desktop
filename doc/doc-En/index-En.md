@@ -17,7 +17,7 @@ Hyperledger Fabric Desktop provides the following major features:
 
 For developers,it is highly recommended to read [coding guidelines](../doc-En/coding-guidelines-En.md) first;
 
-For normal users,it is highly recommended to read [tutorial](../doc-Zn/tutorial-En.md).
+For normal users,it is highly recommended to read [tutorial](../doc-Zn/tutorial-En.md) first.
 
 Additional instructions can be found in [hyperledger fabric doc](https://hyperledger-fabric.readthedocs.io/en/release-1.3/tutorials.html).
 
