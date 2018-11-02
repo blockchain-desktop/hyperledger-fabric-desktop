@@ -3,6 +3,7 @@
 import React from 'react';
 import { Col, Row, Table, Modal } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
+import getBlockDBSingleton from '../../util/createDB';
 
 const logger = require('electron-log');
 
@@ -51,7 +52,7 @@ export default class DataContent extends React.Component {
     this.state.timer = setInterval(() => {
       const fc = getFabricClientSingleton();
       fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
-    }, 3000);
+    }, 5000);
   }
 
   componentWillUnmount() {

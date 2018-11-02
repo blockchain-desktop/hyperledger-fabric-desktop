@@ -16,6 +16,17 @@ class FabricClient {
 
     const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json')));
 
+    if (config.tlsPeerPath === '' || config.tlsOrdererPath === '') {
+      logger.info('+++++++++++++++++');
+      this.flag = false;
+    } else {
+      logger.info('------------------');
+      this.peerCert = fs.readFileSync(config.tlsPeerPath);
+      this.orderersCert = fs.readFileSync(config.tlsOrdererPath);
+      this.flag = true;
+    }
+
+
     const storePath = path.join(__dirname, '../../', config.path);
     logger.info(`Store path:${storePath}`);
 
@@ -54,12 +65,26 @@ class FabricClient {
     // setup each channel once
     let channel = this.channels[channelName];
     if (!channel) {
+      logger.info('******************');
       channel = this.fabric_client.newChannel(channelName);
-      const peer = this.fabric_client.newPeer(this.config.peerGrpcUrl);
-      channel.addPeer(peer);
-      const order = this.fabric_client.newOrderer(this.config.ordererUrl);
-      channel.addOrderer(order);
+      let peer;
+      let order;
 
+      if (this.flag) {
+        logger.info('-----------');
+        peer = this.fabric_client.newPeer(this.config.peerGrpcUrl,
+          { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': 'peer0.org1.example.com' });
+        channel.addPeer(peer);
+        order = this.fabric_client.newOrderer(this.config.ordererUrl,
+          { pem: Buffer.from(this.orderersCert).toString(), 'ssl-target-name-override': 'orderer.example.com' });
+        channel.addOrderer(order);
+      } else {
+        logger.info('+++++++++++++++++');
+        peer = this.fabric_client.newPeer(this.config.peerGrpcUrl);
+        channel.addPeer(peer);
+        order = this.fabric_client.newOrderer(this.config.ordererUrl);
+        channel.addOrderer(order);
+      }
       this.channels[channelName] = channel;
     } else {
       channel = this.channels[channelName];
