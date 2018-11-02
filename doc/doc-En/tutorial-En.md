@@ -80,7 +80,7 @@ export GOPATH=$HOME/go
 
 > Note!<br />
 > But for macOs, GUI program and terminal program using two different sets of environment variables，
-> As for setting environment variables for GUI program, you can refer to [Desktop-FAQ](../doc-Zn/Desktop-FAQ-Zn.md).
+> As for setting environment variables for GUI program, you can refer to [Desktop-FAQ](../doc-En/Desktop-FAQ-En.md).
 
 
 We can view all the smart contracts that have been added.
