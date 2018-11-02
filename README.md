@@ -18,7 +18,7 @@
 
 ## 文档目录
 * [使用者：功能介绍](./doc/index.md)  
-* [开发者：参与开发](./doc/CONTRIBUTING.md)    
+* [开发者：参与开发](doc/doc-Zn/CONTRIBUTING-Zn.md)    
 * [构架](./doc/architect.md)  
 
 
