@@ -2,11 +2,10 @@ import React from 'react';
 import * as TestUtils from 'react-dom/test-utils';
 import UserLayout from '../../src/components/UserLayout';
 
-
 function shallowRender(Component) {
-  const renderer = TestUtils.createRenderer();
-  renderer.render(<Component />);
-  return renderer.getRenderOutput();
+  const render = TestUtils.createRenderer();
+  render.render(<Component />);
+  return render.getRenderOutput();
 }
 
 describe('title', () => {

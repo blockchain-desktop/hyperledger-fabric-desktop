@@ -1,14 +1,17 @@
 ### 项目结构
+- test 测试代码
 - doc 项目文档
-- fabric 后端网络配置相关文件
-  - basic-network 基本网络配置文件
-  - chaincode 链码相关文件
-  - fabcar  链码操作脚本文件
-- resources 客户端资源文件  
-- src    前端客户端主要文件
-  - components 前端客户端界面文件
-  - util 链码调用接口文件
-- out  打包客户端后的程序文件
+- fabric 后端网络
+  - basic-network 网络配置
+  - chaincode 链码文件
+  - fabcar  操作脚本
+- node_modules library root 依赖库
+- resources 静态资源  
+- src    客户端
+  - components 客户端界面
+  - util 链码接口
+- out  客户端程序
+
 ### 配置文件
 
 在项目根目录下，会存在`.eslintrc` 、`.package.json`等配置文件，一般情况下，您不需要付出额外的精力
