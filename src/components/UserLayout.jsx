@@ -192,10 +192,10 @@ export default class UserLayout extends React.Component {
       float: 'right',
     };
     const firstDivStyle = {
-      margin: '10px 8px 27px 8px',
+      margin: '10px 8px 20px 8px',
     };
     const divStyle = {
-      margin: '27px 8px',
+      margin: '20px 8px',
     };
     const lastDivStyle = {
       margin: '32px 8px',
