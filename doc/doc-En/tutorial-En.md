@@ -20,7 +20,7 @@ Double click and run Hyperledger Fabric Desktop, the desktop contains four parts
 
 ##### Login
 
-![登录页面](../img/login.png)
+![login](../img/img-En/signin.png)
 
 Suppose you input those fields:
 
@@ -42,15 +42,15 @@ After successful adding, click the `login` button.
 
 We can query information on blocks through block dashboard.
 
-![数据看板页面](../img/datacontent.png)
+![block dashboard](../img/img-En/datacontent.png)
 
 Click on the record for any row in the 'Hash' column of the table,you can view related information.
 
-![Hash](../img/hash.png)
+![Hash](../img/img-En/hash.png)
 
 ##### Chaincode Invoke
 
-![链码调用页面](../img/ccquery.png)
+![chaincode invoke](../img/img-En/ccquery.png)
 
 Suppose you input those fields:
 
@@ -85,16 +85,16 @@ export GOPATH=$HOME/go
 
 We can view all the smart contracts that have been added.
 
-![链码安装页面](../img/ccinstall.png)
+![chaincode install](../img/img-En/ccinstall.png)
 
 Click the `add` button, a window will be popped up. 
 
-![链码安装弹窗](../img/ccinstallinfo.png)
+![add chaincode](../img/img-En/ccinstallwindow.png)
 
 Suppose you input those fields:
 
-- Chaincode Name* :`fabcar1` (replace this with your chaincode name)
-- Version* :`1` （type a version）
+- Chaincode Name* :`fabcar4` (replace this with your chaincode name)
+- Version* :`4.0` （type a version）
 - Channel Name* :`mychannel` (replace this with your channel name)
 - Chaincode Path* :`github.com/hyperledger/fabric-dev-network/chaincode/fabcar/go`
 - Description :`car` (mark the effect of chaincode)
@@ -104,6 +104,8 @@ Suppose you input those fields:
 >  package name under the `src` folder of `GOPATH`.
 
 After the chaincode added,you can perform operations like `install`,`instantiate`,`delete`.
+
+![new chaincode window](../img/img-En/ccoperate.png)
 
 ### Contact us
 

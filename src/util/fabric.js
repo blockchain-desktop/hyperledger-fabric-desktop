@@ -330,10 +330,10 @@ class FabricClient {
       // 安装成功
       let msg;
       if (isProposalGood) {
-        msg = '安装链码成功';
+        msg = 'success';
         logger.info(msg);
       } else {
-        msg = '安装链码失败';
+        msg = 'fail';
         logger.error(msg);
       }
       callback(msg);
@@ -389,11 +389,11 @@ class FabricClient {
       return channel.sendTransaction(request);
     }).then((results) => {
       logger.info('Complete instantiating chaincode.', results);
-      callback('实例化链码成功');
+      callback('success');
     })
       .catch((err) => {
         logger.error(`Fail to instantiate chaincode. Error message: ${err.stack}` ? err.stack : err);
-        callback('实例化链码失败');
+        callback('fail');
       });
   }
 

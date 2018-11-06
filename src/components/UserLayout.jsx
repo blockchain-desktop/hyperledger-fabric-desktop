@@ -253,7 +253,7 @@ export default class UserLayout extends React.Component {
               <label htmlFor="tlsOrdererFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsOrdererLabel} </label>
             </div>
             <div style={lastDivStyle}>
-              <Button type="primary" style={buttonStyle} onClick={this.onClick}>登录</Button>
+              <Button type="primary" style={buttonStyle} onClick={this.onClick}>Sign in</Button>
             </div>
           </Content>
         </div>

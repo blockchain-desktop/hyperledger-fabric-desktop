@@ -94,32 +94,32 @@ export default class ChaincodeInvokeContent extends React.Component {
       <div style={outerDivStyle}>
 
         <div style={divStyle}>
-          通道名称：
+          channel &ensp;name:&ensp;
           <Input type="text" value={this.state.channel} placeholder="mychannel" style={inputStyle} onChange={this.channelChange} />
         </div>
 
         <div style={divStyle}>
-          智能合约：
+          smart contract：
           <Input type="text" value={this.state.chaincodeId} placeholder="fabcar" style={inputStyle} onChange={this.chaincodeIdChange} />
         </div>
 
         <div style={divStyle}>
-          函数名称：
+          function name：
           <Input type="text" value={this.state.fcn} placeholder="queryAllCars" style={inputStyle} onChange={this.fcnChange} />
         </div>
 
         <div style={divStyle}>
-          &emsp;&emsp;参数：
+          &emsp;&emsp;parameter：
           <Select mode="tags" style={inputStyle} placeholder="parameter" onChange={this.argsChange}>
             <Option value="null">null</Option>
           </Select>
         </div>
 
         <div style={divStyle}>
-          &emsp;&emsp;方法：
+          &emsp;&emsp;&emsp;method:&emsp;
           <Radio.Group value={this.state.type} buttonStyle="solid" onChange={this.typeChange}>
-            <Radio.Button value="query">查询(query)</Radio.Button>
-            <Radio.Button value="invoke">调用(invoke)</Radio.Button>
+            <Radio.Button value="query">query</Radio.Button>
+            <Radio.Button value="invoke">invoke</Radio.Button>
           </Radio.Group>
         </div>
 
@@ -133,7 +133,7 @@ export default class ChaincodeInvokeContent extends React.Component {
         </div>
 
         <div style={divStyle}>
-          <Button type="primary" style={buttonStyle} onClick={this.onClick}>发送</Button>
+          <Button type="primary" style={buttonStyle} onClick={this.onClick}>send</Button>
         </div>
 
       </div>
