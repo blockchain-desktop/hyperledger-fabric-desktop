@@ -229,7 +229,7 @@ export default class DataContent extends React.Component {
                   onChange: this.onChange,
                   total: this.state.height }}
               >
-                <ColumnGroup title="最近区块">
+                <ColumnGroup title="Currrent Blocks">
                   <Column
                     defaultSortOrder="descend"
                     align="center"
@@ -250,13 +250,13 @@ export default class DataContent extends React.Component {
                   />
                   <Column
                     align="center"
-                    title="交易数"
+                    title="Number"
                     dataIndex="num"
                     key="num"
                   />
                   <Column
                     align="center"
-                    title="生成时间"
+                    title="Generate time"
                     dataIndex="time"
                     key="time"
                   />
