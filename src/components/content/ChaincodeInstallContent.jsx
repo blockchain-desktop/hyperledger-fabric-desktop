@@ -36,7 +36,7 @@ const CollectionCreateForm = Form.create()(
     constructor(props) {
       super(props);
       this.state = {
-
+        language: localStorage.getItem('language'),
       };
     }
     render() {
@@ -48,44 +48,44 @@ const CollectionCreateForm = Form.create()(
       return (
         <Modal
           visible={visible}
-          title="New Contract"
-          okText="create"
-          cancelText="cancel"
+          title={this.state.language === 'cn' ? '添加合约' : 'New Contract'}
+          okText={this.state.language === 'cn' ? '确认' : 'create'}
+          cancelText={this.state.language === 'cn' ? '取消' : 'cancel'}
           onCancel={onCancel}
           onOk={onCreate}
           centered
           width="480px"
         >
           <Form layout="vertical">
-            <FormItem label="name" style={formItemStyle}>
+            <FormItem label={this.state.language === 'cn' ? '名称' : 'Name'} style={formItemStyle}>
               {getFieldDecorator('name', {
                 rules: [{ required: true, message: 'chaincode name can not be null!' }, { validator: CollectionCreateForm.nameValidator }],
               })(
                 <Input placeholder="chaincode name" />,
               )}
             </FormItem>
-            <FormItem label="Version" style={formItemStyle}>
+            <FormItem label={this.state.language === 'cn' ? '版本' : 'Version'} style={formItemStyle}>
               {getFieldDecorator('version', {
                 rules: [{ required: true, message: 'chaincode version can not be null!' }, { validator: CollectionCreateForm.versionValidator }],
               })(
                 <Input placeholder="chaincode version" />,
               )}
             </FormItem>
-            <FormItem label="channel" style={formItemStyle}>
+            <FormItem label={this.state.language === 'cn' ? '通道' : 'Channel'} style={formItemStyle}>
               {getFieldDecorator('channel', {
                 rules: [{ required: true, message: 'channel name can not be null!' }, { validator: CollectionCreateForm.channelValidator }],
               })(
                 <Input placeholder="channel name" />,
               )}
             </FormItem>
-            <FormItem label="path" style={formItemStyle}>
+            <FormItem label={this.state.language === 'cn' ? '路径' : 'Path'} style={formItemStyle}>
               {getFieldDecorator('path', {
                 rules: [{ required: true, message: 'chaincode path can not be null!' }],
               })(
                 <Input placeholder="chaincode path" />,
               )}
             </FormItem>
-            <FormItem label="description" style={formItemStyle}>
+            <FormItem label={this.state.language === 'cn' ? '描述' : 'Description'} style={formItemStyle}>
               {getFieldDecorator('description')(<Input placeholder="function description" />)}
             </FormItem>
           </Form>
@@ -115,6 +115,7 @@ class ContractDiv extends React.Component {
       result: this.props.citem.result,
       icontype: 'check-circle',
       iconcolor: '#52c41a',
+      language: localStorage.getItem('language'),
     };
     this.handleMenuClick = this.handleMenuClick.bind(this);
     this.handleInstallChaincodeCallBack = this.handleInstallChaincodeCallBack.bind(this);
@@ -284,7 +285,7 @@ class ContractDiv extends React.Component {
             </p>
           </div>
           <div style={DropdownStyle}>
-            <Dropdown.Button overlay={menu} type="primary">operations</Dropdown.Button>
+            <Dropdown.Button overlay={menu} type="primary">{this.state.language === 'cn' ? '操作' : 'operations'}</Dropdown.Button>
           </div>
         </div>
       </div>
@@ -334,6 +335,7 @@ export default class ChaincodeInstallContent extends React.Component {
     this.state = {
       visible: false,
       todolist: arr,
+      language: localStorage.getItem('language'),
     };
     this.showModal = this.showModal.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -396,8 +398,8 @@ export default class ChaincodeInstallContent extends React.Component {
 
   render() {
     const outerDivStyle = {
-      minHeight: '900px',
       padding: '20px',
+      height: '100%',
     };
     const plusDivStyle = {
       height: '200px',
@@ -418,7 +420,7 @@ export default class ChaincodeInstallContent extends React.Component {
     return (
       <div style={outerDivStyle}>
         <div style={plusDivStyle}>
-          <Button icon="plus" style={buttonStyle} onClick={this.showModal}>Add contract</Button>
+          <Button icon="plus" style={buttonStyle} onClick={this.showModal}> {this.state.language === 'cn' ? '添加合约' : ' Add contract'}</Button>
           <CollectionCreateForm
             wrappedComponentRef={this.saveFormRef}
             visible={this.state.visible}

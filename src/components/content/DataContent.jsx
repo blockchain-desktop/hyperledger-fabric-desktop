@@ -35,6 +35,7 @@ export default class DataContent extends React.Component {
       height: 0,
       timer: null,
       pageSize: 4,
+      language: localStorage.getItem('language'),
     };
 
     this.showModal = this.showModal.bind(this);
@@ -174,7 +175,7 @@ export default class DataContent extends React.Component {
     const outerDivStyle = {
       background: '#fff',
       padding: '2px',
-      minHeight: '900px',
+      height: '100%',
     };
     const tableDivStyle = {
       padding: '10px',
@@ -229,7 +230,7 @@ export default class DataContent extends React.Component {
                   onChange: this.onChange,
                   total: this.state.height }}
               >
-                <ColumnGroup title="Currrent Blocks">
+                <ColumnGroup title={this.state.language === 'cn' ? '最近区块' : 'Current Blocks'}>
                   <Column
                     defaultSortOrder="descend"
                     align="center"
@@ -240,7 +241,7 @@ export default class DataContent extends React.Component {
                   />
                   <Column
                     align="center"
-                    title="Hash"
+                    title={this.state.language === 'cn' ? '哈希值' : 'Hash'}
                     key="hash"
                     render={(text, record) => (
                       <span>
@@ -250,13 +251,13 @@ export default class DataContent extends React.Component {
                   />
                   <Column
                     align="center"
-                    title="Number"
+                    title={this.state.language === 'cn' ? '数量' : 'Number'}
                     dataIndex="num"
                     key="num"
                   />
                   <Column
                     align="center"
-                    title="Generate time"
+                    title={this.state.language === 'cn' ? '生成时间' : 'Generate time'}
                     dataIndex="time"
                     key="time"
                   />
@@ -267,7 +268,7 @@ export default class DataContent extends React.Component {
         </div>
 
         <Modal
-          title="Block Detail"
+          title={this.state.language === 'cn' ? '区块' : 'Block Detail'}
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
