@@ -27,7 +27,7 @@ Suppose you input those fields:
 - peer grpc url : `grpc://localhost:7051` (replace this with your peer grpc url)
 - peer event url : `grpc://localhost:7053` (replace this with your peer event url)
 - orderer url : `grpc://localhost:7050`    (replace this with your orderer url)
-- username : ` Org1Admin` (choose a random username)
+- username : ` Org1Admin` (type a username)
 - certificate: choosing a certificate of user
 - private key: choosing a private key of user
 
@@ -97,7 +97,7 @@ Suppose you input those fields:
 - Version* :`4.0` （type a version）
 - Channel Name* :`mychannel` (replace this with your channel name)
 - Chaincode Path* :`github.com/hyperledger/fabric-dev-network/chaincode/fabcar/go`
-- Description :`car` (mark the effect of chaincode)
+- Description :`car` (mark the function of chaincode)
 
 >  Note!  <br />
 >  If chaincode's type is Golang, then the path is the fully qualified

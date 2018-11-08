@@ -7,17 +7,17 @@ and manage blockchains in a more elegant and simple way.
 
 Hyperledger Fabric Desktop provides the following major features:
 1. Manage the lifecycle of chaincodes,aka,smart contract,eg.,`install/instantiate/query/invoke`.
-2. Cross-platform，suitable for Windows,Mac,Linux.
-3. Graphical user interface, easy to install, easy to use.
-4. Users Keep the user's private key locally which Hyperledger Cello,Hyperledger Explorer can not implement.
-5. Multiple functions,e.g.,Block Dashboard, Chaincode Install, Chaincode Invoke,etc.
-6. Technology stack:Electron, React, Ant Design, Fabric-Node-sdk.
+2. Cross-platform, suitable for Windows,Mac,Linux.
+3. Friendly Graphical user interface, easy to install, easy to use.
+4. Users keep user's private key locally which Hyperledger Cello,Hyperledger Explorer do not implement.
+5. Key functions: Block Dashboard, Chaincode Install, Chaincode Invoke,etc.
+6. Technology stack: Electron, React, Ant Design, Fabric-Node-sdk.
 
 # Getting Started
 
-For developers,it is highly recommended to read [coding guidelines](../doc-En/coding-guidelines-En.md) first;
+For normal users, it is highly recommended to read [tutorial](../doc-Zn/tutorial-En.md) first.
 
-For normal users,it is highly recommended to read [tutorial](../doc-Zn/tutorial-En.md) first.
+For developers, it is highly recommended to read [coding guidelines](../doc-En/coding-guidelines-En.md) first;
 
 Additional instructions can be found in [hyperledger fabric doc](https://hyperledger-fabric.readthedocs.io/en/release-1.3/tutorials.html).
 
