@@ -15,7 +15,7 @@ Hyperledger Fabric Desktop provides the following major features:
 
 # Getting Started
 
-For normal users, it is highly recommended to read [tutorial](../doc-Zn/tutorial-En.md) first.
+For normal users, it is highly recommended to read [tutorial](../doc-En/tutorial-En.md) first.
 
 For developers, it is highly recommended to read [coding guidelines](../doc-En/coding-guidelines-En.md) first;
 
