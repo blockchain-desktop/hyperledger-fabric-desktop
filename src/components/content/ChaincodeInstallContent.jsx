@@ -400,6 +400,7 @@ export default class ChaincodeInstallContent extends React.Component {
     const outerDivStyle = {
       padding: '20px',
       height: '100%',
+      overflow: 'scroll',
     };
     const plusDivStyle = {
       height: '200px',
