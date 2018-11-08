@@ -4,7 +4,8 @@
     "document": true,
     "describe": true,
     "it": true,
-    "expect": true
+    "expect": true,
+    "localStorage": true
   },
   "extends": "eslint-config-airbnb",
   "rules": {

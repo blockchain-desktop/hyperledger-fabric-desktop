@@ -36,6 +36,7 @@ export default class BasicLayout extends React.Component {
     this.state = {
       collapsed: true,
       contentKey: 1,
+      language: localStorage.getItem('language'),
     };
     this.onCollapse = this.onCollapse.bind(this);
     this.switchContent = this.switchContent.bind(this);
@@ -74,7 +75,7 @@ export default class BasicLayout extends React.Component {
       padding: '12px',
     };
     return (
-      <Layout >
+      <Layout style={{ height: '100%' }}>
         <Sider
           trigger={<Icon type="logout" />}
           collapsible
@@ -86,15 +87,15 @@ export default class BasicLayout extends React.Component {
           <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
             <Menu.Item key="1" onClick={() => this.switchContent(1)}>
               <Icon type="snippets" theme="outlined" />
-              <span>Block Dashboard</span>
+              <span>{this.state.language === 'cn' ? '区块链看板' : 'Block Dashboard' }</span>
             </Menu.Item>
             <Menu.Item key="2" onClick={() => this.switchContent(2)}>
               <Icon type="file-search" theme="outlined" />
-              <span>Chaincode Invoke</span>
+              <span>{this.state.language === 'cn' ? '链码调用' : 'Chaincode Invoke' }</span>
             </Menu.Item>
             <Menu.Item key="3" onClick={() => this.switchContent(3)}>
               <Icon type="upload" />
-              <span>Chaincode Install</span>
+              <span>{this.state.language === 'cn' ? '链码安装' : 'Chaincode Install' }</span>
             </Menu.Item>
           </Menu>
         </Sider>

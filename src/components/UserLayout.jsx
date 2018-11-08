@@ -6,7 +6,7 @@ import { Button, Input, Layout, Icon } from 'antd';
 import getFabricClientSingleton from '../util/fabric';
 import { getConfigDBSingleton } from '../util/createDB';
 
-
+const ButtonGroup = Button.Group;
 const path = require('path');
 const fs = require('fs');
 
@@ -37,8 +37,8 @@ export default class UserLayout extends React.Component {
       keylabel: ' choose a private key',
       tlsPeerLabel: ' choose a tls peer key',
       tlsOrdererLabel: 'choose a tls orderer key',
+      language: localStorage.getItem('language'),
     };
-
 
     this.onClick = this.onClick.bind(this);
     this.peerGrpcUrlChange = this.peerGrpcUrlChange.bind(this);
@@ -49,8 +49,9 @@ export default class UserLayout extends React.Component {
     this.tlsOrdererImport = this.tlsOrdererImport.bind(this);
     this.ordererChange = this.ordererChange.bind(this);
     this.usernameChange = this.usernameChange.bind(this);
+    this.changeLangtoEn = this.changeLangtoEn.bind(this);
+    this.changeLangtoCn = this.changeLangtoCn.bind(this);
   }
-
 
   onClick() {
     const data = {
@@ -79,7 +80,6 @@ export default class UserLayout extends React.Component {
     logger.info(this.state.certPath);
     fc.importCer(this.state.keyPath, this.state.certPath);
   }
-
   peerGrpcUrlChange(event) {
     this.setState({ peerGrpcUrl: event.target.value });
   }
@@ -126,7 +126,14 @@ export default class UserLayout extends React.Component {
     this.setState({ username: event.target.value });
   }
 
-
+  changeLangtoEn() {
+    localStorage.setItem('language', 'en');
+    this.setState({ language: localStorage.getItem('language') });
+  }
+  changeLangtoCn() {
+    localStorage.setItem('language', 'cn');
+    this.setState({ language: localStorage.getItem('language') });
+  }
   render() {
     const LayoutStyle = {
       maxHeight: '600px',
@@ -148,6 +155,16 @@ export default class UserLayout extends React.Component {
       minHeight: '900px',
       display: 'block',
       marginLeft: '400px',
+    };
+    const languageStyle = {
+      position: 'absolute',
+      right: '10px',
+      top: '10px',
+    };
+    const buttonGroupStyle = {
+      backgroundColor: 'transparent',
+      borderStyle: 'none',
+      outline: 'none',
     };
     const LoginStyle = {
       display: 'block',
@@ -212,6 +229,12 @@ export default class UserLayout extends React.Component {
 
         <div style={contentStyle}>
           <Content>
+            <div style={languageStyle}>
+              <ButtonGroup>
+                <Button style={buttonGroupStyle} onClick={this.changeLangtoEn}>En</Button>
+                <Button style={buttonGroupStyle} onClick={this.changeLangtoCn}>Ch</Button>
+              </ButtonGroup>
+            </div>
             <div style={LoginStyle}>
               <span style={fontStyle}>Fabric Desktop</span>
             </div>
@@ -253,7 +276,7 @@ export default class UserLayout extends React.Component {
               <label htmlFor="tlsOrdererFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsOrdererLabel} </label>
             </div>
             <div style={lastDivStyle}>
-              <Button type="primary" style={buttonStyle} onClick={this.onClick}>Sign in</Button>
+              <Button type="primary" style={buttonStyle} onClick={this.onClick}>{this.state.language === 'cn' ? '登录' : 'Sign in'}</Button>
             </div>
           </Content>
         </div>

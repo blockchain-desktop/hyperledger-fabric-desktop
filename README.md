@@ -6,11 +6,11 @@ and manage blockchains in a more elegant and simple way.
 ## Main Features
 
 1. Manage the lifecycle of chaincodes,aka,smart contract,eg.,`install/instantiate/query/invoke`.
-2. Cross-platform，suitable for Windows,Mac,Linux.
-3. Graphical user interface, easy to install, easy to use.
-4. Users Keep the user's private key locally which Hyperledger Cello,Hyperledger Explorer can not implement.
-5. Multiple functions,e.g.,Block Dashboard, Chaincode Install, Chaincode Invoke,etc.
-6. Technology stack:Electron, React, Ant Design, Fabric-Node-sdk.
+2. Cross-platform, suitable for Windows,Mac,Linux.
+3. Friendly Graphical user interface, easy to install, easy to use.
+4. Users keep user's private key locally which Hyperledger Cello,Hyperledger Explorer do not implement.
+5. Key features: Block Dashboard, Chaincode Install, Chaincode Invoke,etc.
+6. Technology stack: Electron, React, Ant Design, Fabric-Node-sdk.
 
 ## Releases
 
