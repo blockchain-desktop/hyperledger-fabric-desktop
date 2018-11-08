@@ -3,11 +3,11 @@ Any kind of contribution is encouraged,e.g., software feedback or code contribut
 
 ### Raising an Issue
 
-If you have a question on using Hyperledger fabric desktop:
+If you have a question when using Hyperledger fabric desktop:
 
 - raise an [issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)
 
-If you have found a defect or want to raise a feature requests:
+If you have found a defect or want to raise a feature request:
 
 - raise an [issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)
 
