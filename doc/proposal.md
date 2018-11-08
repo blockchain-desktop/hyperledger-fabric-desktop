@@ -12,15 +12,14 @@ Fabric Desktop
 
 ## Abstract
 **Hyperledger Fabric Desktop** is a user-friendly cross-platform desktop application,
-which help ordinary users to play with Fabric network easily. 
+which helps ordinary users to play around with Fabric network easily. 
 It is general-purpose, in other words, an API tool with GUI.
 It can be the go-to client for new comers, 
-and can also serve as a prototype which help accelerate developing custom applications.
-Its features include creating, querying and managing transactions, chaincodes, channels, CAs, etc.
+and also serve as a prototype which helps accelerate development of custom applications.
  
 ## Motivation
 Fabric is a permissioned blockchain framework. 
-Many industries start to use it to build their own blockchain network alliance.
+It is becoming popular in many industries where blockchain network alliances are needed.
 For those non-IT companies who are not capable to build a system by themselves, which are many, they always 
 seek for outside IT companies to build for them.  
 
@@ -29,7 +28,7 @@ clients are always confused about what on earth is blockchain,
 and how it acts in a real system. They often ask questions such as
 "Could you show me something real?", "Can I have a try to create a transaction?", etc., before a project
 is done or even started.
-Those who are not developers want to have hands-on experience to interact with fabric blockchain networks, 
+Those who are not developers also want to have hands-on experience to interact with fabric blockchain networks, 
 instead of just looking at slides or the black window of CLI.
 Therefore, a primitive GUI client is needed, like a bitcoin wallet.
 
@@ -44,15 +43,16 @@ Hyperledger Explorer | Browser/Server | simple | high | high
 Hyperledger Cello | Browser/Server | rich, but specific to BaaS | medium | high 
  
 One more thing is needed to be mentioned, that for those B/S architecture tools such as Explorer and Cello, it
-is hard to clarify the concern that a user's private key are kept in servers but not the user's personal computer. 
-It means that it is the servers to represent them rather than the their own devices. 
+is hard to clarify the concern that a user's private key are kept in servers instead of the user's personal computer. 
+It means that it is the servers to represent them rather than their own devices. 
 It also requires B/S systems to have another access-control mechanism above the original PKI, 
 in order to prevent others to act on behalf of the user. 
 
-All these worries are unnecessary for a desktop app. Users can simply store private keys in their own devices 
-with this desktop app, instead of the servers that they cannot control or even understand. 
+All these worries are unnecessary for a desktop app. With this app, 
+users can simply store private keys in their own devices, 
+instead of the servers that they cannot control or even understand. 
 
-Besides, in many case, the custom distributed-ledger applications are mostly 
+Besides, in many cases, the custom distributed-ledger applications are mostly 
 about custom role management and transaction flows. 
 There are many features that are common for most cases, such as chaincode installation and installation, 
 block-info dashboard, CA registration and revocation.  
@@ -67,7 +67,9 @@ To sum up, the advantages of a general-purpose desktop are following:
 
 ## Solution
 The desktop is a simple wrapper of fabric-nodejs SDK, and will keep general-purpose at heart. 
-In other words, it is an API tool with GUI, and will never be a custom one. Its scope is:  
+In other words, it is an API tool with GUI, and will never be a custom one. 
+Its features include creating, querying and managing transactions, chaincodes, channels, CAs, etc.
+Its scope is:  
 
 * GUI application 
 * General functions like CLI
@@ -104,12 +106,12 @@ The source code repository is hosted in Github. Please see
 #### Progress Report
 As v0.1.0 version, we have already implemented features including connection with peers and orderers, installation and delopyment of chaincode, 
 query and invocation of chaincode, and a simple block-info dashboard. 
-We can already use it to demonstrate the workflow of a fabric blockchain network.
+The workflow of a fabric blockchain network can already be demonstrated by it.
 
 #### Roadmap
-Recently, we focus on documents, internationalization, quality assurence, and architecture refactoring.
+Recently, we are focusing on documents, internationalization, quality assurence, and architecture refactoring.
 After these things done, ideally before Dec. 2018, we will start v0.2.0 version to implement more features. 
-We estimate about 3 or 4-rounds development, we will reach the goal: a full-function general-purpose fabric desktop app.
+About 3 or 4-rounds development, we will reach the goal: a full-function general-purpose fabric desktop app.
 
 Afterwards, we only need to maintain the core features to follow the progress of Fabric. Of course, we 
 might try something more interesting then, for example, integrating Blockly to allow ordinary users
@@ -118,11 +120,12 @@ sawtooth etc.
 
 ## Effort and Resources
 
-We design this project as simple as possible, and choose tech stack as common as possible. 
+We designed this project as simple as possible, and chose tech stack as common as possible. 
 So that we can implement it easily, and, hopefully, attract outside contributors easily.
+This project welcomes all potential contributors to participate.  
 It won't require a significant amount of efforts and resources to fulfill and maintain this project. 
 
-Yonyou has committed and will still commit consistent effort to this project. 
+Yonyou has committed and will still commit consistent effort to this project.
 The following would be the initial set of maintainers for the project: 
 
 Name| Company | Allocation
