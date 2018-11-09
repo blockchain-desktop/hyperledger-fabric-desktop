@@ -173,20 +173,18 @@ class ContractDiv extends React.Component {
       // 安装链码操作
       this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
       this.setState({ result: 'install chaincode...' });
-      fc.installCc(this.handleInstallChaincodeCallBack,
-        this.props.citem.path,
-        this.props.citem.name,
-        this.props.citem.version);
+      fc.installCc(this.props.citem.path, this.props.citem.name, this.props.citem.version)
+        .then(this.handleInstallChaincodeCallBack, this.handleInstallChaincodeCallBack);
     }
     if (e.key === '2') {
       // 实例化链码操作
       this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
       this.setState({ result: 'instantiate chaincode...' });
-      fc.instantiateCc(this.handleInstantiateChaincodeCallBack,
-        this.props.citem.channel,
+      fc.instantiateCc(this.props.citem.channel,
         this.props.citem.name,
         this.props.citem.version,
-        ['']);
+        [''])
+        .then(this.handleInstantiateChaincodeCallBack, this.handleInstantiateChaincodeCallBack);
     }
     if (e.key === '3') {
       // 删除链码操作

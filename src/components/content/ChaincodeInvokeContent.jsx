@@ -37,17 +37,11 @@ export default class ChaincodeInvokeContent extends React.Component {
 
     const fc = getFabricClientSingleton();
     if (this.state.type === 'query') {
-      fc.queryCc(this.onClickCallback,
-        this.state.chaincodeId,
-        this.state.fcn,
-        this.state.args,
-        this.state.channel);
+      fc.queryCc(this.state.chaincodeId, this.state.fcn, this.state.args, this.state.channel)
+        .then(this.onClickCallback, this.onClickCallback);
     } else if (this.state.type === 'invoke') {
-      fc.invokeCc(this.onClickCallback,
-        this.state.chaincodeId,
-        this.state.fcn,
-        this.state.args,
-        this.state.channel);
+      fc.invokeCc(this.state.chaincodeId, this.state.fcn, this.state.args, this.state.channel)
+        .then(this.onClickCallback, this.onClickCallback);
     } else {
       logger.error('Chaincode calling type is invalid.');
     }

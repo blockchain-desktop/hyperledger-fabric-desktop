@@ -96,54 +96,6 @@ class FabricClient {
     return args || [];
   }
 
-  /**
-   *  查询链码
-   * @param callback {function(string)}  回调函数，参数为字符串结果
-   * @param chaincodeId {string}
-   * @param fcn {string}
-   * @param args {[]string}
-   * @param channelName {string}
-   */
-  queryCc(callback, chaincodeId, fcn, args, channelName) {
-    logger.info(`start query, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`);
-
-    const channel = this._setupChannelOnce(channelName);
-    this._enrollUser().then((user) => {
-      if (user && user.isEnrolled()) {
-        logger.info('Successfully loaded user1 from persistence, user:', user.toString());
-      } else {
-        throw new Error('Failed to get user1.... run registerUser.js');
-      }
-
-      const request = {
-        chaincodeId,
-        fcn,
-        args: FabricClient._argsNullHelper(args),
-      };
-
-      // send the query proposal to the peer
-      return channel.queryByChaincode(request);
-    }).then((queryResponses) => {
-      logger.info('Query has completed, checking results');
-      // queryResponses could have more than one results if there were multiple peers targets
-      if (queryResponses && queryResponses.length === 1) {
-        if (queryResponses[0] instanceof Error) {
-          logger.error('error from query = ', queryResponses[0]);
-        } else {
-          const result = queryResponses[0].toString();
-          logger.info('Response is ', result);
-
-          callback(result);
-        }
-      } else {
-        logger.info('No payloads were returned from query');
-      }
-    }).catch((err) => {
-      logger.error(`Failed to query successfully :: ${err}`);
-    });
-  }
-
-
   importCer(keyPath, certPath) {
     // -------------------- admin start ---------
     logger.info('start to create admin user.');
@@ -160,6 +112,63 @@ class FabricClient {
   }
 
   /**
+   *  查询链码
+   * @param callback {function(string)}  回调函数，参数为字符串结果
+   * @param chaincodeId {string}
+   * @param fcn {string}
+   * @param args {[]string}
+   * @param channelName {string}
+   */
+  queryCc(chaincodeId, fcn, args, channelName) {
+    logger.info(`start query, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`);
+
+    let channel;
+    try {
+      channel = this._setupChannelOnce(channelName);
+    } catch (err) {
+      logger.error(`Failed to create channel :: ${err}`);
+      return Promise.reject(err);
+    }
+
+    return this._enrollUser().then((user) => {
+      if (user && user.isEnrolled()) {
+        logger.info('Successfully loaded user1 from persistence, user:', user.toString());
+      } else {
+        logger.error('Failed to get user1.... run registerUser.js');
+        return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
+      }
+
+      const request = {
+        chaincodeId,
+        fcn,
+        args: FabricClient._argsNullHelper(args),
+      };
+
+      // send the query proposal to the peer
+
+      return channel.queryByChaincode(request);
+    }).then((queryResponses) => {
+      logger.info('Query has completed, checking results');
+      // queryResponses could have more than one results if there were multiple peers targets
+      if (queryResponses && queryResponses.length === 1) {
+        if (queryResponses[0] instanceof Error) {
+          logger.error('error from query = ', queryResponses[0]);
+          return Promise.reject(new Error(queryResponses[0]));
+        }
+        const result = queryResponses[0].toString();
+        logger.info('Success, response is ', result);
+
+        return Promise.resolve(result);
+      }
+      logger.info('No payloads were returned from query');
+      return Promise.reject(new Error('No payloads were returned from query'));
+    }).catch((err) => {
+      logger.error(`Failed to query successfully :: ${err}`);
+      return Promise.reject(new Error(`Failed to query successfully :: ${err}`));
+    });
+  }
+
+  /**
    *  调用链码，写入账本
    * @param callback {function(string)}  回调函数，参数为字符串结果
    * @param chaincodeId {string}
@@ -167,17 +176,24 @@ class FabricClient {
    * @param args {[]string}
    * @param channelName {string}
    */
-  invokeCc(callback, chaincodeId, fcn, args, channelName) {
+  invokeCc(chaincodeId, fcn, args, channelName) {
     logger.info(`start invoke, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`);
-    const channel = this._setupChannelOnce(channelName);
+    let channel;
+    try {
+      channel = this._setupChannelOnce(channelName);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject(err);
+    }
     let txID;
     const fabricClient = this.fabric_client;
 
-    this._enrollUser().then((user) => {
+    return this._enrollUser().then((user) => {
       if (user && user.isEnrolled()) {
         logger.info('Successfully loaded user1 from persistence');
       } else {
-        throw new Error('Failed to get user1.... run registerUser.js');
+        logger.error('Failed to get user1.... run registerUser.js');
+        return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
       }
 
       // get a transaction id object based on the current user assigned to fabric client
@@ -206,6 +222,7 @@ class FabricClient {
         logger.info('Transaction proposal was good:');
       } else {
         logger.error('Transaction proposal was bad');
+        return Promise.reject(new Error('Transaction proposal was bad'));
       }
       if (isProposalGood) {
         logger.info(util.format(
@@ -271,7 +288,7 @@ class FabricClient {
         return Promise.all(promises);
       }
       logger.error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
-      throw new Error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
+      return Promise.reject(new Error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...'));
     }).then((results) => {
       logger.info('Send transaction promise and event listener promise have completed');
       // check the results in the order the promises were added to the promise all list
@@ -288,10 +305,11 @@ class FabricClient {
       }
       logger.info('Invoke result:', results);
 
-      callback('调用成功'); // TODO: invoke的结果获取
+      return Promise.resolve('调用成功');
     })
       .catch((err) => {
         logger.error(`Failed to invoke successfully :: ${err}`);
+        return Promise.reject(new Error(`Failed to invoke successfully :: ${err}`));
       });
   }
 
@@ -304,42 +322,36 @@ class FabricClient {
    * @param chaincodeName
    * @param chaincodeVersion
    */
-  installCc(callback, chaincodePath, chaincodeName, chaincodeVersion) {
+  installCc(chaincodePath, chaincodeName, chaincodeVersion) {
     logger.info(`${chaincodePath}, ${chaincodeName}, ${chaincodeVersion}`);
-    this._enrollUser().then((user) => {
+    const self = this;
+    return this._enrollUser().then((user) => {
       logger.info('Successfully loaded user from persistence, user:', user.toString());
 
       const request = {
-        targets: [this.fabric_client.newPeer(this.config.peerGrpcUrl)], // peerAddress
+        targets: [self.fabric_client.newPeer(self.config.peerGrpcUrl)], // peerAddress
         chaincodePath,
         chaincodeId: chaincodeName,
         chaincodeVersion,
       };
-      return this.fabric_client.installChaincode(request);
+      return self.fabric_client.installChaincode(request);
     }).then((results) => {
       const proposalResponses = results[0];
-      let isProposalGood = false;
       if (proposalResponses && proposalResponses[0].response &&
         proposalResponses[0].response.status === 200) {
-        isProposalGood = true;
         logger.info('Transaction proposal was good:');
-      } else {
-        logger.error('Transaction proposal was bad');
+        return Promise.resolve('success');
       }
-
-      // 安装成功
-      let msg;
-      if (isProposalGood) {
-        msg = 'success';
-        logger.info(msg);
-      } else {
-        msg = 'fail';
-        logger.error(msg);
-      }
-      callback(msg);
+      logger.error('Transaction proposal was bad');
+      return Promise.reject('fail');
     }, (err) => {
       logger.error(`Failed to send install proposal due to error: ${err.stack}` ? err.stack : err);
-      throw new Error(`Failed to send install proposal due to error: ${err.stack}` ? err.stack : err);
+      // throw new Error(`Failed to send install proposal due to error: ${err.stack}`
+      // ? err.stack : err);
+      return Promise.reject('fail');
+    }).catch((err) => {
+      logger.error(`Failed to install :: ${err}`);
+      return Promise.reject('fail');
     });
   }
 
@@ -352,16 +364,23 @@ class FabricClient {
    * @param chaincodeVersion
    * @param args
    */
-  instantiateCc(callback, channelName, chaincodeName, chaincodeVersion, args) {
-    const channel = this._setupChannelOnce(channelName);
+  instantiateCc(channelName, chaincodeName, chaincodeVersion, args) {
+    let channel;
+    try {
+      channel = this._setupChannelOnce(channelName);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject('fail');
+    }
     let txID;
 
-    this._enrollUser().then((user) => {
+    const self = this;
+    return this._enrollUser().then((user) => {
       logger.info('Successfully loaded user from persistence, user:', user.toString());
 
-      txID = this.fabric_client.newTransactionID();
+      txID = self.fabric_client.newTransactionID();
       const request = {
-        targets: [this.fabric_client.newPeer(this.config.peerGrpcUrl)], // peerAddress
+        targets: [self.fabric_client.newPeer(self.config.peerGrpcUrl)], // peerAddress
         chaincodeId: chaincodeName,
         chaincodeVersion,
         args,
@@ -377,7 +396,7 @@ class FabricClient {
         && proposalResponses[0].response.status === 200;
 
       if (!isGood) {
-        throw new Error('Transaction proposal was bad');
+        return Promise.reject('fail');
       }
 
       logger.info('Transaction proposal was good:');
@@ -389,11 +408,11 @@ class FabricClient {
       return channel.sendTransaction(request);
     }).then((results) => {
       logger.info('Complete instantiating chaincode.', results);
-      callback('success');
+      return Promise.resolve('success');
     })
       .catch((err) => {
         logger.error(`Fail to instantiate chaincode. Error message: ${err.stack}` ? err.stack : err);
-        callback('fail');
+        return Promise.reject('fail');
       });
   }
 
@@ -403,12 +422,12 @@ class FabricClient {
    * @param blockNumber
    * @param channelName
    */
-  queryBlock(callback, blockNumber, channelName) {
+  queryBlock(blockNumber, channelName) {
     const channel = this._setupChannelOnce(channelName);
 
-    this._enrollUser().then(() => channel.queryBlock(blockNumber)).then((block) => {
+    return this._enrollUser().then(() => channel.queryBlock(blockNumber)).then((block) => {
       logger.info('block:', block, block.toString());
-      callback(block);
+      return Promise.resolve(block);
     });
   }
 
@@ -417,12 +436,12 @@ class FabricClient {
    * @param callback
    * @param channelName
    */
-  queryInfo(callback, channelName) {
+  queryInfo(channelName) {
     const channel = this._setupChannelOnce(channelName);
 
-    this._enrollUser().then(() => channel.queryInfo()).then((blockchainInfo) => {
+    return this._enrollUser().then(() => channel.queryInfo()).then((blockchainInfo) => {
       logger.info('blockchainInfo:', blockchainInfo, blockchainInfo.toString());
-      callback(blockchainInfo);
+      return Promise.resolve(blockchainInfo);
     });
   }
 }

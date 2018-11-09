@@ -3,7 +3,6 @@
 import React from 'react';
 import { Col, Row, Table, Modal } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
-import getBlockDBSingleton from '../../util/createDB';
 
 const logger = require('electron-log');
 
@@ -46,13 +45,13 @@ export default class DataContent extends React.Component {
     this.onChange = this.onChange.bind(this);
 
     const fc = getFabricClientSingleton();
-    fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
+    fc.queryInfo('mychannel').then(this.onQueryInfoCallback);
   }
 
   componentDidMount() {
     this.state.timer = setInterval(() => {
       const fc = getFabricClientSingleton();
-      fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
+      fc.queryInfo('mychannel').then(this.onQueryInfoCallback);
     }, 5000);
   }
 
@@ -69,7 +68,7 @@ export default class DataContent extends React.Component {
       currentPage: current - 1,
     });
     const fc = getFabricClientSingleton();
-    fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
+    fc.queryInfo('mychannel').then(this.onQueryInfoCallback);
   }
 
 
@@ -97,7 +96,7 @@ export default class DataContent extends React.Component {
         head[tempHead.key] = tempHead;
         this.setState({ head });
       } else {
-        fc.queryBlock(this.onQueryBlockCallback, i, 'mychannel');
+        fc.queryBlock(i, 'mychannel').then(this.onQueryBlockCallback);
       }
     }
   }
