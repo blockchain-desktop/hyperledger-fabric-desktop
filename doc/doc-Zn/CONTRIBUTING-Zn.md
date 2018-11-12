@@ -18,5 +18,5 @@
 4. 具体的开发工作可参考[开发者文档](coding-guidelines-Zn.md)
 5. 开发完成后push到自己的github仓库,非公共的正式仓库
 6. 此时在公共的正式仓库中点击pull request, 确定reviewers后提交pull request
-7. 等待管理员评审
+7. 等待管理员评审，评审后可合并到公共的正式仓库
 
