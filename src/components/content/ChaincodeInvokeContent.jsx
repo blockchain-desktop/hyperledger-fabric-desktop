@@ -20,6 +20,7 @@ export default class ChaincodeInvokeContent extends React.Component {
       fcn: '',
       args: '',
       type: 'query',
+      language: localStorage.getItem('language'),
     };
 
     this.onClick = this.onClick.bind(this);
@@ -36,17 +37,11 @@ export default class ChaincodeInvokeContent extends React.Component {
 
     const fc = getFabricClientSingleton();
     if (this.state.type === 'query') {
-      fc.queryCc(this.onClickCallback,
-        this.state.chaincodeId,
-        this.state.fcn,
-        this.state.args,
-        this.state.channel);
+      fc.queryCc(this.state.chaincodeId, this.state.fcn, this.state.args, this.state.channel)
+        .then(this.onClickCallback, this.onClickCallback);
     } else if (this.state.type === 'invoke') {
-      fc.invokeCc(this.onClickCallback,
-        this.state.chaincodeId,
-        this.state.fcn,
-        this.state.args,
-        this.state.channel);
+      fc.invokeCc(this.state.chaincodeId, this.state.fcn, this.state.args, this.state.channel)
+        .then(this.onClickCallback, this.onClickCallback);
     } else {
       logger.error('Chaincode calling type is invalid.');
     }
@@ -78,14 +73,19 @@ export default class ChaincodeInvokeContent extends React.Component {
 
   render() {
     const outerDivStyle = {
-      minHeight: '900px',
       padding: '0 15px',
+      height: '100%',
     };
     const divStyle = {
       margin: '24px 0',
     };
+    const inputDivStyle = {
+      float: 'right',
+      width: '65%',
+      marginRight: '22%',
+    };
     const inputStyle = {
-      width: '70%',
+      width: '100%',
     };
     const buttonStyle = {
       width: '100%',
@@ -94,33 +94,43 @@ export default class ChaincodeInvokeContent extends React.Component {
       <div style={outerDivStyle}>
 
         <div style={divStyle}>
-          通道名称：
-          <Input type="text" value={this.state.channel} placeholder="mychannel" style={inputStyle} onChange={this.channelChange} />
+          {this.state.language === 'cn' ? '通道名称：' : 'channel:'}
+          <div style={inputDivStyle}>
+            <Input type="text" value={this.state.channel} placeholder="channel name" style={inputStyle} onChange={this.channelChange} />
+          </div>
         </div>
 
         <div style={divStyle}>
-          智能合约：
-          <Input type="text" value={this.state.chaincodeId} placeholder="fabcar" style={inputStyle} onChange={this.chaincodeIdChange} />
+          {this.state.language === 'cn' ? '智能合约：' : 'contract：'}
+          <div style={inputDivStyle}>
+            <Input type="text" value={this.state.chaincodeId} placeholder="contract name" style={inputStyle} onChange={this.chaincodeIdChange} />
+          </div>
         </div>
 
         <div style={divStyle}>
-          函数名称：
-          <Input type="text" value={this.state.fcn} placeholder="queryAllCars" style={inputStyle} onChange={this.fcnChange} />
+          {this.state.language === 'cn' ? '函数名称：' : 'function ：'}
+          <div style={inputDivStyle}>
+            <Input type="text" value={this.state.fcn} placeholder="function name" style={inputStyle} onChange={this.fcnChange} />
+          </div>
         </div>
 
         <div style={divStyle}>
-          &emsp;&emsp;参数：
-          <Select mode="tags" style={inputStyle} placeholder="parameter" onChange={this.argsChange}>
-            <Option value="null">null</Option>
-          </Select>
+          {this.state.language === 'cn' ? '参数：' : 'parameter：'}
+          <div style={inputDivStyle}>
+            <Select mode="tags" style={inputStyle} placeholder="parameter" onChange={this.argsChange}>
+              <Option value="null">null</Option>
+            </Select>
+          </div>
         </div>
 
         <div style={divStyle}>
-          &emsp;&emsp;方法：
-          <Radio.Group value={this.state.type} buttonStyle="solid" onChange={this.typeChange}>
-            <Radio.Button value="query">查询(query)</Radio.Button>
-            <Radio.Button value="invoke">调用(invoke)</Radio.Button>
-          </Radio.Group>
+          {this.state.language === 'cn' ? '方法：' : ' method:'}
+          <div style={inputDivStyle}>
+            <Radio.Group value={this.state.type} buttonStyle="solid" onChange={this.typeChange}>
+              <Radio.Button value="query">query</Radio.Button>
+              <Radio.Button value="invoke">invoke</Radio.Button>
+            </Radio.Group>
+          </div>
         </div>
 
         <div style={divStyle}>
@@ -133,7 +143,7 @@ export default class ChaincodeInvokeContent extends React.Component {
         </div>
 
         <div style={divStyle}>
-          <Button type="primary" style={buttonStyle} onClick={this.onClick}>发送</Button>
+          <Button type="primary" style={buttonStyle} onClick={this.onClick}>{this.state.language === 'cn' ? '发送' : 'send'}</Button>
         </div>
 
       </div>

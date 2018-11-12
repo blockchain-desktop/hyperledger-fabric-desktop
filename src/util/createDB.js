@@ -4,6 +4,7 @@ const Datastore = require('nedb');
 
 let chaincodeDB;
 let configDB;
+let blockDB;
 
 export function getChaincodeDBSingleton() {
   if (!chaincodeDB) {
@@ -17,4 +18,11 @@ export function getConfigDBSingleton() {
     configDB = new Datastore({ filename: path.join(__dirname, '../../resources/persistence/config.db'), autoload: true });
   }
   return configDB;
+}
+
+export function getBlockDBSingleton() {
+  if (!blockDB) {
+    blockDB = new Datastore({ filename: path.join(__dirname, '../../resources/persistence/block.db'), autoload: true });
+  }
+  return blockDB;
 }

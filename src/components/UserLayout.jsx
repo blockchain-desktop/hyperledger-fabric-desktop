@@ -6,7 +6,7 @@ import { Button, Input, Layout, Icon } from 'antd';
 import getFabricClientSingleton from '../util/fabric';
 import { getConfigDBSingleton } from '../util/createDB';
 
-
+const ButtonGroup = Button.Group;
 const path = require('path');
 const fs = require('fs');
 
@@ -20,7 +20,7 @@ const bcgd = path.join(__dirname, '../../resources/styles/image/blc.jpg');
 
 // const styles = path.join(__dirname,'content/styles/css/UserLayoutCss.css');
 
-export default class DataContent extends React.Component {
+export default class UserLayout extends React.Component {
   constructor(props) {
     super(props);
 
@@ -31,20 +31,27 @@ export default class DataContent extends React.Component {
       username: 'Org1Admin',
       certPath: '',
       keyPath: '',
+      tlsPeerPath: '',
+      tlsOrdererPath: '',
       certlabel: '  choose a certificate ',
-      keylabel: ' choose a privary key',
+      keylabel: ' choose a private key',
+      tlsPeerLabel: ' choose a tls peer key',
+      tlsOrdererLabel: 'choose a tls orderer key',
+      language: localStorage.getItem('language'),
     };
-
 
     this.onClick = this.onClick.bind(this);
     this.peerGrpcUrlChange = this.peerGrpcUrlChange.bind(this);
     this.peerEventUrlChange = this.peerEventUrlChange.bind(this);
     this.cerImport = this.cerImport.bind(this);
     this.priImport = this.priImport.bind(this);
+    this.tlsPeerImport = this.tlsPeerImport.bind(this);
+    this.tlsOrdererImport = this.tlsOrdererImport.bind(this);
     this.ordererChange = this.ordererChange.bind(this);
     this.usernameChange = this.usernameChange.bind(this);
+    this.changeLangtoEn = this.changeLangtoEn.bind(this);
+    this.changeLangtoCn = this.changeLangtoCn.bind(this);
   }
-
 
   onClick() {
     const data = {
@@ -53,6 +60,8 @@ export default class DataContent extends React.Component {
       peerEventUrl: this.state.peerEventUrl,
       ordererUrl: this.state.ordererUrl,
       username: this.state.username,
+      tlsPeerPath: this.state.tlsPeerPath,
+      tlsOrdererPath: this.state.tlsOrdererPath,
       path: 'resources/key/',
     };
     const content = JSON.stringify(data);
@@ -71,7 +80,6 @@ export default class DataContent extends React.Component {
     logger.info(this.state.certPath);
     fc.importCer(this.state.keyPath, this.state.certPath);
   }
-
   peerGrpcUrlChange(event) {
     this.setState({ peerGrpcUrl: event.target.value });
   }
@@ -87,9 +95,24 @@ export default class DataContent extends React.Component {
     this.setState({ certlabel: cerArray[cerArray.length - 1] });
   }
 
+  tlsPeerImport() {
+    const selectedFile = document.getElementById('tlsPeerFiles').files[0];// 获取读取的File对象
+    this.setState({ tlsPeerPath: selectedFile.path });
+    const tlsArray = selectedFile.path.split('/');
+    this.setState({ tlsPeerLabel: tlsArray[tlsArray.length - 1] });
+  }
+
+  tlsOrdererImport() {
+    const selectedFile = document.getElementById('tlsOrdererFiles').files[0];// 获取读取的File对象
+    this.setState({ tlsOrdererPath: selectedFile.path });
+    const tlsArray = selectedFile.path.split('/');
+    this.setState({ tlsOrdererLabel: tlsArray[tlsArray.length - 1] });
+  }
 
   priImport() {
     const selectedFile = document.getElementById('priFiles').files[0];// 获取读取的File对象
+    console.log(document.getElementById('priFiles'));
+    console.log(document.getElementById('priFiles').files);
     this.setState({ keyPath: selectedFile.path });
     const priArray = selectedFile.path.split('/');
     this.setState({ keylabel: priArray[priArray.length - 1] });
@@ -103,7 +126,14 @@ export default class DataContent extends React.Component {
     this.setState({ username: event.target.value });
   }
 
-
+  changeLangtoEn() {
+    localStorage.setItem('language', 'en');
+    this.setState({ language: localStorage.getItem('language') });
+  }
+  changeLangtoCn() {
+    localStorage.setItem('language', 'cn');
+    this.setState({ language: localStorage.getItem('language') });
+  }
   render() {
     const LayoutStyle = {
       maxHeight: '600px',
@@ -126,23 +156,25 @@ export default class DataContent extends React.Component {
       display: 'block',
       marginLeft: '400px',
     };
+    const languageStyle = {
+      position: 'absolute',
+      right: '10px',
+      top: '10px',
+    };
+    const buttonGroupStyle = {
+      backgroundColor: 'transparent',
+      borderStyle: 'none',
+      outline: 'none',
+    };
     const LoginStyle = {
       display: 'block',
       alignItems: 'center',
-      padding: '24px 0',
+      padding: '12px 0',
     };
     const fontStyle = {
       fontSize: '38px',
     };
-    const cerfileStyle = {
-      width: '0.1px',
-      height: '0.1px',
-      opacity: 0,
-      overflow: 'hidden',
-      position: 'absolute',
-      zIndex: -1,
-    };
-    const prifilesStyle = {
+    const fileStyle = {
       width: '0.1px',
       height: '0.1px',
       opacity: 0,
@@ -177,10 +209,10 @@ export default class DataContent extends React.Component {
       float: 'right',
     };
     const firstDivStyle = {
-      margin: '10px 8px 27px 8px',
+      margin: '10px 8px 20px 8px',
     };
     const divStyle = {
-      margin: '27px 8px',
+      margin: '20px 8px',
     };
     const lastDivStyle = {
       margin: '32px 8px',
@@ -197,6 +229,12 @@ export default class DataContent extends React.Component {
 
         <div style={contentStyle}>
           <Content>
+            <div style={languageStyle}>
+              <ButtonGroup>
+                <Button style={buttonGroupStyle} onClick={this.changeLangtoEn}>En</Button>
+                <Button style={buttonGroupStyle} onClick={this.changeLangtoCn}>Ch</Button>
+              </ButtonGroup>
+            </div>
             <div style={LoginStyle}>
               <span style={fontStyle}>Fabric Desktop</span>
             </div>
@@ -219,16 +257,26 @@ export default class DataContent extends React.Component {
             </div>
             <div style={divStyle}>
               <span style={spanStyle}>certificate：</span>
-              <input type="file" id="cerFiles" name="cerFiles" style={cerfileStyle}onChange={this.cerImport} />
+              <input type="file" id="cerFiles" name="cerFiles" style={fileStyle}onChange={this.cerImport} />
               <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.certlabel} </label>
             </div>
             <div style={divStyle}>
               <span style={spanStyle}>private key：</span>
-              <input type="file" id="priFiles" name="priFiles" style={prifilesStyle} onChange={this.priImport} />
+              <input type="file" id="priFiles" name="priFiles" style={fileStyle} onChange={this.priImport} />
               <label htmlFor="priFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.keylabel}</label>
             </div>
+            <div style={divStyle}>
+              <span style={spanStyle}>tls peer key：</span>
+              <input type="file" id="tlsPeerFiles" name="tlsPeerFiles" style={fileStyle} onChange={this.tlsPeerImport} />
+              <label htmlFor="tlsPeerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsPeerLabel} </label>
+            </div>
+            <div style={divStyle}>
+              <span style={spanStyle}>tls orderer key：</span>
+              <input type="file" id="tlsOrdererFiles" name="tlsOrdererFiles" style={fileStyle} onChange={this.tlsOrdererImport} />
+              <label htmlFor="tlsOrdererFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsOrdererLabel} </label>
+            </div>
             <div style={lastDivStyle}>
-              <Button type="primary" style={buttonStyle} onClick={this.onClick}>登录</Button>
+              <Button type="primary" style={buttonStyle} onClick={this.onClick}>{this.state.language === 'cn' ? '登录' : 'Sign in'}</Button>
             </div>
           </Content>
         </div>

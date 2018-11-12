@@ -2,11 +2,11 @@ node_modules
 out
 .eslintcache
 .idea
-
+resources/persistence
 
 # fabric network
 fabric/fabcar/hfc-key-store
 fabric/fabcar/node_modules
 
-resources/persistence/chaincode.db
+
 

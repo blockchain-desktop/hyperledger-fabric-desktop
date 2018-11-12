@@ -1,7 +1,11 @@
 {
   "parser": "babel-eslint",
   "globals":{
-    "document": true
+    "document": true,
+    "describe": true,
+    "it": true,
+    "expect": true,
+    "localStorage": true
   },
   "extends": "eslint-config-airbnb",
   "rules": {
@@ -14,6 +18,8 @@
     "no-underscore-dangle": 0,
     "jsx-a11y/href-no-hash": 0,
     "react/prop-types": 0,
-    "prefer-template": 0
+    "prefer-template": 0,
+    "react/no-multi-comp": 0,
+    "react/jsx-filename-extension": 0
   }
 }

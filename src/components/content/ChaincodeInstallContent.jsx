@@ -17,26 +17,26 @@ const CollectionCreateForm = Form.create()(
   class extends React.Component {
     static nameValidator(rule, value, callback) {
       if (!/^[A-Za-z0-9]+$/.test(value)) {
-        callback('只支持英文和数字，不支持中文及其他字符！');
+        callback('only letters and digitals！');
       }
       callback();
     }
     static versionValidator(rule, value, callback) {
       if (!/^\d+(.\d+)?$/.test(value)) {
-        callback('只支持数字和小数点！');
+        callback('only digitals and dot！');
       }
       callback();
     }
     static channelValidator(rule, value, callback) {
       if (!/^[A-Za-z0-9]+$/.test(value)) {
-        callback('只支持英文和数字，不支持中文及其他字符！');
+        callback('only letters and digitals！');
       }
       callback();
     }
     constructor(props) {
       super(props);
       this.state = {
-
+        language: localStorage.getItem('language'),
       };
     }
     render() {
@@ -48,45 +48,45 @@ const CollectionCreateForm = Form.create()(
       return (
         <Modal
           visible={visible}
-          title="新建智能合约"
-          okText="新建"
-          cancelText="取消"
+          title={this.state.language === 'cn' ? '添加合约' : 'New Contract'}
+          okText={this.state.language === 'cn' ? '确认' : 'create'}
+          cancelText={this.state.language === 'cn' ? '取消' : 'cancel'}
           onCancel={onCancel}
           onOk={onCreate}
           centered
           width="480px"
         >
           <Form layout="vertical">
-            <FormItem label="名称" style={formItemStyle}>
+            <FormItem label={this.state.language === 'cn' ? '名称' : 'Name'} style={formItemStyle}>
               {getFieldDecorator('name', {
-                rules: [{ required: true, message: '请输入链码名称! ' }, { validator: CollectionCreateForm.nameValidator }],
+                rules: [{ required: true, message: 'chaincode name can not be null!' }, { validator: CollectionCreateForm.nameValidator }],
               })(
-                <Input placeholder="链码名称" />,
+                <Input placeholder="chaincode name" />,
               )}
             </FormItem>
-            <FormItem label="版本" style={formItemStyle}>
+            <FormItem label={this.state.language === 'cn' ? '版本' : 'Version'} style={formItemStyle}>
               {getFieldDecorator('version', {
-                rules: [{ required: true, message: '请输入链码版本号! ' }, { validator: CollectionCreateForm.versionValidator }],
+                rules: [{ required: true, message: 'chaincode version can not be null!' }, { validator: CollectionCreateForm.versionValidator }],
               })(
-                <Input placeholder="链码版本" />,
+                <Input placeholder="chaincode version" />,
               )}
             </FormItem>
-            <FormItem label="通道" style={formItemStyle}>
+            <FormItem label={this.state.language === 'cn' ? '通道' : 'Channel'} style={formItemStyle}>
               {getFieldDecorator('channel', {
-                rules: [{ required: true, message: '请输入通道名称! ' }, { validator: CollectionCreateForm.channelValidator }],
+                rules: [{ required: true, message: 'channel name can not be null!' }, { validator: CollectionCreateForm.channelValidator }],
               })(
-                <Input placeholder="通道名称" />,
+                <Input placeholder="channel name" />,
               )}
             </FormItem>
-            <FormItem label="路径" style={formItemStyle}>
+            <FormItem label={this.state.language === 'cn' ? '路径' : 'Path'} style={formItemStyle}>
               {getFieldDecorator('path', {
-                rules: [{ required: true, message: '请输入链码文件路径!' }],
+                rules: [{ required: true, message: 'chaincode path can not be null!' }],
               })(
-                <Input placeholder="文件路径" />,
+                <Input placeholder="chaincode path" />,
               )}
             </FormItem>
-            <FormItem label="描述" style={formItemStyle}>
-              {getFieldDecorator('description')(<Input placeholder="功能描述" />)}
+            <FormItem label={this.state.language === 'cn' ? '描述' : 'Description'} style={formItemStyle}>
+              {getFieldDecorator('description')(<Input placeholder="function description" />)}
             </FormItem>
           </Form>
         </Modal>
@@ -115,6 +115,7 @@ class ContractDiv extends React.Component {
       result: this.props.citem.result,
       icontype: 'check-circle',
       iconcolor: '#52c41a',
+      language: localStorage.getItem('language'),
     };
     this.handleMenuClick = this.handleMenuClick.bind(this);
     this.handleInstallChaincodeCallBack = this.handleInstallChaincodeCallBack.bind(this);
@@ -122,44 +123,44 @@ class ContractDiv extends React.Component {
   }
   // 对安装链码进行操作
   handleInstallChaincodeCallBack(result) {
-    if (result.indexOf('失败') > -1) {
+    if (result.indexOf('fail') > -1) {
       this.setState({ icontype: 'exclamation-circle', iconcolor: '#FF4500' });
       this.setState({ disable1: false });
-      this.setState({ result });
+      this.setState({ result: 'installation failed' });
       this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
     } else {
       // 安装链码成功
       this.setState({ icontype: 'check-circle', iconcolor: '#52c41a' });
       this.setState({ disable1: true });
-      this.setState({ result });
+      this.setState({ result: 'installed successfully' });
       this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
       this.setState({ signal: '1' });
       // 更新持久化数据库
       db.update({ name: this.props.citem.name,
         version: this.props.citem.version,
         channel: this.props.citem.channel },
-      { $set: { disable1: true, result: '安装链码成功', time: this.state.time } },
+      { $set: { disable1: true, result: 'installed successfully', time: this.state.time } },
       {}, () => {
       });
     }
   }
   // 对实例化链码进行操作
   handleInstantiateChaincodeCallBack(result) {
-    if (result.indexOf('失败') > -1) {
+    if (result.indexOf('fail') > -1) {
       this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
       this.setState({ icontype: 'exclamation-circle', iconcolor: '#FF4500' });
       this.setState({ disable2: false });
-      this.setState({ result });
+      this.setState({ result: 'instantiation failed' });
     } else {
       // 实例化链码成功
       this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
       this.setState({ icontype: 'check-circle', iconcolor: '#52c41a' });
       this.setState({ disable2: true });
-      this.setState({ result });
+      this.setState({ result: 'instantiated successfully' });
       db.update({ name: this.props.citem.name,
         version: this.props.citem.version,
         channel: this.props.citem.channel },
-      { $set: { disable1: true, disable2: true, result: '实例化链码成功', time: this.state.time } },
+      { $set: { disable1: true, disable2: true, result: 'instantiated successfully', time: this.state.time } },
       {}, () => {
       });
     }
@@ -171,21 +172,19 @@ class ContractDiv extends React.Component {
     if (e.key === '1') {
       // 安装链码操作
       this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
-      this.setState({ result: '正在安装智能合约...' });
-      fc.installCc(this.handleInstallChaincodeCallBack,
-        this.props.citem.path,
-        this.props.citem.name,
-        this.props.citem.version);
+      this.setState({ result: 'install chaincode...' });
+      fc.installCc(this.props.citem.path, this.props.citem.name, this.props.citem.version)
+        .then(this.handleInstallChaincodeCallBack, this.handleInstallChaincodeCallBack);
     }
     if (e.key === '2') {
       // 实例化链码操作
       this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
-      this.setState({ result: '正在部署智能合约...' });
-      fc.instantiateCc(this.handleInstantiateChaincodeCallBack,
-        this.props.citem.channel,
+      this.setState({ result: 'instantiate chaincode...' });
+      fc.instantiateCc(this.props.citem.channel,
         this.props.citem.name,
         this.props.citem.version,
-        ['']);
+        [''])
+        .then(this.handleInstantiateChaincodeCallBack, this.handleInstantiateChaincodeCallBack);
     }
     if (e.key === '3') {
       // 删除链码操作
@@ -208,9 +207,9 @@ class ContractDiv extends React.Component {
         version: contract.version,
         channel: contract.channel }, {}, (err) => {
         if (err) {
-          logger.info('the opertion of remove document failed! ');
+          logger.info('remove the document failed! ');
         } else {
-          logger.info('you have remove the smartbill!');
+          logger.info('you have remove the contract!');
         }
       });
     }
@@ -261,9 +260,9 @@ class ContractDiv extends React.Component {
     };
     const menu = (
       <Menu onClick={this.handleMenuClick}>
-        <Menu.Item key="1" disabled={this.state.disable1}>安装</Menu.Item>
-        <Menu.Item key="2" disabled={this.state.disable2}>部署</Menu.Item>
-        <Menu.Item key="3" >删除</Menu.Item>
+        <Menu.Item key="1" disabled={this.state.disable1}>install</Menu.Item>
+        <Menu.Item key="2" disabled={this.state.disable2}>instantiate</Menu.Item>
+        <Menu.Item key="3" >delete</Menu.Item>
       </Menu>
     );
     return (
@@ -284,7 +283,7 @@ class ContractDiv extends React.Component {
             </p>
           </div>
           <div style={DropdownStyle}>
-            <Dropdown.Button overlay={menu} type="primary">链码操作</Dropdown.Button>
+            <Dropdown.Button overlay={menu} type="primary">{this.state.language === 'cn' ? '操作' : 'operations'}</Dropdown.Button>
           </div>
         </div>
       </div>
@@ -334,6 +333,7 @@ export default class ChaincodeInstallContent extends React.Component {
     this.state = {
       visible: false,
       todolist: arr,
+      language: localStorage.getItem('language'),
     };
     this.showModal = this.showModal.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -365,7 +365,7 @@ export default class ChaincodeInstallContent extends React.Component {
         key: moment().format('YYYYMMDDHHmmss'),
         disable1: false,
         disable2: false,
-        result: '已新建智能合约',
+        result: 'added successfully',
         time: '',
       };
 
@@ -378,7 +378,7 @@ export default class ChaincodeInstallContent extends React.Component {
       // 新增智能合约对象数据持久化
       db.insert(li, (error) => {
         if (error) {
-          logger.info('The operation of insert into database failed');
+          logger.info('insert into database failed');
         }
       });
       form.resetFields();
@@ -396,8 +396,9 @@ export default class ChaincodeInstallContent extends React.Component {
 
   render() {
     const outerDivStyle = {
-      minHeight: '900px',
       padding: '20px',
+      height: '100%',
+      overflow: 'scroll',
     };
     const plusDivStyle = {
       height: '200px',
@@ -418,7 +419,7 @@ export default class ChaincodeInstallContent extends React.Component {
     return (
       <div style={outerDivStyle}>
         <div style={plusDivStyle}>
-          <Button icon="plus" style={buttonStyle} onClick={this.showModal}>添加合约</Button>
+          <Button icon="plus" style={buttonStyle} onClick={this.showModal}> {this.state.language === 'cn' ? '添加合约' : ' Add contract'}</Button>
           <CollectionCreateForm
             wrappedComponentRef={this.saveFormRef}
             visible={this.state.visible}
