@@ -34,6 +34,7 @@ export default class DataContent extends React.Component {
       height: 0,
       timer: null,
       pageSize: 4,
+      language: localStorage.getItem('language'),
     };
 
     this.showModal = this.showModal.bind(this);
@@ -44,14 +45,14 @@ export default class DataContent extends React.Component {
     this.onChange = this.onChange.bind(this);
 
     const fc = getFabricClientSingleton();
-    fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
+    fc.queryInfo('mychannel').then(this.onQueryInfoCallback);
   }
 
   componentDidMount() {
     this.state.timer = setInterval(() => {
       const fc = getFabricClientSingleton();
-      fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
-    }, 3000);
+      fc.queryInfo('mychannel').then(this.onQueryInfoCallback);
+    }, 5000);
   }
 
   componentWillUnmount() {
@@ -67,7 +68,7 @@ export default class DataContent extends React.Component {
       currentPage: current - 1,
     });
     const fc = getFabricClientSingleton();
-    fc.queryInfo(this.onQueryInfoCallback, 'mychannel');
+    fc.queryInfo('mychannel').then(this.onQueryInfoCallback);
   }
 
 
@@ -95,7 +96,7 @@ export default class DataContent extends React.Component {
         head[tempHead.key] = tempHead;
         this.setState({ head });
       } else {
-        fc.queryBlock(this.onQueryBlockCallback, i, 'mychannel');
+        fc.queryBlock(i, 'mychannel').then(this.onQueryBlockCallback);
       }
     }
   }
@@ -173,7 +174,7 @@ export default class DataContent extends React.Component {
     const outerDivStyle = {
       background: '#fff',
       padding: '2px',
-      minHeight: '900px',
+      height: '100%',
     };
     const tableDivStyle = {
       padding: '10px',
@@ -228,7 +229,7 @@ export default class DataContent extends React.Component {
                   onChange: this.onChange,
                   total: this.state.height }}
               >
-                <ColumnGroup title="最近区块">
+                <ColumnGroup title={this.state.language === 'cn' ? '最近区块' : 'Current Blocks'}>
                   <Column
                     defaultSortOrder="descend"
                     align="center"
@@ -239,7 +240,7 @@ export default class DataContent extends React.Component {
                   />
                   <Column
                     align="center"
-                    title="Hash"
+                    title={this.state.language === 'cn' ? '哈希值' : 'Hash'}
                     key="hash"
                     render={(text, record) => (
                       <span>
@@ -249,13 +250,13 @@ export default class DataContent extends React.Component {
                   />
                   <Column
                     align="center"
-                    title="交易数"
+                    title={this.state.language === 'cn' ? '数量' : 'Number'}
                     dataIndex="num"
                     key="num"
                   />
                   <Column
                     align="center"
-                    title="生成时间"
+                    title={this.state.language === 'cn' ? '生成时间' : 'Generate time'}
                     dataIndex="time"
                     key="time"
                   />
@@ -266,7 +267,7 @@ export default class DataContent extends React.Component {
         </div>
 
         <Modal
-          title="Block Detail"
+          title={this.state.language === 'cn' ? '区块' : 'Block Detail'}
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}

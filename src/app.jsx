@@ -4,51 +4,53 @@ import React from 'react';
 
 import BasicLayout from './components/BasicLayout';
 import UserLayout from './components/UserLayout';
+import LoadingLayout from './components/LoadingLayout';
 
-// import { getConfigDBSingleton } from './util/createDB';
+import { getConfigDBSingleton } from './util/createDB';
 
 
+const logger = require('electron-log');
 
-const fs = require('fs');
-const path = require('path');
-
-// const db = getConfigDBSingleton();
+const db = getConfigDBSingleton();
 
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
 
-    const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../config.json')));
-
-    // db.find({}, (err, data) => {
-    //   console.warn(data);
-    //   if (data.length === 0) {
-    //     const tempData = {
-    //       id: 0,
-    //       isSign: false,
-    //     };
-    //     db.insert(tempData, (error) => {
-    //       if (error) {
-    //         logger.info('The operation of insert into database failed');
-    //       }
-    //     });
-    //     this.setState({
-    //       flag: tempData.isSign,
-    //     });
-    //   } else {
-    //     this.setState({
-    //       flag: data[0].isSign,
-    //     });
-    //   }
-    // });
-
     this.state = {
-      flag: config.isSign,
+      flag: 0,
     };
 
 
     this.getChildMessage = this.getChildMessage.bind(this);
+    this.getConfig = this.getConfig.bind(this);
+
+    setTimeout(this.getConfig, 1000);
+  }
+
+  getConfig() {
+    db.find({}, (err, data) => {
+      console.warn(data);
+      if (data.length === 0) {
+        const tempData = {
+          id: 0,
+          isSign: 1,
+        };
+        db.insert(tempData, (error) => {
+          if (error) {
+            logger.info('The operation of insert into database failed');
+          }
+        });
+        this.setState({
+          flag: tempData.isSign,
+        });
+      } else {
+        this.setState({
+          flag: data[0].isSign,
+        });
+      }
+    });
   }
 
   getChildMessage(newFlag) {
@@ -58,13 +60,17 @@ export default class App extends React.Component {
   }
 
   render() {
-    if (this.state.flag) {
+    if (this.state.flag === 0) {
       return (
-        <BasicLayout onGetChildMessage={this.getChildMessage} />
+        <LoadingLayout />
+      );
+    } else if (this.state.flag === 1) {
+      return (
+        <UserLayout onGetChildMessage={this.getChildMessage} />
       );
     }
     return (
-      <UserLayout onGetChildMessage={this.getChildMessage} />
+      <BasicLayout onGetChildMessage={this.getChildMessage} />
     );
   }
 }
