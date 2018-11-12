@@ -13,10 +13,10 @@
 ###  如何提交代码
 
 1. 将项目fork到自己的github仓库中
-2. 将项目clone到自己本地仓库
-3. 创建一个feature分支, 并在此分支上进行开发
+2. 将项目git clone到本地仓库
+3. 在本地仓库中新建一个feature分支, 并在此分支上进行开发新的功能
 4. 具体的开发工作可参考[开发者文档](coding-guidelines-Zn.md)
-5. 将代码合并到主分支,提交到自己的github仓库
-6. 新建一个pull request, 向管理员提交pull request
+5. 开发完成后push到自己的github仓库,非公共的正式仓库
+6. 此时在公共的正式仓库中可看见您的分支，点击pull request, 确定reviewers后提交pull request
 7. 等待管理员评审
 
