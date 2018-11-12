@@ -10,7 +10,6 @@ import { deleteFabricClientSingleton } from '../util/fabric';
 
 import { getConfigDBSingleton } from '../util/createDB';
 
-const fs = require('fs');
 const path = require('path');
 
 const db = getConfigDBSingleton();
@@ -49,11 +48,6 @@ export default class BasicLayout extends React.Component {
 
   onClick() {
     this.props.onGetChildMessage(1);
-
-    const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json')));
-    config.isSign = false;
-    const content = JSON.stringify(config);
-    fs.writeFileSync(path.join(__dirname, '../../config.json'), content);
 
     db.update({ id: 0 },
       { $set: { isSign: 1 } },

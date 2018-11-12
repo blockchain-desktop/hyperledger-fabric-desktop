@@ -27,7 +27,6 @@ describe('插入测试', () => {
 });
 
 describe('插入测试', () => {
-
   it('空查询测试', () => {
     const db = getConfigDBSingleton();
     db.find({ id: 'test' }, (err, docs) => {

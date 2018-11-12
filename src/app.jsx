@@ -31,7 +31,7 @@ export default class App extends React.Component {
 
   getConfig() {
     db.find({}, (err, data) => {
-      console.warn(data);
+      logger.info(data);
       if (data.length === 0) {
         const tempData = {
           id: 0,

@@ -168,51 +168,54 @@ class ContractDiv extends React.Component {
 
 
   handleMenuClick(e) {
-    const fc = getFabricClientSingleton();
-    if (e.key === '1') {
-      // 安装链码操作
-      this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
-      this.setState({ result: 'install chaincode...' });
-      fc.installCc(this.props.citem.path, this.props.citem.name, this.props.citem.version)
-        .then(this.handleInstallChaincodeCallBack, this.handleInstallChaincodeCallBack);
-    }
-    if (e.key === '2') {
-      // 实例化链码操作
-      this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
-      this.setState({ result: 'instantiate chaincode...' });
-      fc.instantiateCc(this.props.citem.channel,
-        this.props.citem.name,
-        this.props.citem.version,
-        [''])
-        .then(this.handleInstantiateChaincodeCallBack, this.handleInstantiateChaincodeCallBack);
-    }
-    if (e.key === '3') {
-      // 删除链码操作
-      const contract = {
-        name: this.props.citem.name,
-        version: this.props.citem.version,
-        channel: this.props.citem.channel,
-        path: this.props.citem.path,
-        description: this.props.citem.description,
-      };
-      // 从todolist对象集中删除链码对象
-      const index = ContractDiv.findArray(this.props.ctodo,
-        contract.name,
-        contract.version,
-        contract.channel);
-      this.props.ctodo.splice(index, 1);
-      this.props.cdelete(this.props.ctodo);
-      // 删除持久化数据库中的记录
-      db.remove({ name: contract.name,
-        version: contract.version,
-        channel: contract.channel }, {}, (err) => {
-        if (err) {
-          logger.info('remove the document failed! ');
-        } else {
-          logger.info('you have remove the contract!');
-        }
-      });
-    }
+    getFabricClientSingleton().then((fabricClient) => {
+      if (e.key === '1') {
+        // 安装链码操作
+        this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
+        this.setState({ result: 'install chaincode...' });
+        fabricClient.installCc(this.props.citem.path,
+          this.props.citem.name,
+          this.props.citem.version)
+          .then(this.handleInstallChaincodeCallBack, this.handleInstallChaincodeCallBack);
+      }
+      if (e.key === '2') {
+        // 实例化链码操作
+        this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
+        this.setState({ result: 'instantiate chaincode...' });
+        fabricClient.instantiateCc(this.props.citem.channel,
+          this.props.citem.name,
+          this.props.citem.version,
+          [''])
+          .then(this.handleInstantiateChaincodeCallBack, this.handleInstantiateChaincodeCallBack);
+      }
+      if (e.key === '3') {
+        // 删除链码操作
+        const contract = {
+          name: this.props.citem.name,
+          version: this.props.citem.version,
+          channel: this.props.citem.channel,
+          path: this.props.citem.path,
+          description: this.props.citem.description,
+        };
+        // 从todolist对象集中删除链码对象
+        const index = ContractDiv.findArray(this.props.ctodo,
+          contract.name,
+          contract.version,
+          contract.channel);
+        this.props.ctodo.splice(index, 1);
+        this.props.cdelete(this.props.ctodo);
+        // 删除持久化数据库中的记录
+        db.remove({ name: contract.name,
+          version: contract.version,
+          channel: contract.channel }, {}, (err) => {
+          if (err) {
+            logger.info('remove the document failed! ');
+          } else {
+            logger.info('you have remove the contract!');
+          }
+        });
+      }
+    });
   }
 
   render() {

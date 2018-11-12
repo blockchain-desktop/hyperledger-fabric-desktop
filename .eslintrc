@@ -20,6 +20,7 @@
     "react/prop-types": 0,
     "prefer-template": 0,
     "react/no-multi-comp": 0,
-    "react/jsx-filename-extension": 0
+    "react/jsx-filename-extension": 0,
+    "class-methods-use-this": 0
   }
 }

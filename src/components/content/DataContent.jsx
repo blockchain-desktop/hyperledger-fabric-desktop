@@ -44,14 +44,16 @@ export default class DataContent extends React.Component {
     this.onQueryBlockCallback = this.onQueryBlockCallback.bind(this);
     this.onChange = this.onChange.bind(this);
 
-    const fc = getFabricClientSingleton();
-    fc.queryInfo('mychannel').then(this.onQueryInfoCallback);
+    getFabricClientSingleton().then((fabricClient) => {
+      fabricClient.queryInfo('mychannel').then(this.onQueryInfoCallback);
+    });
   }
 
   componentDidMount() {
     this.state.timer = setInterval(() => {
-      const fc = getFabricClientSingleton();
-      fc.queryInfo('mychannel').then(this.onQueryInfoCallback);
+      getFabricClientSingleton().then((fabricClient) => {
+        fabricClient.queryInfo('mychannel').then(this.onQueryInfoCallback);
+      });
     }, 5000);
   }
 
@@ -67,8 +69,9 @@ export default class DataContent extends React.Component {
     this.setState({
       currentPage: current - 1,
     });
-    const fc = getFabricClientSingleton();
-    fc.queryInfo('mychannel').then(this.onQueryInfoCallback);
+    getFabricClientSingleton().then((fabricClient) => {
+      fabricClient.queryInfo('mychannel').then(this.onQueryInfoCallback);
+    });
   }
 
 
@@ -79,26 +82,27 @@ export default class DataContent extends React.Component {
       high: result.height.high,
       height: Math.ceil(result.height.low / this.state.pageSize) * this.state.pageSize,
     });
-    const fc = getFabricClientSingleton();
-    logger.info(this.state.data.length);
-    count = 0;
-    const start = this.state.low - (this.state.pageSize * this.state.currentPage) - 1;
-    for (let i = start; i > start - this.state.pageSize; i--) {
-      if (this.state.high >= i) {
-        const tempHead = {
-          key: count++,
-          id: '',
-          hash: '',
-          num: '',
-          time: '',
-        };
-        const head = this.state.head.slice();
-        head[tempHead.key] = tempHead;
-        this.setState({ head });
-      } else {
-        fc.queryBlock(i, 'mychannel').then(this.onQueryBlockCallback);
+    getFabricClientSingleton().then((fabricClient) => {
+      logger.info(this.state.data.length);
+      count = 0;
+      const start = this.state.low - (this.state.pageSize * this.state.currentPage) - 1;
+      for (let i = start; i > start - this.state.pageSize; i--) {
+        if (this.state.high >= i) {
+          const tempHead = {
+            key: count++,
+            id: '',
+            hash: '',
+            num: '',
+            time: '',
+          };
+          const head = this.state.head.slice();
+          head[tempHead.key] = tempHead;
+          this.setState({ head });
+        } else {
+          fabricClient.queryBlock(i, 'mychannel').then(this.onQueryBlockCallback);
+        }
       }
-    }
+    });
   }
 
   onQueryBlockCallback(result) {
