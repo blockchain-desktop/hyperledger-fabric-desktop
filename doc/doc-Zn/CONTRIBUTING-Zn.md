@@ -17,6 +17,6 @@
 3. 在本地仓库中新建一个feature分支, 并在此分支上进行开发新的功能
 4. 具体的开发工作可参考[开发者文档](coding-guidelines-Zn.md)
 5. 开发完成后push到自己的github仓库
-6. 在公共的正式仓库中您可看见您的分支，点击pull request, 确定reviewers后提交pull request
+6. 此时在公共的正式仓库中可看见您的分支，点击pull request, 确定reviewers后提交pull request
 7. 等待管理员评审
 
