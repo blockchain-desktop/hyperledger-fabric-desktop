@@ -11,16 +11,6 @@ const loadingImageUrl = path.join(__dirname, '../../resources/styles/image/loadi
 
 
 export default class LoadingLayout extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      collapsed: true,
-      contentKey: 1,
-      language: localStorage.getItem('language'),
-    };
-  }
-
-
   render() {
     const contentStyle = {
       height: '100%',
@@ -63,8 +53,8 @@ export default class LoadingLayout extends React.Component {
     return (
       <Layout style={contentStyle}>
         <div style={logoDivStyle}>
-          {/*<img src={logoUrl} style={logoImageStyle} alt="loading" />*/}
-          {/*<span style={LoadingTextStyle}>&nbsp;&nbsp;Fabric Desktop</span>*/}
+          {/* <img src={logoUrl} style={logoImageStyle} alt="loading" /> */}
+          {/* <span style={LoadingTextStyle}>&nbsp;&nbsp;Fabric Desktop</span> */}
         </div>
         <div style={loadingDivStyle}>
           <img src={loadingImageUrl} style={loadingImageStyle} alt="loading" />

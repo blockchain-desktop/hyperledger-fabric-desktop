@@ -8,7 +8,6 @@ import { getConfigDBSingleton } from '../util/createDB';
 
 const ButtonGroup = Button.Group;
 const path = require('path');
-const fs = require('fs');
 
 const logger = require('electron-log');
 
@@ -54,31 +53,25 @@ export default class UserLayout extends React.Component {
   }
 
   onClick() {
-    const data = {
-      isSign: 2,
-      peerGrpcUrl: this.state.peerGrpcUrl,
-      peerEventUrl: this.state.peerEventUrl,
-      ordererUrl: this.state.ordererUrl,
-      username: this.state.username,
-      tlsPeerPath: this.state.tlsPeerPath,
-      tlsOrdererPath: this.state.tlsOrdererPath,
-      path: 'resources/key/',
-    };
-    const content = JSON.stringify(data);
-    fs.writeFileSync(path.join(__dirname, '../../config.json'), content);
     db.update({ id: 0 },
       { $set: { isSign: 2,
         peerGrpcUrl: this.state.peerGrpcUrl,
         peerEventUrl: this.state.peerEventUrl,
         ordererUrl: this.state.ordererUrl,
         username: this.state.username,
+        tlsPeerPath: this.state.tlsPeerPath,
+        tlsOrdererPath: this.state.tlsOrdererPath,
         path: 'resources/key/' } },
       {}, () => {
       });
-    this.props.onGetChildMessage(2);
-    const fc = getFabricClientSingleton();
+    getFabricClientSingleton().then((fabricClient) => {
+      fabricClient.importCer(this.state.keyPath, this.state.certPath).then((result) => {
+        this.props.onGetChildMessage(2);
+        logger.info(result);
+      });
+    });
+
     logger.info(this.state.certPath);
-    fc.importCer(this.state.keyPath, this.state.certPath);
   }
   peerGrpcUrlChange(event) {
     this.setState({ peerGrpcUrl: event.target.value });

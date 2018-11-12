@@ -1,39 +1,68 @@
 // Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
 
+import { getConfigDBSingleton } from './createDB';
+
 const FabricClientSDK = require('fabric-client');
 const path = require('path');
 const util = require('util');
 const fs = require('fs');
 
+const db = getConfigDBSingleton();
+
 const logger = require('electron-log');
 
 class FabricClient {
   constructor() {
-    // TODO: 若配置更新，如何调整？
-
-    // FIXME: 解决异步问题,将配置从config.db里面读取
     const fabricClient = new FabricClientSDK();
-
-    const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json')));
-
-    if (config.tlsPeerPath === '' || config.tlsOrdererPath === '') {
-      logger.info('+++++++++++++++++');
-      this.flag = false;
-    } else {
-      logger.info('------------------');
-      this.peerCert = fs.readFileSync(config.tlsPeerPath);
-      this.orderersCert = fs.readFileSync(config.tlsOrdererPath);
-      this.flag = true;
-    }
-
-
-    const storePath = path.join(__dirname, '../../', config.path);
-    logger.info(`Store path:${storePath}`);
-
     this.fabric_client = fabricClient;
-    this.config = config;
-    this.store_path = storePath;
-    this.channels = {}; // {channelName: channel}
+  }
+
+  _gitConfig() {
+    const self = this;
+    console.log(self);
+    return new Promise((resolve, reject) => {
+      db.find({}, (err, resultList) => {
+        if (err) {
+          logger.info('the operation of find documents failed!');
+          reject('error');
+        }
+        logger.info('success get config!');
+        const output = {
+          result: resultList,
+          obj: self,
+        };
+        resolve(output);
+        logger.info('result:', resultList);
+      });
+    });
+  }
+
+  _config(input) {
+    console.log(input.self);
+    const obj = input.obj;
+    return new Promise((resolve) => {
+      logger.info('input:', input.result);
+      const config = input.result[0];
+
+      if (config.tlsPeerPath === '' || config.tlsOrdererPath === '') {
+        logger.info('+++++++++++++++++');
+        obj.flag = false;
+      } else {
+        logger.info('------------------');
+        obj.peerCert = fs.readFileSync(config.tlsPeerPath);
+        obj.orderersCert = fs.readFileSync(config.tlsOrdererPath);
+        obj.flag = true;
+      }
+
+      logger.info('config:', config);
+      const storePath = path.join(__dirname, '../../', config.path);
+      logger.info(`Store path:${storePath}`);
+      obj.config = config;
+      obj.store_path = storePath;
+      obj.channels = {};
+
+      resolve('success');
+    });
   }
 
   /**
@@ -94,21 +123,6 @@ class FabricClient {
 
   static _argsNullHelper(args) {
     return args || [];
-  }
-
-  importCer(keyPath, certPath) {
-    // -------------------- admin start ---------
-    logger.info('start to create admin user.');
-
-    this.fabric_client.createUser({
-      username: this.config.username,
-      mspid: 'Org1MSP',
-      cryptoContent: {
-        privateKey: keyPath,
-        signedCert: certPath,
-      },
-    });
-    // ---------------admin finish ---------------
   }
 
   /**
@@ -444,6 +458,24 @@ class FabricClient {
       return Promise.resolve(blockchainInfo);
     });
   }
+
+  importCer(keyPath, certPath) {
+    // -------------------- admin start ---------
+    this._setupChannelOnce('mychannel');
+    const self = this;
+    logger.info('start to create admin user.');
+    return this._enrollUser().then(() => {
+      self.fabric_client.createUser({
+        username: self.config.username,
+        mspid: 'Org1MSP',
+        cryptoContent: {
+          privateKey: keyPath,
+          signedCert: certPath,
+        },
+      }).then(() => Promise.resolve('success'));
+    });
+    // ---------------admin finish ---------------
+  }
 }
 
 
@@ -453,8 +485,12 @@ let __fabricClient;
 export default function getFabricClientSingleton() {
   if (!__fabricClient) {
     __fabricClient = new FabricClient();
+    return __fabricClient._gitConfig()
+      .then(__fabricClient._config)
+      .then(() => Promise.resolve(__fabricClient));
   }
-  return __fabricClient;
+
+  return Promise.resolve(__fabricClient);
 }
 
 export function deleteFabricClientSingleton() {
