@@ -48,7 +48,7 @@ export default class BasicLayout extends React.Component {
   }
 
   onClick() {
-    this.props.onGetChildMessage(false);
+    this.props.onGetChildMessage(1);
 
     const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../config.json')));
     config.isSign = false;
@@ -56,7 +56,7 @@ export default class BasicLayout extends React.Component {
     fs.writeFileSync(path.join(__dirname, '../../config.json'), content);
 
     db.update({ id: 0 },
-      { $set: { isSign: false } },
+      { $set: { isSign: 1 } },
       {}, () => {
       });
     deleteFabricClientSingleton();

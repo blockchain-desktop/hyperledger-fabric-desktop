@@ -55,7 +55,7 @@ export default class UserLayout extends React.Component {
 
   onClick() {
     const data = {
-      isSign: true,
+      isSign: 2,
       peerGrpcUrl: this.state.peerGrpcUrl,
       peerEventUrl: this.state.peerEventUrl,
       ordererUrl: this.state.ordererUrl,
@@ -67,7 +67,7 @@ export default class UserLayout extends React.Component {
     const content = JSON.stringify(data);
     fs.writeFileSync(path.join(__dirname, '../../config.json'), content);
     db.update({ id: 0 },
-      { $set: { isSign: true,
+      { $set: { isSign: 2,
         peerGrpcUrl: this.state.peerGrpcUrl,
         peerEventUrl: this.state.peerEventUrl,
         ordererUrl: this.state.ordererUrl,
@@ -75,7 +75,7 @@ export default class UserLayout extends React.Component {
         path: 'resources/key/' } },
       {}, () => {
       });
-    this.props.onGetChildMessage(true);
+    this.props.onGetChildMessage(2);
     const fc = getFabricClientSingleton();
     logger.info(this.state.certPath);
     fc.importCer(this.state.keyPath, this.state.certPath);
