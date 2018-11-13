@@ -330,7 +330,6 @@ export default class ChaincodeInstallContent extends React.Component {
         arr.push(docs[i]);
       }
       arr.sort(ChaincodeInstallContent.sortkey);
-      logger.info('the arr: ', arr);
       obj.setState({ todolist: arr });
     });
     this.state = {

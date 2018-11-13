@@ -17,20 +17,22 @@ describe('function', () => {
   it('handleCreate() ', () => {
     const ChaincodeInstall = TestUtils.renderIntoDocument(<ChaincodeInstallContent />);
     ChaincodeInstall.handleCreate();
+    expect(ChaincodeInstall.state.todolist != null).toBe(true);
   });
 });
 
 // Required: Test if click on 'delete' button. a contract will be deleted in the todolist or not.
-
 describe('function', () => {
   it('handledelete', () => {
     const ChaincodeInstall = TestUtils.renderIntoDocument(<ChaincodeInstallContent />);
     ChaincodeInstall.handleChange(ChaincodeInstall.state.todolist);
+    expect(ChaincodeInstall.state.todolist.length === 0).toBe(true);
   });
 });
 
 // Optional: Test input's value is valid or not.
 // describe('value', () => {
+//   const ChaincodeInstall = TestUtils.renderIntoDocument(<ChaincodeInstallContent />);
 //   const inputItems = TestUtils.scryRenderedDOMComponentsWithTag(ChaincodeInstall, 'input');
 //   it('name', () => {
 //     const input = inputItems[0];
@@ -61,4 +63,4 @@ describe('function', () => {
 //     expect(/^\d+(.\d+)?$/.test(input.value)).toBe(true);
 //   });
 // });
-//
+
