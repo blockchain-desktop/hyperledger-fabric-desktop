@@ -7,7 +7,6 @@ import UserLayout from './components/UserLayout';
 import LoadingLayout from './components/LoadingLayout';
 
 import { getConfigDBSingleton } from './util/createDB';
-import getQueryBlockSingleton from './util/queryBlock';
 
 
 const logger = require('electron-log');

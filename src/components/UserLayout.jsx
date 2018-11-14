@@ -62,7 +62,7 @@ export default class UserLayout extends React.Component {
         username: this.state.username,
         tlsPeerPath: this.state.tlsPeerPath,
         tlsOrdererPath: this.state.tlsOrdererPath,
-        path: 'resources/key/' } },
+        path: 'resources/key/users/' } },
       {}, () => {
       });
     getFabricClientSingleton().then((fabricClient) => {
