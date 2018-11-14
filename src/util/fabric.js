@@ -19,7 +19,6 @@ class FabricClient {
 
   _gitConfig() {
     const self = this;
-    console.log(self);
     return new Promise((resolve, reject) => {
       db.find({}, (err, resultList) => {
         if (err) {
@@ -38,7 +37,6 @@ class FabricClient {
   }
 
   _config(input) {
-    console.log(input.self);
     const obj = input.obj;
     return new Promise((resolve) => {
       logger.info('input:', input.result);
@@ -72,7 +70,7 @@ class FabricClient {
    */
   _enrollUser() {
     const usrName = this.config.username;
-    logger.info('start to load member user.');
+    // logger.info('start to load member user.');
     return FabricClientSDK.newDefaultKeyValueStore({ path: this.store_path,
     }).then((stateStore) => {
       // assign the store to the fabric client
@@ -127,7 +125,6 @@ class FabricClient {
 
   /**
    *  查询链码
-   * @param callback {function(string)}  回调函数，参数为字符串结果
    * @param chaincodeId {string}
    * @param fcn {string}
    * @param args {[]string}
@@ -184,7 +181,6 @@ class FabricClient {
 
   /**
    *  调用链码，写入账本
-   * @param callback {function(string)}  回调函数，参数为字符串结果
    * @param chaincodeId {string}
    * @param fcn {string}
    * @param args {[]string}
@@ -331,7 +327,6 @@ class FabricClient {
   /**
    * 安装链码。
    * 需要相应语言环境，如go语言。
-   * @param callback
    * @param chaincodePath
    * @param chaincodeName
    * @param chaincodeVersion
@@ -372,7 +367,6 @@ class FabricClient {
 
   /**
    * 实例化链码
-   * @param callback
    * @param channelName
    * @param chaincodeName
    * @param chaincodeVersion
@@ -432,31 +426,27 @@ class FabricClient {
 
   /**
    * 根据区块号，获取区块
-   * @param callback
    * @param blockNumber
    * @param channelName
    */
   queryBlock(blockNumber, channelName) {
     const channel = this._setupChannelOnce(channelName);
 
-    return this._enrollUser().then(() => channel.queryBlock(blockNumber)).then((block) => {
-      logger.info('block:', block, block.toString());
-      return Promise.resolve(block);
-    });
+    return this._enrollUser()
+      .then(() => channel.queryBlock(blockNumber))
+      .then(block => Promise.resolve(block));
   }
 
   /**
    * 获取区块链信息，包含区块高度height
-   * @param callback
    * @param channelName
    */
   queryInfo(channelName) {
     const channel = this._setupChannelOnce(channelName);
 
-    return this._enrollUser().then(() => channel.queryInfo()).then((blockchainInfo) => {
-      logger.info('blockchainInfo:', blockchainInfo, blockchainInfo.toString());
-      return Promise.resolve(blockchainInfo);
-    });
+    return this._enrollUser()
+      .then(() => channel.queryInfo())
+      .then(blockchainInfo => Promise.resolve(blockchainInfo));
   }
 
   importCer(keyPath, certPath) {
@@ -484,12 +474,16 @@ let __fabricClient;
 // FabricClient单例模式。后续考虑优化为多套身份，多个client
 export default function getFabricClientSingleton() {
   if (!__fabricClient) {
+    logger.info('strat create fabric client');
     __fabricClient = new FabricClient();
     return __fabricClient._gitConfig()
       .then(__fabricClient._config)
-      .then(() => Promise.resolve(__fabricClient));
+      .then((result) => {
+        logger.info('create fabric client', result);
+        return Promise.resolve(__fabricClient);
+      });
   }
-
+  logger.info('get fabric client');
   return Promise.resolve(__fabricClient);
 }
 

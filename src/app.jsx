@@ -7,6 +7,7 @@ import UserLayout from './components/UserLayout';
 import LoadingLayout from './components/LoadingLayout';
 
 import { getConfigDBSingleton } from './util/createDB';
+import getQueryBlockSingleton from './util/queryBlock';
 
 
 const logger = require('electron-log');
@@ -27,6 +28,13 @@ export default class App extends React.Component {
     this.getConfig = this.getConfig.bind(this);
 
     setTimeout(this.getConfig, 1000);
+    // const qb = getQueryBlockSingleton();
+    // qb.queryBlockFromFabric(0).then((results) => {
+    //   console.warn(results);
+    // });
+    // qb.queryBlockFromDatabase(0).then((results) => {
+    //   console.log('results:', results);
+    // });
   }
 
   getConfig() {

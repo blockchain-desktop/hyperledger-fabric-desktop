@@ -2,23 +2,17 @@
 
 import React from 'react';
 import { Col, Row, Table, Modal } from 'antd';
-import getFabricClientSingleton from '../../util/fabric';
+import { getQueryBlockSingleton, deleteQueryBlockSingleton } from '../../util/queryBlock';
 
 const logger = require('electron-log');
 
 const { Column, ColumnGroup } = Table;
 
-let count = 0;
 
 export default class DataContent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
-      head: [],
-      result: '',
-      high: 0,
-      low: 0,
       peerNum: 4,
       blackNum: 6,
       intelligentContractNum: 3,
@@ -35,31 +29,50 @@ export default class DataContent extends React.Component {
       timer: null,
       pageSize: 4,
       language: localStorage.getItem('language'),
+      block: [],
     };
 
     this.showModal = this.showModal.bind(this);
     this.handleOk = this.handleOk.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
-    this.onQueryInfoCallback = this.onQueryInfoCallback.bind(this);
-    this.onQueryBlockCallback = this.onQueryBlockCallback.bind(this);
     this.onChange = this.onChange.bind(this);
 
-    getFabricClientSingleton().then((fabricClient) => {
-      fabricClient.queryInfo('mychannel').then(this.onQueryInfoCallback);
+    getQueryBlockSingleton().then((qb) => {
+      qb.queryBlockFromDatabase(this.state.currentPage).then((block) => {
+        if (block !== 'Data does not need change') {
+          if (this.state.currentPage === 0) {
+            const height = parseInt(block[0].id, 0);
+            this.setState({ height });
+          }
+          this.setState({ block });
+          console.log('blocks:', this.state.block);
+        }
+      });
     });
   }
 
   componentDidMount() {
     this.state.timer = setInterval(() => {
-      getFabricClientSingleton().then((fabricClient) => {
-        fabricClient.queryInfo('mychannel').then(this.onQueryInfoCallback);
+      getQueryBlockSingleton().then((qb) => {
+        qb.queryBlockFromDatabase(this.state.currentPage).then((block) => {
+          if (block !== 'Data does not need change') {
+            if (this.state.currentPage === 0) {
+              const height = parseInt(block[0].id, 0);
+              this.setState({ height });
+            }
+            this.setState({ block });
+            console.log('blocks:', this.state.block);
+          }
+          qb.isNeedToQuery();
+        });
       });
-    }, 5000);
+    }, 3000);
   }
 
   componentWillUnmount() {
     if (this.state.timer != null) {
       clearInterval(this.state.timer);
+      deleteQueryBlockSingleton();
     }
   }
 
@@ -69,90 +82,20 @@ export default class DataContent extends React.Component {
     this.setState({
       currentPage: current - 1,
     });
-    getFabricClientSingleton().then((fabricClient) => {
-      fabricClient.queryInfo('mychannel').then(this.onQueryInfoCallback);
-    });
-  }
-
-
-  onQueryInfoCallback(result) {
-    logger.info(result);
-    this.setState({
-      low: result.height.low,
-      high: result.height.high,
-      height: Math.ceil(result.height.low / this.state.pageSize) * this.state.pageSize,
-    });
-    getFabricClientSingleton().then((fabricClient) => {
-      logger.info(this.state.data.length);
-      count = 0;
-      const start = this.state.low - (this.state.pageSize * this.state.currentPage) - 1;
-      for (let i = start; i > start - this.state.pageSize; i--) {
-        if (this.state.high >= i) {
-          const tempHead = {
-            key: count++,
-            id: '',
-            hash: '',
-            num: '',
-            time: '',
-          };
-          const head = this.state.head.slice();
-          head[tempHead.key] = tempHead;
-          this.setState({ head });
-        } else {
-          fabricClient.queryBlock(i, 'mychannel').then(this.onQueryBlockCallback);
+    getQueryBlockSingleton().then((qb) => {
+      qb.queryBlockFromDatabase(this.state.currentPage).then((block) => {
+        if (block !== 'Data does not need change') {
+          if (this.state.currentPage === 0) {
+            const height = parseInt(block[0].id, 0);
+            this.setState({ height });
+          }
+          this.setState({ block });
+          console.log('blocks:', this.state.block);
         }
-      }
+      });
     });
   }
 
-  onQueryBlockCallback(result) {
-    logger.info(result);
-    if (result.header.number !== 0) {
-      const tempData = {
-      };
-      for (let i = 0; i < result.data.data.length; i++) {
-        const tempTransaction = {
-          tx: result.data.data[i.toString()].payload.header.channel_header.tx_id,
-          hash: result.header.data_hash,
-          creatorMSP: result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].header.creator.Mspid : '',
-          endorser: result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].header.creator.Mspid : '',
-          chaincodeName: result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.chaincode_id.name : '',
-          type: result.data.data[i.toString()].payload.header.channel_header.typeString,
-          time: result.data.data[i.toString()].payload.header.channel_header.timestamp,
-          reads: {
-            0: result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset['0'].rwset.reads : '',
-          },
-          writes: {
-            0: result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset['0'].rwset.writes : '',
-          },
-        };
-        if ((result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset.length : 0) > 1) {
-          tempTransaction.reads[1] = result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset['1'].rwset.reads : '';
-          tempTransaction.writes[1] = result.data.data[i.toString()].payload.data.actions ? result.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset['1'].rwset.writes : '';
-        } else {
-          tempTransaction.reads[1] = '';
-          tempTransaction.writes[1] = '';
-        }
-        tempData[i.toString()] = tempTransaction;
-      }
-      const data = this.state.data.slice();
-      data[result.header.number] = tempData;
-      this.setState({ data });
-      logger.info(this.state.data);
-
-      const tempHead = {
-        key: count++,
-        id: result.header.number,
-        hash: (result.header.data_hash).substring(0, 16) + '...',
-        num: result.data.data.length,
-        time: result.data.data['0'].payload.header.channel_header.timestamp,
-      };
-      const head = this.state.head.slice();
-      head[tempHead.key] = tempHead;
-      this.setState({ head });
-      logger.info(this.state.head);
-    }
-  }
 
   handleOk() {
     this.setState({
@@ -226,7 +169,7 @@ export default class DataContent extends React.Component {
             <Col span={24}>
               <Table
                 bordered
-                dataSource={this.state.head}
+                dataSource={this.state.block}
                 pagination={{
                   defaultPageSize: this.state.pageSize,
                   showQuickJumper: true,
@@ -244,25 +187,25 @@ export default class DataContent extends React.Component {
                   />
                   <Column
                     align="center"
-                    title={this.state.language === 'cn' ? '哈希值' : 'Hash'}
+                    title={this.state.language === 'cn' ? '哈希值' : 'Block Hash'}
                     key="hash"
                     render={(text, record) => (
                       <span>
-                        <a href="#" onClick={() => this.showModal(record.id)}>{record.hash}</a>
+                        <a href="#" onClick={() => this.showModal(record.key)}>{record.hash}</a>
                       </span>
                     )}
                   />
                   <Column
                     align="center"
-                    title={this.state.language === 'cn' ? '数量' : 'Number'}
+                    title={this.state.language === 'cn' ? '数量' : 'Transaction Number'}
                     dataIndex="num"
                     key="num"
                   />
                   <Column
                     align="center"
                     title={this.state.language === 'cn' ? '生成时间' : 'Generate time'}
-                    dataIndex="time"
-                    key="time"
+                    dataIndex="key"
+                    key="key"
                   />
                 </ColumnGroup>
               </Table>
@@ -279,20 +222,20 @@ export default class DataContent extends React.Component {
           width="60%"
           centered
         >
-          <strong>Hash:</strong>{this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].hash : ''}<br />
-          <strong>Tx:</strong>{this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].tx : ''}<br />
-          <strong>Creator MSP:</strong>{this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].creatorMSP : ''}<br />
-          <strong>Endorser:</strong>{this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].endorser : ''}<br />
-          <strong>Chaincode Name:</strong>{this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].chaincodeName : ''}<br />
-          <strong>Type:</strong>{this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].type : ''}<br />
-          <strong>Time:</strong>{this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].time : ''}<br />
+          <strong>Hash:</strong>{this.state.block[this.state.currentId] ? this.state.block[this.state.currentId].hash : '1'}<br />
+          <strong>Tx:</strong>{this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].tx : '1'}<br />
+          <strong>Creator MSP:</strong>{this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].creatorMSP : ''}<br />
+          <strong>Endorser:</strong>{this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].endorser : ''}<br />
+          <strong>Chaincode Name:</strong>{this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].chaincodeName : ''}<br />
+          <strong>Type:</strong>{this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].type : ''}<br />
+          <strong>Time:</strong>{this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].time : ''}<br />
           <strong>Reads:</strong><br />
-          {JSON.stringify(this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].reads['0'] : '')}<br />
-          {JSON.stringify(this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].reads['1'] : '')}<br />
+          {JSON.stringify(this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].reads[0] : '')}<br />
+          {JSON.stringify(this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].reads[1] : '')}<br />
           <strong>Writes:</strong><br />
           {/* FIXME: 二进制出现乱码.以下仅仅把乱码去除,后续还需重新解析 */}
-          {(JSON.stringify(this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].writes['0'] : '')).replace(/[\\]/g, '').replace(/[�]/g, '')}<br />
-          {(JSON.stringify(this.state.data[this.state.currentId] ? this.state.data[this.state.currentId]['0'].writes['1'] : '')).replace(/[\\]/g, '').replace(/[�]/g, '')}<br />
+          {(JSON.stringify(this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].writes[0] : '')).replace(/[\\]/g, '').replace(/[�]/g, '')}<br />
+          {(JSON.stringify(this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].writes[1] : '')).replace(/[\\]/g, '').replace(/[�]/g, '')}<br />
         </Modal>
       </div>
     );

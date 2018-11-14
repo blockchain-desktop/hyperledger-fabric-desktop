@@ -9,8 +9,7 @@ import ChaincodeInstallContent from './content/ChaincodeInstallContent';
 import { deleteFabricClientSingleton } from '../util/fabric';
 
 import { getConfigDBSingleton } from '../util/createDB';
-
-const path = require('path');
+import { getQueryBlockSingleton } from '../util/queryBlock';
 
 const db = getConfigDBSingleton();
 
@@ -53,6 +52,9 @@ export default class BasicLayout extends React.Component {
       { $set: { isSign: 1 } },
       {}, () => {
       });
+    getQueryBlockSingleton().then((qb) => {
+      qb.deleteAllBlock();
+    });
     deleteFabricClientSingleton();
   }
 
