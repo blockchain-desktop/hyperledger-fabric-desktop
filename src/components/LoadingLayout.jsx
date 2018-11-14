@@ -14,6 +14,7 @@ export default class LoadingLayout extends React.Component {
   render() {
     const contentStyle = {
       height: '100%',
+      background: '#fff',
     };
 
     const loadingImageStyle = {
