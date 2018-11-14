@@ -99,7 +99,10 @@ Suppose you input those fields:
 
 >  Note!  <br />
 >  If chaincode's type is Golang, then the path is the fully qualified
->  package name under the `src` folder of `GOPATH`.
+>  package name under the `src` folder of `GOPATH`.For example, You can create a new folder `cc`
+>  under the `src` folder of `GOPATH` and put your chaincode file there.
+>  Then just need to type `cc` in the `Chaincode Path` field.
+
 
 After the chaincode added, you can perform operations like `install`,`instantiate`,`delete`.
 
