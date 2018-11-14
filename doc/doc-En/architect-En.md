@@ -13,7 +13,7 @@
 ├── fabric             Hyperledger fabric
 	├── basic-network  Basic network
 	├── chaincode      Chaincode
-    ├── fabcar         Fabric node sdk
+        ├── fabcar         Node sdk
 ├── resources          Assets
 	├── key            Certificate and private key
 	├── persistence	   Database
