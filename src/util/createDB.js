@@ -5,6 +5,7 @@ const Datastore = require('nedb');
 let chaincodeDB;
 let configDB;
 let blockDB;
+let invokeDB;
 
 export function getChaincodeDBSingleton() {
   if (!chaincodeDB) {
@@ -25,4 +26,11 @@ export function getBlockDBSingleton() {
     blockDB = new Datastore({ filename: path.join(__dirname, '../../resources/persistence/block.db'), autoload: true });
   }
   return blockDB;
+}
+
+export function getInvokeDBSingleton() {
+  if (!invokeDB) {
+    invokeDB = new Datastore({ filename: path.join(__dirname, '../../resources/persistence/invoke.db'), autoload: true });
+  }
+  return invokeDB;
 }

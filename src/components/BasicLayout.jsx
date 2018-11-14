@@ -8,10 +8,16 @@ import ChaincodeInvokeContent from './content/ChaincodeInvokeContent';
 import ChaincodeInstallContent from './content/ChaincodeInstallContent';
 import { deleteFabricClientSingleton } from '../util/fabric';
 
-import { getConfigDBSingleton } from '../util/createDB';
+import { getConfigDBSingleton, getInvokeDBSingleton } from '../util/createDB';
 import { getQueryBlockSingleton } from '../util/queryBlock';
 
-const db = getConfigDBSingleton();
+const configDB = getConfigDBSingleton();
+const invokeDB = getInvokeDBSingleton();
+
+const logger = require('electron-log');
+const fs = require('fs');
+const path = require('path');
+
 
 const { Sider, Content } = Layout;
 
@@ -48,7 +54,7 @@ export default class BasicLayout extends React.Component {
   onClick() {
     this.props.onGetChildMessage(1);
 
-    db.update({ id: 0 },
+    configDB.update({ id: 0 },
       { $set: { isSign: 1 } },
       {}, () => {
       });
@@ -56,6 +62,13 @@ export default class BasicLayout extends React.Component {
       qb.deleteAllBlock();
     });
     deleteFabricClientSingleton();
+    invokeDB.remove({}, { multi: true }, (err) => {
+      if (err) {
+        logger.info(err);
+      }
+    });
+    fs.readdirSync(path.join(__dirname, '../../resources/key/users'))
+      .forEach(file => fs.unlinkSync(path.join(__dirname, '../../resources/key/users') + '/' + file));
   }
 
   switchContent(contentKey) {

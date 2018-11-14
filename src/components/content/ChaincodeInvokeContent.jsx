@@ -3,6 +3,9 @@
 import React from 'react';
 import { Button, Input, Select, Radio } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
+import { getInvokeDBSingleton } from '../../util/createDB';
+
+const db = getInvokeDBSingleton();
 
 const logger = require('electron-log');
 
@@ -16,20 +19,50 @@ export default class ChaincodeInvokeContent extends React.Component {
       result: '',
       value: '',
       channel: '',
-      chaincodeId: '',
+      contract: '',
       fcn: '',
       args: '',
       type: 'query',
       language: localStorage.getItem('language'),
     };
 
+    this.getConfig = this.getConfig.bind(this);
     this.onClick = this.onClick.bind(this);
-    this.chaincodeIdChange = this.chaincodeIdChange.bind(this);
+    this.contractChange = this.contractChange.bind(this);
     this.fcnChange = this.fcnChange.bind(this);
     this.argsChange = this.argsChange.bind(this);
     this.typeChange = this.typeChange.bind(this);
     this.channelChange = this.channelChange.bind(this);
     this.onClickCallback = this.onClickCallback.bind(this);
+
+    this.getConfig();
+  }
+
+  componentDidMount() {
+    this.state.timer = setInterval(() => {
+      logger.info('this is a timer');
+    }, 60000);
+  }
+
+  componentWillUnmount() {
+    if (this.state.timer != null) {
+      clearInterval(this.state.timer);
+      db.remove({}, { multi: true }, (err) => {
+        if (err) {
+          logger.info(err);
+        }
+      });
+      const tempData = {
+        channel: this.state.channel,
+        contract: this.state.contract,
+        fcn: this.state.fcn,
+      };
+      db.insert(tempData, (error) => {
+        if (error) {
+          logger.info('The operation of insert into database failed');
+        }
+      });
+    }
   }
 
   onClick() {
@@ -37,13 +70,13 @@ export default class ChaincodeInvokeContent extends React.Component {
 
     getFabricClientSingleton().then((fabricClient) => {
       if (this.state.type === 'query') {
-        fabricClient.queryCc(this.state.chaincodeId,
+        fabricClient.queryCc(this.state.contract,
           this.state.fcn,
           this.state.args,
           this.state.channel)
           .then(this.onClickCallback, this.onClickCallback);
       } else if (this.state.type === 'invoke') {
-        fabricClient.invokeCc(this.state.chaincodeId,
+        fabricClient.invokeCc(this.state.contract,
           this.state.fcn,
           this.state.args,
           this.state.channel)
@@ -58,8 +91,20 @@ export default class ChaincodeInvokeContent extends React.Component {
     this.setState({ result });
   }
 
-  chaincodeIdChange(event) {
-    this.setState({ chaincodeId: event.target.value });
+  getConfig() {
+    db.find({}, (err, data) => {
+      if (data.length !== 0) {
+        this.setState({
+          channel: data[0].channel,
+          contract: data[0].contract,
+          fcn: data[0].fcn,
+        });
+      }
+    });
+  }
+
+  contractChange(event) {
+    this.setState({ contract: event.target.value });
   }
 
   fcnChange(event) {
@@ -110,7 +155,7 @@ export default class ChaincodeInvokeContent extends React.Component {
         <div style={divStyle}>
           {this.state.language === 'cn' ? '智能合约：' : 'contract：'}
           <div style={inputDivStyle}>
-            <Input type="text" value={this.state.chaincodeId} placeholder="contract name" style={inputStyle} onChange={this.chaincodeIdChange} />
+            <Input type="text" value={this.state.contract} placeholder="contract name" style={inputStyle} onChange={this.contractChange} />
           </div>
         </div>
 
