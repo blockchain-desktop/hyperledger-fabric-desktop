@@ -13,7 +13,7 @@ If you have found a defect or want to raise a feature request:
 
 If you want to contribute to the develop of Hyperledger fabric desktop:
 
-- refer to Submitting a Pull Request
+- refer to `Submitting a Pull Request`
 
 ### Submitting a Pull Request
 
