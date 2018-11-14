@@ -16,8 +16,8 @@
 	├── key            Certificate and private key
 	├── persistence	   Database
 	├── styles	   CSS and images
-	    ├── css       CSS
-	    ├── image     Images
+	    ├── css        CSS
+	    ├── image      Images
 ├── src                Source code
 	├── components     Functional content
 	    ├── content	   User interface
