@@ -1,6 +1,4 @@
-# Architecture
-
-## Directory Structure
+# Directory Structure
 
 ```
 ├── doc                Document  	 
