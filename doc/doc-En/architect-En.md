@@ -1,5 +1,16 @@
-# Directory Structure
+# Architecture Design
 
+## Philosophy and principles
+The architecture follows the main following principle: 
+- Less is more
+
+## Main-function Layout Design
+![BasicLayout](../img/proposal/BasicLayout.png) 
+
+## Code Structure
+![sourceCode](../img/proposal/sourceCode.png)
+
+## Directory Structure
 ```
 ├── doc                Document  	 
 	├── doc-Ch         Document(Chinese)
@@ -21,10 +32,10 @@
 ├── src                Source code
 	├── components     Functional content
 	    ├── content	   User interface
-	├── util	  	   Function interface
-├── test		       Unit testing
+	├── util	   Function interface
+├── test		   Unit testing
     ├── components     Functional content testing
 	    ├── content	   User interface testing
-    ├── util    	   Function interface testing
+    ├── util           Function interface testing
 ```
 
