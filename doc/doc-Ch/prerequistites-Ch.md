@@ -2,7 +2,7 @@
 
 ## 安装源代码
 
-如果您不清楚如何安装源代码和客户端，您可参考[setup](setup-Zn.md)文档。
+如果您不清楚如何安装源代码和客户端，您可参考[setup](setup-Ch.md)文档。
 
 ## 安装Docker和Docker Compose
 
@@ -46,7 +46,7 @@ npm install npm@5.6.0 -g
 ```
   npm install
 ```
-即可，但因为国内网络的限制，在安装时会出现进度停滞的现象，解决方法请见[Desktop-FAQ](Desktop-FAQ-Zn.md)。
+即可，但因为国内网络的限制，在安装时会出现进度停滞的现象，解决方法请见[Desktop-FAQ](Desktop-FAQ-Ch.md)。
 
 如果您将要操作的链码文件是Go语言类型，你需要设置`GOPATH`环境变量，如在linux平台下，你可以在`〜/.bashrc`文件中进行配置。
 

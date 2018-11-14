@@ -5,7 +5,6 @@
   - basic-network 网络配置
   - chaincode 链码文件
   - fabcar  操作脚本
-- node_modules library root 依赖库
 - resources 静态资源  
 - src    客户端
   - components 客户端界面

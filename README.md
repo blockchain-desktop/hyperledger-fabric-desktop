@@ -57,9 +57,9 @@ available at http://creativecommons.org/licenses/by/4.0/.
 - [软件包下载地址](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/releases)  
 
 ## 文档目录
-* [使用者：功能介绍](doc/doc-Zn/tutorial-Zn.md)  
-* [开发者：参与开发](doc/doc-Zn/coding-guidelines-Zn.md) 
-* [开发者：贡献代码](doc/doc-Zn/CONTRIBUTING-Zn.md)   
+* [使用者：功能介绍](doc/doc-Ch/tutorial-Ch.md)  
+* [开发者：参与开发](doc/doc-Ch/coding-guidelines-Ch.md) 
+* [开发者：贡献代码](doc/doc-Ch/CONTRIBUTING-Ch.md)   
 * [项目架构](./doc/architect.md)  
 
 ## 如何参与？
