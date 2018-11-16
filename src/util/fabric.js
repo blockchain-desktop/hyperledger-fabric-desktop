@@ -454,16 +454,16 @@ class FabricClient {
     this._setupChannelOnce('mychannel');
     const self = this;
     logger.info('start to create admin user.');
-    return this._enrollUser().then(() => {
-      return self.fabric_client.createUser({
+    return this._enrollUser()
+      .then(() => self.fabric_client.createUser({
         username: self.config.username,
         mspid: 'Org1MSP',
         cryptoContent: {
           privateKey: keyPath,
           signedCert: certPath,
         },
-      }).then(() => Promise.resolve('success'));
-    });
+      }),
+      ).then(() => Promise.resolve('success'));
     // ---------------admin finish ---------------
   }
 }

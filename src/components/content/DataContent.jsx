@@ -22,19 +22,27 @@ export default class DataContent extends React.Component {
       type: 'fabric',
       runningTime: '26',
       startTime: '2018-8-28',
-      visible: false,
-      currentId: 0,
+      blockModal: false,
+      transactionModal: false,
+      currentBlock: 0,
+      currentTransaction: 0,
       currentPage: 0,
       height: 0,
       timer: null,
       pageSize: 4,
       language: localStorage.getItem('language'),
       block: [],
+      listData: [],
+      transaction: [],
+      loading: true,
     };
 
-    this.showModal = this.showModal.bind(this);
-    this.handleOk = this.handleOk.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
+    this.showTransactionModal = this.showTransactionModal.bind(this);
+    this.showBlockModal = this.showBlockModal.bind(this);
+    this.blockModalHandleOk = this.blockModalHandleOk.bind(this);
+    this.blockModalHandleCancel = this.blockModalHandleCancel.bind(this);
+    this.transactionModalHandleOk = this.transactionModalHandleOk.bind(this);
+    this.transactionModalHandleCancel = this.transactionModalHandleCancel.bind(this);
     this.onChange = this.onChange.bind(this);
 
     getQueryBlockSingleton().then((qb) => {
@@ -45,7 +53,8 @@ export default class DataContent extends React.Component {
             this.setState({ height });
           }
           this.setState({ block });
-          console.log('blocks:', this.state.block);
+          console.warn('blocks:', this.state.block);
+          this.setState({ loading: false });
         }
       });
     });
@@ -61,7 +70,6 @@ export default class DataContent extends React.Component {
               this.setState({ height });
             }
             this.setState({ block });
-            console.log('blocks:', this.state.block);
           }
           qb.isNeedToQuery();
         });
@@ -78,6 +86,7 @@ export default class DataContent extends React.Component {
 
 
   onChange(current, pageSize) {
+    this.setState({ loading: true });
     logger.info(current, pageSize);
     this.setState({
       currentPage: current - 1,
@@ -90,29 +99,74 @@ export default class DataContent extends React.Component {
             this.setState({ height });
           }
           this.setState({ block });
-          console.log('blocks:', this.state.block);
+          console.warn('blocks:', this.state.block);
+          this.setState({ loading: false });
         }
       });
     });
   }
 
 
-  handleOk() {
+  blockModalHandleOk() {
     this.setState({
-      visible: false,
+      blockModal: false,
     });
   }
 
-  handleCancel() {
+  blockModalHandleCancel() {
     this.setState({
-      visible: false,
+      blockModal: false,
     });
   }
 
-  showModal(id) {
+  transactionModalHandleOk() {
     this.setState({
-      visible: true,
-      currentId: id,
+      transactionModal: false,
+    });
+  }
+
+  transactionModalHandleCancel() {
+    this.setState({
+      transactionModal: false,
+    });
+  }
+
+  showBlockModal(id) {
+    const tempListData = [{
+      key: 'Data Hash:',
+      value: this.state.block[id].hash,
+    }, {
+      key: 'Previous Hash:',
+      value: this.state.block[id].preHash,
+    }, {
+      key: 'Block Height:',
+      value: this.state.block[id].id,
+    }, {
+      key: 'Transactions:',
+      value: this.state.block[id].num,
+    }];
+
+    const tempTransaction = [];
+    for (let i = 0; i < this.state.block[id].num; i++) {
+      const temp = {
+        key: i,
+        tx: this.state.block[id][i].tx !== '' ? ((this.state.block[id][i].tx).substring(0, 30) + '...') : '000000000000000000000000000000...',
+        time: this.state.block[id][i].time,
+      };
+      tempTransaction[i] = temp;
+    }
+    this.setState({
+      blockModal: true,
+      currentBlock: id,
+      listData: tempListData,
+      transaction: tempTransaction,
+    });
+  }
+
+  showTransactionModal(id) {
+    this.setState({
+      currentTransaction: id,
+      transactionModal: true,
     });
   }
 
@@ -164,12 +218,17 @@ export default class DataContent extends React.Component {
         {/* </Row> */}
         {/* </div> */}
 
+
+        {/*    列表: 区块高度; 区块哈希; 交易数量
+            一级弹框: 区块信息
+            二级弹框: 交易信息, Json数据以树形显示出来 */}
         <div style={tableDivStyle}>
           <Row>
             <Col span={24}>
               <Table
                 bordered
                 dataSource={this.state.block}
+                loading={this.state.loading}
                 pagination={{
                   defaultPageSize: this.state.pageSize,
                   showQuickJumper: true,
@@ -183,6 +242,7 @@ export default class DataContent extends React.Component {
                     title="ID"
                     dataIndex="id"
                     key="id"
+                    width="10%"
                     sorter={(a, b) => a.id - b.id}
                   />
                   <Column
@@ -191,22 +251,24 @@ export default class DataContent extends React.Component {
                     key="hash"
                     render={(text, record) => (
                       <span>
-                        <a href="#" onClick={() => this.showModal(record.key)}>{record.hash}</a>
+                        <a href="#" onClick={() => this.showBlockModal(record.key)}>{record.hash}</a>
                       </span>
                     )}
                   />
                   <Column
                     align="center"
-                    title={this.state.language === 'cn' ? '数量' : 'Transaction Number'}
+                    title={this.state.language === 'cn' ? '数量' : 'Transaction Num'}
                     dataIndex="num"
+                    width="20%"
                     key="num"
                   />
-                  <Column
-                    align="center"
-                    title={this.state.language === 'cn' ? '生成时间' : 'Generate time'}
-                    dataIndex="key"
-                    key="key"
-                  />
+                  {/* <Column */}
+                  {/* align="center" */}
+                  {/* title={this.state.language === 'cn' ? '生成时间' : 'Transaction'} */}
+                  {/* dataIndex="key" */}
+                  {/* width="10%" */}
+                  {/* key="key" */}
+                  {/* /> */}
                 </ColumnGroup>
               </Table>
             </Col>
@@ -214,28 +276,78 @@ export default class DataContent extends React.Component {
         </div>
 
         <Modal
-          title={this.state.language === 'cn' ? '区块' : 'Block Detail'}
-          visible={this.state.visible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
+          title={<div style={{ width: '100%', textAlign: 'center', fontSize: '130%' }}><strong>{this.state.language === 'cn' ? '区块' : 'Block Detail'}</strong></div>}
+          visible={this.state.blockModal}
+          onOk={this.blockModalHandleOk}
+          onCancel={this.blockModalHandleCancel}
           footer={null}
-          width="60%"
+          width="90%"
           centered
         >
-          <strong>Hash:</strong>{this.state.block[this.state.currentId] ? this.state.block[this.state.currentId].hash : '1'}<br />
-          <strong>Tx:</strong>{this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].tx : '1'}<br />
-          <strong>Creator MSP:</strong>{this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].creatorMSP : ''}<br />
-          <strong>Endorser:</strong>{this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].endorser : ''}<br />
-          <strong>Chaincode Name:</strong>{this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].chaincodeName : ''}<br />
-          <strong>Type:</strong>{this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].type : ''}<br />
-          <strong>Time:</strong>{this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].time : ''}<br />
+          <Table
+            dataSource={this.state.listData}
+            pagination={false}
+          >
+            <Column
+              align="right"
+              title={<div style={{ width: '100%', textAlign: 'left' }}><strong>{this.state.language === 'cn' ? '区块头信息' : 'Block Header'}</strong></div>}
+              width="20%"
+              dataIndex="key"
+            />
+            <Column
+              align="left"
+              dataIndex="value"
+            />
+          </Table>
+
+          <div style={{ width: '100%', height: '2px', backgroundColor: '#000' }}>
+            <br />
+          </div>
+
+          <Table
+            dataSource={this.state.transaction}
+            pagination={false}
+          >
+            <Column
+              align="right"
+              dataIndex="tx"
+              title={<div style={{ width: '100%', textAlign: 'left' }}><strong>{this.state.language === 'cn' ? '交易列表' : 'Transactions'}</strong></div>}
+              width="46%"
+              render={(text, record) => (
+                <span>
+                  <a href="#" onClick={() => this.showTransactionModal(record.key)}>{record.tx}</a>
+                </span>
+              )}
+            />
+            <Column
+              align="left"
+              dataIndex="time"
+            />
+          </Table>
+        </Modal>
+
+        <Modal
+          title={<div style={{ width: '100%', textAlign: 'center', fontSize: '130%' }}><strong>{this.state.language === 'cn' ? '交易信息' : 'Transaction Detail'}</strong></div>}
+          visible={this.state.transactionModal}
+          onOk={this.transactionModalHandleOk}
+          onCancel={this.transactionModalHandleCancel}
+          footer={null}
+          width="80%"
+          centered
+        >
+          <strong>Tx:</strong>{this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].tx : '1'}<br />
+          <strong>Creator MSP:</strong>{this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].creatorMSP : ''}<br />
+          <strong>Endorser:</strong>{this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].endorser : ''}<br />
+          <strong>Chaincode Name:</strong>{this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].chaincodeName : ''}<br />
+          <strong>Type:</strong>{this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].type : ''}<br />
+          <strong>Time:</strong>{this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].time : ''}<br />
           <strong>Reads:</strong><br />
-          {JSON.stringify(this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].reads[0] : '')}<br />
-          {JSON.stringify(this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].reads[1] : '')}<br />
+          {JSON.stringify(this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].reads[0] : '')}<br />
+          {JSON.stringify(this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].reads[1] : '')}<br />
           <strong>Writes:</strong><br />
           {/* FIXME: 二进制出现乱码.以下仅仅把乱码去除,后续还需重新解析 */}
-          {(JSON.stringify(this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].writes[0] : '')).replace(/[\\]/g, '').replace(/[�]/g, '')}<br />
-          {(JSON.stringify(this.state.block[this.state.currentId] ? this.state.block[this.state.currentId][0].writes[1] : '')).replace(/[\\]/g, '').replace(/[�]/g, '')}<br />
+          {(JSON.stringify(this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].writes[0] : '')).replace(/[\\]/g, '').replace(/[�]/g, '')}<br />
+          {(JSON.stringify(this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].writes[1] : '')).replace(/[\\]/g, '').replace(/[�]/g, '')}<br />
         </Modal>
       </div>
     );

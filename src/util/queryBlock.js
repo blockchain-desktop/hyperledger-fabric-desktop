@@ -121,6 +121,7 @@ class QueryBlock {
           db.find({ id: j.toString() }, (err, data) => {
             if (data.length === 0) {
               return fabricClient.queryBlock(j, 'mychannel').then((block) => {
+                console.warn('_getBlockArray: ', block);
                 resolve(self._getBlock(block));
               });
             }
@@ -147,6 +148,7 @@ class QueryBlock {
         id: block.header.number,
         num: block.data.data.length,
         hash: block.header.data_hash,
+        preHash: block.header.previous_hash,
       };
       for (let i = 0; i < block.data.data.length; i++) {
         const tempTransaction = {
