@@ -10,6 +10,7 @@ import { deleteFabricClientSingleton } from '../util/fabric';
 
 import { getConfigDBSingleton } from '../util/createDB';
 import { getQueryBlockSingleton } from '../util/queryBlock';
+import ChannelManangeContent from './content/ChannelManangeContent';
 
 const db = getConfigDBSingleton();
 
@@ -24,6 +25,8 @@ function ContentRoute(props) {
     return <ChaincodeInvokeContent />;
   } else if (props.contentKey === 3) {
     return <ChaincodeInstallContent />;
+  } else if (props.contentKey === 4) {
+    return <ChannelManangeContent />;
   }
   return <h1>The sidebar button is not bound to corresponding content</h1>;
 }
@@ -92,6 +95,10 @@ export default class BasicLayout extends React.Component {
             <Menu.Item key="3" onClick={() => this.switchContent(3)}>
               <Icon type="upload" />
               <span>{this.state.language === 'cn' ? '链码安装' : 'Chaincode Install' }</span>
+            </Menu.Item>
+            <Menu.Item key="4" onClick={() => this.switchContent(4)}>
+              <Icon type="block" />
+              <span>{this.state.language === 'cn' ? '通道管理' : 'Channel Manage' }</span>
             </Menu.Item>
           </Menu>
         </Sider>
