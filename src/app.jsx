@@ -27,13 +27,6 @@ export default class App extends React.Component {
     this.getConfig = this.getConfig.bind(this);
 
     setTimeout(this.getConfig, 1000);
-    // const qb = getQueryBlockSingleton();
-    // qb.queryBlockFromFabric(0).then((results) => {
-    //   console.warn(results);
-    // });
-    // qb.queryBlockFromDatabase(0).then((results) => {
-    //   console.log('results:', results);
-    // });
   }
 
   getConfig() {
