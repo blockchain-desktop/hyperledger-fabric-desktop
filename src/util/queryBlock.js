@@ -12,7 +12,7 @@ class QueryBlock {
     logger.info('constructor');
     this.low = 3;
     this.high = 4;
-    this.height = 426;
+    this.height = 0;
     this.pageSize = 4;
     this.currentPage = -1;
     this.data = [];

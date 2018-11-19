@@ -342,6 +342,16 @@ export default class ChaincodeInstallContent extends React.Component {
     this.handleCreate = this.handleCreate.bind(this);
     this.saveFormRef = this.saveFormRef.bind(this);
     this.handleChange = this.handleChange.bind(this);
+
+    // 智能合约查询例子,记得删除
+    getFabricClientSingleton().then((fabricClient) => {
+      fabricClient.queryInstalledChaincodes().then((result) => {
+        console.log('Installed chaincodes', result);
+      });
+      fabricClient.queryInstantiatedChaincodes('mychannel').then((result) => {
+        console.log('Instantiated chaincodes', result);
+      });
+    });
   }
 
   showModal() {

@@ -87,30 +87,32 @@ class FabricClient {
     });
   }
 
-
+  /**
+   *
+   * @returns {channel}
+   * @private
+   */
   _setupChannelOnce(channelName) {
     // setup each channel once
     let channel = this.channels[channelName];
     if (!channel) {
       logger.info('******************');
       channel = this.fabric_client.newChannel(channelName);
-      let peer;
-      let order;
 
       if (this.flag) {
         logger.info('-----------');
-        peer = this.fabric_client.newPeer(this.config.peerGrpcUrl,
+        this.peer = this.fabric_client.newPeer(this.config.peerGrpcUrl,
           { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': 'peer0.org1.example.com' });
-        channel.addPeer(peer);
-        order = this.fabric_client.newOrderer(this.config.ordererUrl,
+        channel.addPeer(this.peer);
+        this.order = this.fabric_client.newOrderer(this.config.ordererUrl,
           { pem: Buffer.from(this.orderersCert).toString(), 'ssl-target-name-override': 'orderer.example.com' });
-        channel.addOrderer(order);
+        channel.addOrderer(this.order);
       } else {
         logger.info('+++++++++++++++++');
-        peer = this.fabric_client.newPeer(this.config.peerGrpcUrl);
-        channel.addPeer(peer);
-        order = this.fabric_client.newOrderer(this.config.ordererUrl);
-        channel.addOrderer(order);
+        this.peer = this.fabric_client.newPeer(this.config.peerGrpcUrl);
+        channel.addPeer(this.peer);
+        this.order = this.fabric_client.newOrderer(this.config.ordererUrl);
+        channel.addOrderer(this.order);
       }
       this.channels[channelName] = channel;
     } else {
@@ -125,6 +127,7 @@ class FabricClient {
 
   /**
    *  查询链码
+   *  @returns {Promise<String>}
    * @param chaincodeId {string}
    * @param fcn {string}
    * @param args {[]string}
@@ -181,6 +184,7 @@ class FabricClient {
 
   /**
    *  调用链码，写入账本
+   *  @returns {Promise<String>}
    * @param chaincodeId {string}
    * @param fcn {string}
    * @param args {[]string}
@@ -327,6 +331,7 @@ class FabricClient {
   /**
    * 安装链码。
    * 需要相应语言环境，如go语言。
+   * @returns {Promise<String>}
    * @param chaincodePath
    * @param chaincodeName
    * @param chaincodeVersion
@@ -367,6 +372,7 @@ class FabricClient {
 
   /**
    * 实例化链码
+   * @returns {Promise<String>}
    * @param channelName
    * @param chaincodeName
    * @param chaincodeVersion
@@ -426,11 +432,18 @@ class FabricClient {
 
   /**
    * 根据区块号，获取区块
+   * @returns {Promise<block>}
    * @param blockNumber
    * @param channelName
    */
   queryBlock(blockNumber, channelName) {
-    const channel = this._setupChannelOnce(channelName);
+    let channel;
+    try {
+      channel = this._setupChannelOnce(channelName);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject('fail');
+    }
 
     return this._enrollUser()
       .then(() => channel.queryBlock(blockNumber))
@@ -439,16 +452,27 @@ class FabricClient {
 
   /**
    * 获取区块链信息，包含区块高度height
+   * @returns {Promise<blockInfo>}
    * @param channelName
    */
   queryInfo(channelName) {
-    const channel = this._setupChannelOnce(channelName);
+    let channel;
+    try {
+      channel = this._setupChannelOnce(channelName);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject('fail');
+    }
 
     return this._enrollUser()
       .then(() => channel.queryInfo())
-      .then(blockchainInfo => Promise.resolve(blockchainInfo));
+      .then(blockInfo => Promise.resolve(blockInfo));
   }
 
+  /**
+   * 生成证书私钥
+   * @returns {Promise<String>}
+   */
   importCer(keyPath, certPath) {
     // -------------------- admin start ---------
     this._setupChannelOnce('mychannel');
@@ -465,6 +489,86 @@ class FabricClient {
       }),
       ).then(() => Promise.resolve('success'));
     // ---------------admin finish ---------------
+  }
+
+  /**
+   * 查询已经安装的chaincodes
+   * @returns {Promise<Array|chaincodes>}
+   */
+  queryInstalledChaincodes() {
+    try {
+      this._setupChannelOnce('mychannel');
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject('fail');
+    }
+    const self = this;
+    return this._enrollUser()
+      .then((user) => {
+        if (user && user.isEnrolled()) {
+          logger.info('Successfully loaded user1 from persistence');
+        } else {
+          logger.error('Failed to get user1.... run registerUser.js');
+          return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
+        }
+        return self.fabric_client.queryInstalledChaincodes(self.peer);
+      })
+      .then((response) => {
+        if (response) {
+          logger.info('Successfully get response from fabric client');
+        } else {
+          logger.error('Failed to get response.... ');
+          return Promise.reject(new Error('Failed to get response.... '));
+        }
+        logger.info('response from fabric client:', response);
+
+        return Promise.resolve(response.chaincodes);
+      })
+      .catch((err) => {
+        logger.error(`Fail to query installed chaincodes. Error message: ${err.stack}` ? err.stack : err);
+        return Promise.reject('fail');
+      });
+  }
+
+  /**
+   * 查询已经部署的chaincodes
+   * @returns {Promise<Array|chaincodes>}
+   * @param channelName 通道名字
+   */
+  queryInstantiatedChaincodes(channelName) {
+    let channel;
+    try {
+      channel = this._setupChannelOnce(channelName);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject('fail');
+    }
+
+    return this._enrollUser()
+      .then((user) => {
+        if (user && user.isEnrolled()) {
+          logger.info('Successfully loaded user1 from persistence');
+        } else {
+          logger.error('Failed to get user1.... run registerUser.js');
+          return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
+        }
+        return channel.queryInstantiatedChaincodes();
+      })
+      .then((response) => {
+        if (response) {
+          logger.info('Successfully get response from channel');
+        } else {
+          logger.error('Failed to get response.... ');
+          return Promise.reject(new Error('Failed to get response.... '));
+        }
+        logger.info('response from channel:', response);
+
+        return Promise.resolve(response.chaincodes);
+      })
+      .catch((err) => {
+        logger.error(`Fail to query instantiated chaincodes. Error message: ${err.stack}` ? err.stack : err);
+        return Promise.reject('fail');
+      });
   }
 }
 
