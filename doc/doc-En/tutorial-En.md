@@ -93,9 +93,9 @@ Suppose you input those fields:
 
 - Chaincode Name* :`fabcar4` (replace this with your chaincode name)
 - Version* :`4.0` （type a version）
-- Channel Name* :`mychannel` (replace this with your channel name)
+- Channel Name* :`mychannel` (so far,you can't change the value)
 - Chaincode Path* :`github.com/hyperledger/fabric-dev-network/chaincode/fabcar/go`
-- Description :`car` (mark the function of chaincode)
+- Description :`car` (describe functions of the chaincode)
 
 >  Note!  <br />
 >  If chaincode's type is Golang, then the path is the fully qualified
