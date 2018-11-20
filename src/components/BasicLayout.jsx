@@ -8,10 +8,12 @@ import ChaincodeInvokeContent from './content/ChaincodeInvokeContent';
 import ChaincodeInstallContent from './content/ChaincodeInstallContent';
 import { deleteFabricClientSingleton } from '../util/fabric';
 
-import { getConfigDBSingleton, getInvokeDBSingleton } from '../util/createDB';
+import { getConfigDBSingleton, getInvokeDBSingleton, getChaincodeDBSingleton } from '../util/createDB';
 import { getQueryBlockSingleton } from '../util/queryBlock';
 import ChannelManangeContent from './content/ChannelManangeContent';
 
+
+const chaincodedb = getChaincodeDBSingleton();
 const configDB = getConfigDBSingleton();
 const invokeDB = getInvokeDBSingleton();
 
@@ -66,6 +68,12 @@ export default class BasicLayout extends React.Component {
     });
     deleteFabricClientSingleton();
     invokeDB.remove({}, { multi: true }, (err) => {
+      if (err) {
+        logger.info(err);
+      }
+    });
+    // 每次注销时，删除链码数据库中所有记录
+    chaincodedb.remove({}, { multi: true }, (err) => {
       if (err) {
         logger.info(err);
       }

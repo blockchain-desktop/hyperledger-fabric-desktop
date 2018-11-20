@@ -85,9 +85,6 @@ const CollectionCreateForm = Form.create()(
                 <Input placeholder="chaincode path" />,
               )}
             </FormItem>
-            <FormItem label={this.state.language === 'cn' ? '描述' : 'Description'} style={formItemStyle}>
-              {getFieldDecorator('description')(<Input placeholder="function description" />)}
-            </FormItem>
           </Form>
         </Modal>
       );
@@ -111,7 +108,6 @@ class ContractDiv extends React.Component {
     this.state = {
       disable1: this.props.citem.disable1,
       disable2: this.props.citem.disable2,
-      time: this.props.citem.time,
       result: this.props.citem.result,
       icontype: 'check-circle',
       iconcolor: '#52c41a',
@@ -127,19 +123,17 @@ class ContractDiv extends React.Component {
       this.setState({ icontype: 'exclamation-circle', iconcolor: '#FF4500' });
       this.setState({ disable1: false });
       this.setState({ result: 'installation failed' });
-      this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
     } else {
       // 安装链码成功
       this.setState({ icontype: 'check-circle', iconcolor: '#52c41a' });
       this.setState({ disable1: true });
       this.setState({ result: 'installed successfully' });
-      this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
       this.setState({ signal: '1' });
       // 更新持久化数据库
       db.update({ name: this.props.citem.name,
         version: this.props.citem.version,
-        channel: this.props.citem.channel },
-      { $set: { disable1: true, result: 'installed successfully', time: this.state.time } },
+      },
+      { $set: { disable1: true, result: 'installed successfully' } },
       {}, () => {
       });
     }
@@ -147,20 +141,19 @@ class ContractDiv extends React.Component {
   // 对实例化链码进行操作
   handleInstantiateChaincodeCallBack(result) {
     if (result.indexOf('fail') > -1) {
-      this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
       this.setState({ icontype: 'exclamation-circle', iconcolor: '#FF4500' });
       this.setState({ disable2: false });
       this.setState({ result: 'instantiation failed' });
     } else {
       // 实例化链码成功
-      this.setState({ time: moment().format('YYYY-MM-DD HH:mm:ss') });
       this.setState({ icontype: 'check-circle', iconcolor: '#52c41a' });
       this.setState({ disable2: true });
       this.setState({ result: 'instantiated successfully' });
+      // 更新持久化数据库
       db.update({ name: this.props.citem.name,
         version: this.props.citem.version,
-        channel: this.props.citem.channel },
-      { $set: { disable1: true, disable2: true, result: 'instantiated successfully', time: this.state.time } },
+      },
+      { $set: { disable1: true, disable2: true, result: 'instantiated successfully' } },
       {}, () => {
       });
     }
@@ -188,33 +181,33 @@ class ContractDiv extends React.Component {
           [''])
           .then(this.handleInstantiateChaincodeCallBack, this.handleInstantiateChaincodeCallBack);
       }
-      if (e.key === '3') {
-        // 删除链码操作
-        const contract = {
-          name: this.props.citem.name,
-          version: this.props.citem.version,
-          channel: this.props.citem.channel,
-          path: this.props.citem.path,
-          description: this.props.citem.description,
-        };
-        // 从todolist对象集中删除链码对象
-        const index = ContractDiv.findArray(this.props.ctodo,
-          contract.name,
-          contract.version,
-          contract.channel);
-        this.props.ctodo.splice(index, 1);
-        this.props.cdelete(this.props.ctodo);
-        // 删除持久化数据库中的记录
-        db.remove({ name: contract.name,
-          version: contract.version,
-          channel: contract.channel }, {}, (err) => {
-          if (err) {
-            logger.info('remove the document failed! ');
-          } else {
-            logger.info('you have remove the contract!');
-          }
-        });
-      }
+      // if (e.key === '3') {
+      //   // 删除链码操作
+      //   const contract = {
+      //     name: this.props.citem.name,
+      //     version: this.props.citem.version,
+      //     channel: this.props.citem.channel,
+      //     path: this.props.citem.path,
+      //     description: this.props.citem.description,
+      //   };
+      //   // 从todolist对象集中删除链码对象
+      //   const index = ContractDiv.findArray(this.props.ctodo,
+      //     contract.name,
+      //     contract.version,
+      //     contract.channel);
+      //   this.props.ctodo.splice(index, 1);
+      //   this.props.cdelete(this.props.ctodo);
+      //   // 删除持久化数据库中的记录
+      //   db.remove({ name: contract.name,
+      //     version: contract.version,
+      //     channel: contract.channel }, {}, (err) => {
+      //     if (err) {
+      //       logger.info('remove the document failed! ');
+      //     } else {
+      //       logger.info('you have remove the contract!');
+      //     }
+      //   });
+      // }
     });
   }
 
@@ -231,7 +224,7 @@ class ContractDiv extends React.Component {
       float: 'left',
     };
     const contentStyle = {
-      padding: '15px',
+      padding: '20px',
     };
     const PStyle = {
       display: 'block',
@@ -251,21 +244,15 @@ class ContractDiv extends React.Component {
       padding: '0 5px',
       backgroundColor: 'rgb(216, 216, 216)',
     };
-    const timeSpanStyle = {
-      display: 'block',
-      marginTop: '5px',
-      fontSize: '12px',
-      color: 'gray',
-    };
     const DropdownStyle = {
       display: 'block',
-      margin: '12px',
+      margin: '16px',
     };
     const menu = (
       <Menu onClick={this.handleMenuClick}>
         <Menu.Item key="1" disabled={this.state.disable1}>install</Menu.Item>
         <Menu.Item key="2" disabled={this.state.disable2}>instantiate</Menu.Item>
-        <Menu.Item key="3" >delete</Menu.Item>
+        {/* <Menu.Item key="3" >delete</Menu.Item> */}
       </Menu>
     );
     return (
@@ -282,7 +269,6 @@ class ContractDiv extends React.Component {
             <p style={PStyle}>
               <span><Icon type={this.state.icontype} theme="outlined" style={{ color: this.state.iconcolor }} />&nbsp;</span>
               <span>{this.state.result}</span>
-              <span style={timeSpanStyle}>{this.state.time}</span>
             </p>
           </div>
           <div style={DropdownStyle}>
@@ -302,7 +288,7 @@ class ListToDo extends React.Component {
         {
           this.props.todo.map(item =>
             (<ContractDiv
-              key={item.key}
+              key={item.name + item.version}
               citem={item}
               ctodo={this.props.todo}
               cdelete={this.props.onDelete}
@@ -322,36 +308,68 @@ export default class ChaincodeInstallContent extends React.Component {
     super(props);
     const arr = [];
     const obj = this;
+    // 首先查询数据库,判断数据库是否为空
     db.find({}, (err, docs) => {
-      if (err) {
-        logger.info('the operation of find documents failed!');
+    // 如果数据库为空，则从网络中查询链码情况并记录在数据库中
+      if (docs.length === 0 || docs == null) {
+        getFabricClientSingleton().then((fabricClient) => {
+          fabricClient.queryInstalledChaincodes().then((result) => {
+            for (let i = 0; i < result.length; i++) {
+              const doc = {
+                name: result[i].name,
+                version: result[i].version,
+                path: result[i].path,
+                channel: 'mychannel',
+                key: moment().format('YYYYMMDDHHmmss'),
+                disable1: true,
+                disable2: false,
+                result: 'installed successfully',
+              };
+              db.insert(doc, (error) => {
+                if (error) {
+                  logger.info('insert into database failed');
+                }
+              });
+            }
+          });
+          fabricClient.queryInstantiatedChaincodes('mychannel').then((result) => {
+            for (let i = 0; i < result.length; i++) {
+              db.update({
+                name: result[i].name,
+                version: result[i].version,
+              },
+              { $set: { disable2: true, result: 'instantiated successfully' } },
+              {}, () => {
+              });
+            }
+          });
+        });
       }
-      for (let i = 0; i < docs.length; i++) {
-        arr.push(docs[i]);
-      }
-      arr.sort(ChaincodeInstallContent.sortkey);
-      obj.setState({ todolist: arr });
     });
+    // 从数据库中查询链码情况
+    setTimeout(() => {
+      db.find({}, (err, doc) => {
+        //  console.log('doc length: ' + doc.length);
+        for (let i = 0; i < doc.length; i++) {
+          arr.push(doc[i]);
+        }
+        // console.log(arr);
+        arr.sort(ChaincodeInstallContent.sortkey);
+        obj.setState({ todolist: arr });
+      });
+    }, 100);
+
     this.state = {
       visible: false,
       todolist: arr,
       language: localStorage.getItem('language'),
     };
+
     this.showModal = this.showModal.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
     this.saveFormRef = this.saveFormRef.bind(this);
     this.handleChange = this.handleChange.bind(this);
-
-    // 智能合约查询例子,记得删除
-    getFabricClientSingleton().then((fabricClient) => {
-      fabricClient.queryInstalledChaincodes().then((result) => {
-        console.log('Installed chaincodes', result);
-      });
-      fabricClient.queryInstantiatedChaincodes('mychannel').then((result) => {
-        console.log('Instantiated chaincodes', result);
-      });
-    });
   }
 
   showModal() {
@@ -371,26 +389,23 @@ export default class ChaincodeInstallContent extends React.Component {
       const li = {
         name: values.name,
         version: values.version,
-        channel: values.channel,
         path: values.path,
-        description: values.description,
+        channel: values.channel,
         key: moment().format('YYYYMMDDHHmmss'),
         disable1: false,
         disable2: false,
         result: 'added successfully',
-        time: '',
       };
 
       // 新增智能合约对象加入todolist数组
       const list = this.state.todolist;
       list.push(li);
       this.setState({ todolist: list });
-      logger.info('the contract list:', this.state.todolist);
-
-      // 新增智能合约对象数据持久化
+      // logger.info('the contract list:', this.state.todolist);
+      // 新增智能合约对象插入数据库
       db.insert(li, (error) => {
         if (error) {
-          logger.info('insert into database failed');
+          logger.info('contract inserting into database failed');
         }
       });
       form.resetFields();
