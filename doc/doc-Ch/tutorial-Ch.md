@@ -81,8 +81,9 @@ Admin@org1.example.com-cert.pem, 选择private key文件为keystore文件夹下�
 输入链码名称、版本号、通道名称、链码文件路径和功能描述，其中，链码名称、版本号、通道名称、链码文件路径为必填项，功能描述非必填项。
 点击添加，即可添加新的智能合约。
 
-注意：fabric默认在GOPATH路径下src文件夹下寻找链码文件，路径只需具体到链码文件的上一层目录，您可参考下面的例子：
-
+注意：
+1. 目前，我们只实现了单通道，所以通道名称需填"mychannel"
+2. fabric默认在GOPATH路径下src文件夹下寻找链码文件，路径只需具体到链码文件的上一层目录，您可参考下面的例子：
 如：要安装的链码文件的完整路径为：`/Users/chuancey/go/src/github.com/hyperledger/fabric-dev-network/chaincode/fabcar/go/fabcar.go`
 GOPATH为`/Users/chuancey/go`，需填入的路径为：`github.com/hyperledger/fabric-dev-network/chaincode/fabcar/go`
 
