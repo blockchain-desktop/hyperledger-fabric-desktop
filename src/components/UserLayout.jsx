@@ -105,8 +105,6 @@ export default class UserLayout extends React.Component {
 
   priImport() {
     const selectedFile = document.getElementById('priFiles').files[0];// 获取读取的File对象
-    console.log(document.getElementById('priFiles'));
-    console.log(document.getElementById('priFiles').files);
     this.setState({ keyPath: selectedFile.path });
     const priArray = selectedFile.path.split('/');
     this.setState({ keylabel: priArray[priArray.length - 1] });
