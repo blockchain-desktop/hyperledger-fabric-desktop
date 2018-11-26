@@ -78,6 +78,8 @@ export default class BasicLayout extends React.Component {
         logger.info(err);
       }
     });
+    // 每次注销时，清空peer有关的channel持久化数据信息
+    localStorage.removeItem('channels');
     fs.readdirSync(path.join(__dirname, '../../resources/key/users'))
       .forEach(file => fs.unlinkSync(path.join(__dirname, '../../resources/key/users') + '/' + file));
   }
