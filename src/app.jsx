@@ -7,6 +7,7 @@ import UserLayout from './components/UserLayout';
 import LoadingLayout from './components/LoadingLayout';
 
 import { getConfigDBSingleton } from './util/createDB';
+import getFabricClientSingleton from './util/fabric';
 
 
 const logger = require('electron-log');
@@ -27,6 +28,48 @@ export default class App extends React.Component {
     this.getConfig = this.getConfig.bind(this);
 
     setTimeout(this.getConfig, 1000);
+
+    // let fc;
+    // const channelName = 'mychannel2';
+    // getFabricClientSingleton()
+    //   .then((fabricClient) => {
+    //     fc = fabricClient;
+    //     return fc.createChannel(channelName);
+    //   })
+    //   .then((result) => {
+    //     console.log('create channel', result);
+    //     return new Promise((resolve) => {
+    //       setTimeout(() => {
+    //         logger.info('wait');
+    //         resolve(fc.joinChannel(channelName));
+    //       }, 1000);
+    //     });
+    //   })
+    //   .then((result) => {
+    //     console.log('join channel', result);
+    //     return fc.queryChannels();
+    //   })
+    //   .then((result) => {
+    //     console.log('query channel', result);
+    //   });
+
+    // getFabricClientSingleton().then((fabricClient) => {
+    //   fabricClient.joinChannel('mychannel')
+    //     .then((result) => {
+    //       console.log('join channel', result);
+    //       fabricClient.queryChannels()
+    //         .then((result1) => {
+    //           console.log('query channel', result1);
+    //         });
+    //     });
+    // });
+    //
+    // getFabricClientSingleton().then((fabricClient) => {
+    //   fabricClient.queryChannels()
+    //     .then((result1) => {
+    //       console.log('query channel', result1);
+    //     });
+    // });
   }
 
   getConfig() {

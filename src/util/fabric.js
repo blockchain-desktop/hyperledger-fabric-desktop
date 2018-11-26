@@ -6,6 +6,7 @@ const FabricClientSDK = require('fabric-client');
 const path = require('path');
 const util = require('util');
 const fs = require('fs');
+const { exec } = require('child_process');
 
 const db = getConfigDBSingleton();
 
@@ -118,6 +119,7 @@ class FabricClient {
     } else {
       channel = this.channels[channelName];
     }
+    console.warn(channel);
     return channel;
   }
 
@@ -567,6 +569,177 @@ class FabricClient {
       })
       .catch((err) => {
         logger.error(`Fail to query instantiated chaincodes. Error message: ${err.stack}` ? err.stack : err);
+        return Promise.reject('fail');
+      });
+  }
+
+
+  /**
+   * 查询通道
+   * @returns {Promise<Array|chaincodes>}
+   * @param channelName 通道名字
+   */
+  queryChannels() {
+    const self = this;
+    return this._enrollUser()
+      .then((user) => {
+        if (user && user.isEnrolled()) {
+          logger.info('Successfully loaded user1 from persistence');
+        } else {
+          logger.error('Failed to get user1.... run registerUser.js');
+          return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
+        }
+        return self.fabric_client.queryChannels(self.peer);
+      })
+      .then((response) => {
+        if (response) {
+          logger.info('Successfully get response from fabric client');
+        } else {
+          logger.error('Failed to get response.... ');
+          return Promise.reject(new Error('Failed to get response.... '));
+        }
+        logger.info('response from fabric client:', response);
+
+        return Promise.resolve(response.channels);
+      })
+      .catch((err) => {
+        logger.error(`Fail to query channels. Error message: ${err.stack}` ? err.stack : err);
+        return Promise.reject('fail');
+      });
+  }
+
+
+  /**
+   * 创建channel.tx文件
+   * @returns {Promise<Array|chaincodes>}
+   * @param channelName 通道名字
+   */
+  createChannelTX(channelName) {
+    return new Promise((resolve, reject) => {
+      const txPath = path.join(__dirname, '../../resources/key/tx');
+      const cmd = 'cd ' + txPath + ' && ./configtxgen -profile OneOrgChannel -outputCreateChannelTx ./' + channelName + '.tx -channelID ' + channelName;
+      exec(cmd, (err, stdout, stderr) => {
+        if (err) {
+          console.log(err);
+          reject('fail');
+        }
+        console.log(`stdout: ${stdout}`);
+        console.log(`stderr: ${stderr}`);
+        resolve('success');
+      });
+    });
+  }
+
+  /**
+   * 创建通道
+   * @returns {Promise<Array|chaincodes>}
+   * @param channelName 通道名字
+   */
+  createChannel(channelName) {
+    const self = this;
+    return this.createChannelTX(channelName)
+      .then((msg) => {
+        logger.info(msg);
+        try {
+          this._setupChannelOnce(channelName);
+        } catch (err) {
+          logger.error(err);
+          return Promise.reject('fail');
+        }
+        return this._enrollUser();
+      })
+      .then((user) => {
+        if (user && user.isEnrolled()) {
+          logger.info('Successfully loaded user1 from persistence');
+        } else {
+          logger.error('Failed to get user1.... run registerUser.js');
+          return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
+        }
+        const tempTxId = self.fabric_client.newTransactionID();
+        const envelopeBytes = fs.readFileSync(path.join(__dirname, '../../resources/key/tx/' + channelName + '.tx'));
+        const tempConfig = self.fabric_client.extractChannelConfig(envelopeBytes);
+        const signature = self.fabric_client.signChannelConfig(tempConfig);
+        const stringSignature = signature.toBuffer().toString('hex');
+        const tempSignatures = [];
+        tempSignatures.push(stringSignature);
+        const request = {
+          config: tempConfig,
+          signatures: tempSignatures,
+          name: channelName,
+          orderer: self.order,
+          txId: tempTxId,
+        };
+        return self.fabric_client.createChannel(request);
+      })
+      .then((result) => {
+        logger.info(' response ::%j', result);
+
+        if (result.status && result.status === 'SUCCESS') {
+          return Promise.resolve(result);
+        }
+        logger.error('Failed to create the channel. ');
+        return Promise.reject(new Error('Failed to create the channel. '));
+      })
+      .catch((err) => {
+        logger.error(`Fail to query channels. Error message: ${err.stack}` ? err.stack : err);
+        return Promise.reject('fail');
+      });
+  }
+
+  /**
+   * 创建通道
+   * @returns {Promise<Array|chaincodes>}
+   * @param channelName 通道名字
+   */
+  joinChannel(channelName) {
+    let channel;
+    try {
+      channel = this._setupChannelOnce(channelName);
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject('fail');
+    }
+    const self = this;
+    return this._enrollUser()
+      .then((user) => {
+        if (user && user.isEnrolled()) {
+          logger.info('Successfully loaded user1 from persistence');
+        } else {
+          logger.error('Failed to get user1.... run registerUser.js');
+          return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
+        }
+
+        const tempTxId = self.fabric_client.newTransactionID();
+        const request = {
+          txId: tempTxId,
+        };
+        return channel.getGenesisBlock(request);
+      })
+      .then((block) => {
+        logger.info(' block ::%j', block);
+        const tempTargets = [];
+        tempTargets.push(self.peer);
+        const genesisBlock = block;
+        const tempTxId = self.fabric_client.newTransactionID();
+        const request = {
+          targets: tempTargets,
+          block: genesisBlock,
+          txId: tempTxId,
+        };
+
+        // send genesis block to the peer
+        return channel.joinChannel(request);
+      })
+      .then((results) => {
+        logger.info(' results ::%j', results);
+        // if (results && results.response && results.response.status === 200) {
+        return Promise.resolve(results);
+        // }
+        // logger.error('Failed to create the channel. ');
+        // return Promise.reject(new Error('Failed to create the channel. '));
+      })
+      .catch((err) => {
+        logger.error(`Fail to query channels. Error message: ${err.stack}` ? err.stack : err);
         return Promise.reject('fail');
       });
   }

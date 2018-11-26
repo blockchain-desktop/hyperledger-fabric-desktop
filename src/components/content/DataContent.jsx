@@ -281,7 +281,7 @@ export default class DataContent extends React.Component {
           onOk={this.blockModalHandleOk}
           onCancel={this.blockModalHandleCancel}
           footer={null}
-          width="90%"
+          width="720px"
           centered
         >
           <Table
@@ -332,7 +332,7 @@ export default class DataContent extends React.Component {
           onOk={this.transactionModalHandleOk}
           onCancel={this.transactionModalHandleCancel}
           footer={null}
-          width="80%"
+          width="640px"
           centered
         >
           <strong>Tx:</strong>{this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].tx : '1'}<br />
