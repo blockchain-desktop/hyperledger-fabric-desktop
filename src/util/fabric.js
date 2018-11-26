@@ -119,7 +119,6 @@ class FabricClient {
     } else {
       channel = this.channels[channelName];
     }
-    console.warn(channel);
     return channel;
   }
 
@@ -766,7 +765,6 @@ export default function getFabricClientSingleton() {
         return Promise.resolve(__fabricClient);
       });
   }
-  logger.info('get fabric client');
   return Promise.resolve(__fabricClient);
 }
 

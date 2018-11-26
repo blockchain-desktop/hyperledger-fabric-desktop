@@ -1,12 +1,14 @@
 // Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
 
 import React from 'react';
-import { Col, Row, Table, Modal } from 'antd';
+import { Col, Row, Table, Modal, Select } from 'antd';
 import { getQueryBlockSingleton, deleteQueryBlockSingleton } from '../../util/queryBlock';
+import getFabricClientSingleton from '../../util/fabric';
 
 const logger = require('electron-log');
 
 const { Column, ColumnGroup } = Table;
+const Option = Select.Option;
 
 
 export default class DataContent extends React.Component {
@@ -35,6 +37,9 @@ export default class DataContent extends React.Component {
       listData: [],
       transaction: [],
       loading: true,
+      currentChannel: 'mychannel',
+      chanelList: [],
+      optionChildren: [],
     };
 
     this.showTransactionModal = this.showTransactionModal.bind(this);
@@ -44,37 +49,54 @@ export default class DataContent extends React.Component {
     this.transactionModalHandleOk = this.transactionModalHandleOk.bind(this);
     this.transactionModalHandleCancel = this.transactionModalHandleCancel.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.channelChange = this.channelChange.bind(this);
 
-    getQueryBlockSingleton().then((qb) => {
-      qb.queryBlockFromDatabase(this.state.currentPage).then((block) => {
-        if (block !== 'Data does not need change') {
-          if (this.state.currentPage === 0) {
-            const height = parseInt(block[0].id, 0);
-            this.setState({ height });
-          }
-          this.setState({ block });
-          console.warn('blocks:', this.state.block);
-          this.setState({ loading: false });
+    getFabricClientSingleton()
+      .then(fabricClient => fabricClient.queryChannels())
+      .then((channelName) => {
+        console.log('query channel', channelName[0].channel_id);
+        const chanelList = [];
+        const optionChildren = [];
+        for (let i = 0; i < channelName.length; i++) {
+          chanelList[i] = channelName[i].channel_id;
+          optionChildren
+            .push(<Option key={channelName[i].channel_id}>{channelName[i].channel_id}</Option>);
         }
+        this.setState({ chanelList, optionChildren });
+
+        getQueryBlockSingleton(this.state.currentChannel).then((qb) => {
+          qb.queryBlockFromDatabase(this.state.currentPage, this.state.currentChannel)
+            .then((block) => {
+              if (block !== 'Data does not need change') {
+                if (this.state.currentPage === 0) {
+                  const height = parseInt(block[0].id, 0) + 1;
+                  this.setState({ height });
+                }
+                this.setState({ block });
+                console.warn('blocks:', this.state.block);
+                this.setState({ loading: false });
+              }
+            });
+        });
       });
-    });
   }
 
   componentDidMount() {
     this.state.timer = setInterval(() => {
-      getQueryBlockSingleton().then((qb) => {
-        qb.queryBlockFromDatabase(this.state.currentPage).then((block) => {
-          if (block !== 'Data does not need change') {
-            if (this.state.currentPage === 0) {
-              const height = parseInt(block[0].id, 0);
-              this.setState({ height });
+      getQueryBlockSingleton(this.state.currentChannel).then((qb) => {
+        qb.queryBlockFromDatabase(this.state.currentPage, this.state.currentChannel)
+          .then((block) => {
+            if (block !== 'Data does not need change') {
+              if (this.state.currentPage === 0) {
+                const height = parseInt(block[0].id, 0) + 1;
+                this.setState({ height });
+              }
+              this.setState({ block });
             }
-            this.setState({ block });
-          }
-          qb.isNeedToQuery();
-        });
+            qb.isNeedToQuery(this.state.currentChannel);
+          });
       });
-    }, 3000);
+    }, 3000000);
   }
 
   componentWillUnmount() {
@@ -92,14 +114,33 @@ export default class DataContent extends React.Component {
       currentPage: current - 1,
     });
     getQueryBlockSingleton().then((qb) => {
-      qb.queryBlockFromDatabase(this.state.currentPage).then((block) => {
+      qb.queryBlockFromDatabase(this.state.currentPage, this.state.currentChannel).then((block) => {
         if (block !== 'Data does not need change') {
           if (this.state.currentPage === 0) {
-            const height = parseInt(block[0].id, 0);
+            const height = parseInt(block[0].id, 0) + 1;
             this.setState({ height });
           }
           this.setState({ block });
           console.warn('blocks:', this.state.block);
+          this.setState({ loading: false });
+        }
+      });
+    });
+  }
+
+  channelChange(value) {
+    this.setState({ loading: true });
+    console.warn(value);
+    this.setState({ currentChannel: value, currentPage: 0 });
+    getQueryBlockSingleton().then((qb) => {
+      qb.queryBlockFromDatabase(this.state.currentPage, value).then((block) => {
+        if (block !== 'Data does not need change') {
+          console.warn('blocks:', block);
+          if (this.state.currentPage === 0) {
+            const height = parseInt(block[0].id, 0) + 1;
+            this.setState({ height });
+          }
+          this.setState({ block });
           this.setState({ loading: false });
         }
       });
@@ -235,14 +276,22 @@ export default class DataContent extends React.Component {
                   onChange: this.onChange,
                   total: this.state.height }}
               >
-                <ColumnGroup title={this.state.language === 'cn' ? '最近区块' : 'Current Blocks'}>
+                <ColumnGroup title={
+                  <div style={{ width: '100%', textAlign: 'center', fontSize: '130%' }}>
+                    <strong>{this.state.language === 'cn' ? '最近区块' : 'Current Blocks'}</strong>
+                    <Select style={{ width: '20%', float: 'right' }} defaultValue={this.state.currentChannel} onChange={this.channelChange}>
+                      {this.state.optionChildren}
+                    </Select>
+                  </div>
+                }
+                >
                   <Column
                     defaultSortOrder="descend"
                     align="center"
                     title="ID"
                     dataIndex="id"
                     key="id"
-                    width="10%"
+                    width="12%"
                     sorter={(a, b) => a.id - b.id}
                   />
                   <Column
@@ -276,7 +325,11 @@ export default class DataContent extends React.Component {
         </div>
 
         <Modal
-          title={<div style={{ width: '100%', textAlign: 'center', fontSize: '130%' }}><strong>{this.state.language === 'cn' ? '区块' : 'Block Detail'}</strong></div>}
+          title={
+            <div style={{ width: '100%', textAlign: 'center', fontSize: '130%' }}>
+              <strong>{this.state.language === 'cn' ? '区块' : 'Block Detail'}</strong>
+            </div>
+          }
           visible={this.state.blockModal}
           onOk={this.blockModalHandleOk}
           onCancel={this.blockModalHandleCancel}
@@ -290,7 +343,11 @@ export default class DataContent extends React.Component {
           >
             <Column
               align="right"
-              title={<div style={{ width: '100%', textAlign: 'left' }}><strong>{this.state.language === 'cn' ? '区块头信息' : 'Block Header'}</strong></div>}
+              title={
+                <div style={{ width: '100%', textAlign: 'left' }}>
+                  <strong>{this.state.language === 'cn' ? '区块头信息' : 'Block Header'}</strong>
+                </div>
+              }
               width="20%"
               dataIndex="key"
             />
@@ -311,7 +368,11 @@ export default class DataContent extends React.Component {
             <Column
               align="right"
               dataIndex="tx"
-              title={<div style={{ width: '100%', textAlign: 'left' }}><strong>{this.state.language === 'cn' ? '交易列表' : 'Transactions'}</strong></div>}
+              title={
+                <div style={{ width: '100%', textAlign: 'left' }}>
+                  <strong>{this.state.language === 'cn' ? '交易列表' : 'Transactions'}</strong>
+                </div>
+              }
               width="46%"
               render={(text, record) => (
                 <span>
@@ -327,7 +388,11 @@ export default class DataContent extends React.Component {
         </Modal>
 
         <Modal
-          title={<div style={{ width: '100%', textAlign: 'center', fontSize: '130%' }}><strong>{this.state.language === 'cn' ? '交易信息' : 'Transaction Detail'}</strong></div>}
+          title={
+            <div style={{ width: '100%', textAlign: 'center', fontSize: '130%' }}>
+              <strong>{this.state.language === 'cn' ? '交易信息' : 'Transaction Detail'}</strong>
+            </div>
+          }
           visible={this.state.transactionModal}
           onOk={this.transactionModalHandleOk}
           onCancel={this.transactionModalHandleCancel}
