@@ -576,7 +576,7 @@ class FabricClient {
 
   /**
    * 查询通道
-   * @returns {Promise<Array|chaincodes>}
+   * @returns {Promise<Array|channels>}
    * @param channelName 通道名字
    */
   queryChannels() {
@@ -623,7 +623,7 @@ class FabricClient {
   createChannelTX(channelName) {
     return new Promise((resolve, reject) => {
       const txPath = path.join(__dirname, '../../resources/key/tx');
-      const cmd = 'cd ' + txPath + ' && ./configtxgen -profile OneOrgChannel -outputCreateChannelTx ./' + channelName + '.tx -channelID ' + channelName;
+      const cmd = 'cd ' + txPath + ' && configtxgen -profile OneOrgChannel -outputCreateChannelTx ' + channelName + '.tx -channelID ' + channelName;
       exec(cmd, (err, stdout, stderr) => {
         if (err) {
           console.log(err);
@@ -681,13 +681,13 @@ class FabricClient {
         logger.info(' response ::%j', result);
 
         if (result.status && result.status === 'SUCCESS') {
-          return Promise.resolve(result);
+          return Promise.resolve('success');
         }
         logger.error('Failed to create the channel. ');
-        return Promise.reject(new Error('Failed to create the channel. '));
+        return Promise.reject('fail');
       })
       .catch((err) => {
-        logger.error(`Fail to query channels. Error message: ${err.stack}` ? err.stack : err);
+        logger.error(`Fail to create channels. Error message: ${err.stack}` ? err.stack : err);
         return Promise.reject('fail');
       });
   }
@@ -712,7 +712,7 @@ class FabricClient {
           logger.info('Successfully loaded user1 from persistence');
         } else {
           logger.error('Failed to get user1.... run registerUser.js');
-          return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
+          return Promise.reject('fail');
         }
 
         const tempTxId = self.fabric_client.newTransactionID();
@@ -739,7 +739,7 @@ class FabricClient {
       .then((results) => {
         logger.info(' results ::%j', results);
         // if (results && results.response && results.response.status === 200) {
-        return Promise.resolve(results);
+        return Promise.resolve('success');
         // }
         // logger.error('Failed to create the channel. ');
         // return Promise.reject(new Error('Failed to create the channel. '));

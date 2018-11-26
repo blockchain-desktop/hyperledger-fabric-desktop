@@ -61,7 +61,7 @@ Organizations:
         # ID to load the MSP definition as
         ID: Org1MSP
 
-        MSPDir: crypto-config/peerOrganizations/org1.example.com/msp
+        MSPDir: org1.example.com/msp
 
         AnchorPeers:
             # AnchorPeers defines the location of peers which can be used

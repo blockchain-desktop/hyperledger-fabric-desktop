@@ -7,7 +7,6 @@ import UserLayout from './components/UserLayout';
 import LoadingLayout from './components/LoadingLayout';
 
 import { getConfigDBSingleton } from './util/createDB';
-import getFabricClientSingleton from './util/fabric';
 
 
 const logger = require('electron-log');
@@ -52,7 +51,7 @@ export default class App extends React.Component {
     //   .then((result) => {
     //     console.log('query channel', result);
     //   });
-
+    //
     // getFabricClientSingleton().then((fabricClient) => {
     //   fabricClient.joinChannel('mychannel')
     //     .then((result) => {
