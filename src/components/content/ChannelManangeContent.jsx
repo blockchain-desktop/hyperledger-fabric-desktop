@@ -27,7 +27,6 @@ export default class ChannelManangeContent extends React.Component {
         }
         // 第二次及以后进入页面时，则以持久化数组为准
         const channels = JSON.parse(localStorage.getItem('channels'));
-
         obj.setState({ channellist: channels });
       });
     });
@@ -154,7 +153,7 @@ export default class ChannelManangeContent extends React.Component {
                 <Option key={channel} value={channel}>{channel}</Option>)
             }
           </Select>
-          <Button type="primary" onClick={this.handleAddToChannel}>Add</Button>
+          <Button type="primary" onClick={this.handleAddToChannel}>Submit</Button>
         </div>
 
       </div>
