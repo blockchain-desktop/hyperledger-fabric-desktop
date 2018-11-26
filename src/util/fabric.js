@@ -580,6 +580,12 @@ class FabricClient {
    * @param channelName 通道名字
    */
   queryChannels() {
+    try {
+      this._setupChannelOnce('mychannel');
+    } catch (err) {
+      logger.error(err);
+      return Promise.reject('fail');
+    }
     const self = this;
     return this._enrollUser()
       .then((user) => {
