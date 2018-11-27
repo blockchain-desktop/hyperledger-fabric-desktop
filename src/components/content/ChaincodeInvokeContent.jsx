@@ -5,7 +5,6 @@ import { Button, Input, Select, Radio } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
 import { getInvokeDBSingleton } from '../../util/createDB';
 
-const db = getInvokeDBSingleton();
 
 const logger = require('electron-log');
 
@@ -24,9 +23,10 @@ export default class ChaincodeInvokeContent extends React.Component {
       args: '',
       type: 'query',
       language: localStorage.getItem('language'),
+      channelList: [],
+      contractList: {},
     };
 
-    this.getConfig = this.getConfig.bind(this);
     this.onClick = this.onClick.bind(this);
     this.contractChange = this.contractChange.bind(this);
     this.fcnChange = this.fcnChange.bind(this);
@@ -35,35 +35,79 @@ export default class ChaincodeInvokeContent extends React.Component {
     this.channelChange = this.channelChange.bind(this);
     this.onClickCallback = this.onClickCallback.bind(this);
 
-    this.getConfig();
+    let fc;
+    getFabricClientSingleton()
+      .then((fabricClient) => {
+        fc = fabricClient;
+        return fc.queryChannels();
+      })
+      .then((channelName) => {
+        const promises = [];
+        const channelList = [];
+        for (let i = 0; i < channelName.length; i++) {
+          if (i === 0) {
+            this.setState({
+              channel: channelName[i].channel_id,
+            });
+          }
+          channelList[i] = channelName[i].channel_id;
+          const promise = new Promise((resolve) => {
+            logger.info('asdf');
+            return fc.queryInstantiatedChaincodes(channelList[i])
+              .then((contract) => {
+                const tempContractList = [];
+                for (let j = 0; j < contract.length; j++) {
+                  tempContractList[j] = contract[j].name;
+                }
+                const output = {
+                  key: i,
+                  value: tempContractList,
+                };
+                resolve(output);
+              });
+          });
+          promises.push(promise);
+        }
+        this.setState({ channelList, });
+        return Promise.all(promises);
+      }).then((result) => {
+        const contractList = {};
+        for (let i = 0; i < result.length; i++) {
+          contractList[this.state.channelList[result[i].key]] = result[i].value;
+        }
+        this.setState({
+          contractList,
+          contract: contractList[this.state.channelList[0]] ? contractList[this.state.channelList[0]][0] : '',
+        });
+      });
   }
 
-  componentDidMount() {
-    this.state.timer = setInterval(() => {
-      logger.info('this is a timer');
-    }, 60000);
-  }
-
-  componentWillUnmount() {
-    if (this.state.timer != null) {
-      clearInterval(this.state.timer);
-      db.remove({}, { multi: true }, (err) => {
-        if (err) {
-          logger.info(err);
-        }
-      });
-      const tempData = {
-        channel: this.state.channel,
-        contract: this.state.contract,
-        fcn: this.state.fcn,
-      };
-      db.insert(tempData, (error) => {
-        if (error) {
-          logger.info('The operation of insert into database failed');
-        }
-      });
-    }
-  }
+  // componentDidMount() {
+  //   this.state.timer = setInterval(() => {
+  //     logger.info('this is a timer');
+  //   }, 60000);
+  // }
+  //
+  // componentWillUnmount() {
+  //   if (this.state.timer != null) {
+  //     clearInterval(this.state.timer);
+  //     db.remove({}, { multi: true }, (err) => {
+  //       if (err) {
+  //         logger.info(err);
+  //       }
+  //     });
+  //     const tempData = {
+  //       channel: this.state.channel,
+  //       contract: this.state.contract,
+  //       fcn: this.state.fcn,
+  //     };
+  //     db.insert(tempData, (error) => {
+  //       if (error) {
+  //         logger.info('The operation of insert into database failed');
+  //       }
+  //     });
+  //   }
+  // }
 
   onClick() {
     this.setState({ result: '' });
@@ -91,20 +135,20 @@ export default class ChaincodeInvokeContent extends React.Component {
     this.setState({ result });
   }
 
-  getConfig() {
-    db.find({}, (err, data) => {
-      if (data.length !== 0) {
-        this.setState({
-          channel: data[0].channel,
-          contract: data[0].contract,
-          fcn: data[0].fcn,
-        });
-      }
-    });
-  }
+  // getConfig() {
+  //   db.find({}, (err, data) => {
+  //     if (data.length !== 0) {
+  //       this.setState({
+  //         channel: data[0].channel,
+  //         contract: data[0].contract,
+  //         fcn: data[0].fcn,
+  //       });
+  //     }
+  //   });
+  // }
 
-  contractChange(event) {
-    this.setState({ contract: event.target.value });
+  contractChange(value) {
+    this.setState({ contract: value });
   }
 
   fcnChange(event) {
@@ -119,8 +163,8 @@ export default class ChaincodeInvokeContent extends React.Component {
     this.setState({ type: event.target.value });
   }
 
-  channelChange(event) {
-    this.setState({ channel: event.target.value });
+  channelChange(value) {
+    this.setState({ channel: value, contract: this.state.contractList[value] ? this.state.contractList[value][0] : '' });
   }
 
   render() {
@@ -148,14 +192,26 @@ export default class ChaincodeInvokeContent extends React.Component {
         <div style={divStyle}>
           {this.state.language === 'cn' ? '通道名称：' : 'channel:'}
           <div style={inputDivStyle}>
-            <Input type="text" value={this.state.channel} placeholder="channel name" style={inputStyle} onChange={this.channelChange} />
+            <Select
+              style={inputStyle}
+              value={this.state.channel}
+              onChange={this.channelChange}
+            >
+              {this.state.channelList.map(channel => <Option key={channel}>{channel}</Option>)}
+            </Select>
           </div>
         </div>
 
         <div style={divStyle}>
           {this.state.language === 'cn' ? '智能合约：' : 'contract：'}
           <div style={inputDivStyle}>
-            <Input type="text" value={this.state.contract} placeholder="contract name" style={inputStyle} onChange={this.contractChange} />
+            <Select
+              style={inputStyle}
+              value={this.state.contract}
+              onChange={this.contractChange}
+            >
+              {this.state.contractList[this.state.channel] ? this.state.contractList[this.state.channel].map(city => <Option key={city}>{city}</Option>) : null}
+            </Select>
           </div>
         </div>
 
