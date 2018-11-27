@@ -357,7 +357,7 @@ export default class ChaincodeInstallContent extends React.Component {
         arr.sort(ChaincodeInstallContent.sortkey);
         obj.setState({ todolist: arr });
       });
-    }, 100);
+    }, 200);
 
     this.state = {
       visible: false,
