@@ -17,6 +17,7 @@ class QueryBlock {
     this.currentPage = -1;
     this.data = [];
     this.preNum = -1;
+    this.currentChannel = 'mychannel';
   }
 
 
@@ -24,18 +25,18 @@ class QueryBlock {
    *  当区块链网络的区块增加时,查询区块,并把增加的区块保存到数据库中
    *  @returns {Promise<block>}
    */
-  isNeedToQuery() {
+  isNeedToQuery(channelName) {
     if (this.currentPage === 0) {
       const self = this;
-      this.getHeight(self).then((info) => {
+      this.getHeight(self, channelName).then((info) => {
         if (self.height !== info.height) {
           const data = {
             start: info.height,
             end: self.height,
           };
-          this._getBlockArray(data, self).then((results) => {
+          this._getBlockArray(data, self, channelName).then((results) => {
             logger.info('results: ', results);
-            self._saveBlockToDatabase(results);
+            self._saveBlockToDatabase(results, channelName);
             return Promise.resolve(results);
           });
           self.height = info.height;
@@ -50,11 +51,12 @@ class QueryBlock {
    *  @returns {Promise<String>}
    *
    */
-  initHeight() {
+  initHeight(channelName) {
     return getFabricClientSingleton()
-      .then(fabricClient => fabricClient.queryInfo('mychannel'))
+      .then(fabricClient => fabricClient.queryInfo(channelName))
       .then((info) => {
         this.height = info.height.low - info.height.high - 1;
+        this.currentChannel = channelName;
         return Promise.resolve('init height success');
       });
   }
@@ -65,9 +67,9 @@ class QueryBlock {
    *  @returns {Promise<info>}
    *  @param self this对象
    */
-  getHeight(self) {
+  getHeight(self, channelName) {
     return getFabricClientSingleton()
-      .then(fabricClient => fabricClient.queryInfo('mychannel'))
+      .then(fabricClient => fabricClient.queryInfo(channelName))
       .then((info) => {
         const low = info.height.low - 1;
         const high = info.height.high;
@@ -92,16 +94,16 @@ class QueryBlock {
    *  @returns {Promise<Array>}
    *  @param page 区块链面板当前页
    */
-  queryBlockFromFabric(page) {
+  queryBlockFromFabric(page, channelName) {
     logger.info('queryBlockFromFabric');
     this.currentPage = page;
 
     const self = this;
-    return this.getHeight(self)
-      .then(info => this._getBlockArray(info, self))
+    return this.getHeight(self, channelName)
+      .then(info => this._getBlockArray(info, self, channelName))
       .then((results) => {
         logger.info('results: ', results);
-        self._saveBlockToDatabase(results);
+        self._saveBlockToDatabase(results, channelName);
         return Promise.resolve(results);
       });
   }
@@ -113,16 +115,16 @@ class QueryBlock {
    *  @param info 包含查询起始数据
    *  @param self this对象
    */
-  _getBlockArray(info, self) {
+  _getBlockArray(info, self, channelName) {
     const promises = [];
     return getFabricClientSingleton().then((fabricClient) => {
       for (let j = info.start; j > info.end; j--) {
         const promise = new Promise((resolve) => {
-          db.find({ id: j.toString() }, (err, data) => {
+          db.find({ id: j.toString(), channel: channelName }, (err, data) => {
             if (data.length === 0) {
-              return fabricClient.queryBlock(j, 'mychannel').then((block) => {
+              return fabricClient.queryBlock(j, channelName).then((block) => {
                 console.warn('_getBlockArray: ', block);
-                resolve(self._getBlock(block));
+                resolve(self._getBlock(block, channelName));
               });
             }
             return resolve(0);
@@ -140,10 +142,11 @@ class QueryBlock {
    *  @returns {block}
    *  @param block 返回的单个区块信息
    */
-  _getBlock(block) {
+  _getBlock(block, channelName) {
     logger.info(block);
     if (block.header.number !== 0) {
       const tempData = {
+        channel: channelName,
         key: block.header.number,
         id: block.header.number,
         num: block.data.data.length,
@@ -184,12 +187,12 @@ class QueryBlock {
    *  将区块信息保存到数据库中
    *  @param results 区块列表
    */
-  _saveBlockToDatabase(results) {
+  _saveBlockToDatabase(results, channelName) {
     logger.info('data: ', results);
     for (let i = 0, len = results.length; i < len; i++) {
       if (results[i] !== 0) {
         logger.info(results[i].id);
-        this._saveBlock(results[i]);
+        this._saveBlock(results[i], channelName);
       }
     }
   }
@@ -199,8 +202,8 @@ class QueryBlock {
    *  若数据库中已有该区块则不保存
    *  @param result 单个区块
    */
-  _saveBlock(result) {
-    db.find({ id: result.id }, (err, data) => {
+  _saveBlock(result, channelName) {
+    db.find({ id: result.id, channel: channelName }, (err, data) => {
       if (data.length === 0) {
         db.insert(result, (error) => {
           if (error) {
@@ -217,26 +220,60 @@ class QueryBlock {
    *  @returns {Promise<Array>}
    *  @param page 当前页数
    */
-  queryBlockFromDatabase(page) {
+  queryBlockFromDatabase(page, channelName) {
     const promises = [];
+    if (channelName !== this.currentChannel) {
+      return this.initHeight(channelName).then((msg) => {
+        logger.info(msg);
+        const start = this.height - (4 * page);
+        this.currentChannel = channelName;
+        const end = start - 4 > -1 ? start - 4 : -1;
+        logger.info('start: ', start);
+        logger.info('end: ', end);
+        for (let i = start; i > end; i--) {
+          const promise = new Promise((resolve) => {
+            db.find({ id: i.toString(), channel: channelName }, (err, data) => {
+              if (data.length === 0) {
+                resolve(getFabricClientSingleton()
+                  .then(fabricClient => fabricClient.queryBlock(i, channelName))
+                  .then((block) => {
+                    const result = this._getBlock(block, channelName);
+                    this._saveBlock(result, channelName);
+                    result.key = start - i;
+                    return result;
+                  }));
+                logger.info('get block from fabric');
+              } else {
+                logger.info('get block from database');
+                data[0].key = start - i;
+                resolve(data[0]);
+              }
+            });
+          });
+          promises.push(promise);
+        }
+        return Promise.all(promises);
+      });
+    }
     const start = this.height - (4 * page);
-    if (start === this.preNum) {
+    if (start === this.preNum && channelName === this.currentChannel) {
       return Promise.resolve('Data does not need change');
     }
     this.preNum = start;
+    this.currentChannel = channelName;
     const end = start - 4 > -1 ? start - 4 : -1;
     logger.info('start: ', start);
     logger.info('end: ', end);
     for (let i = start; i > end; i--) {
       const promise = new Promise((resolve) => {
-        db.find({ id: i.toString() }, (err, data) => {
+        db.find({ id: i.toString(), channel: channelName }, (err, data) => {
           logger.info(data);
           if (data.length === 0) {
             resolve(getFabricClientSingleton()
-              .then(fabricClient => fabricClient.queryBlock(i, 'mychannel'))
+              .then(fabricClient => fabricClient.queryBlock(i, channelName))
               .then((block) => {
-                const result = this._getBlock(block);
-                this._saveBlock(result);
+                const result = this._getBlock(block, channelName);
+                this._saveBlock(result, channelName);
                 result.key = start - i;
                 return result;
               }));
@@ -249,10 +286,9 @@ class QueryBlock {
       });
       promises.push(promise);
     }
-    this.queryBlockFromFabric(page).then(result => logger.info(result));
+    this.queryBlockFromFabric(page, channelName).then(result => logger.info(result));
     return Promise.all(promises);
   }
-
 
   /**
    *  登出时从数据库中删除所有数据
@@ -270,10 +306,10 @@ class QueryBlock {
 
 let _queryBlock;
 
-export function getQueryBlockSingleton() {
+export function getQueryBlockSingleton(channelName) {
   if (!_queryBlock) {
     _queryBlock = new QueryBlock();
-    return _queryBlock.initHeight().then((result) => {
+    return _queryBlock.initHeight(channelName).then((result) => {
       logger.info(result);
       return Promise.resolve(_queryBlock);
     });

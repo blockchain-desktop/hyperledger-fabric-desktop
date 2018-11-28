@@ -29,7 +29,7 @@ export default class App extends React.Component {
     setTimeout(this.getConfig, 1000);
 
     // let fc;
-    // const channelName = 'mychannel2';
+    // const channelName = 'mychannel3';
     // getFabricClientSingleton()
     //   .then((fabricClient) => {
     //     fc = fabricClient;
@@ -63,12 +63,13 @@ export default class App extends React.Component {
     //     });
     // });
     //
-    // getFabricClientSingleton().then((fabricClient) => {
-    //   fabricClient.queryChannels()
-    //     .then((result1) => {
-    //       console.log('query channel', result1);
-    //     });
-    // });
+
+    getFabricClientSingleton().then((fabricClient) => {
+      fabricClient.queryChannels()
+        .then((result1) => {
+          console.log('query channel', result1);
+        });
+    });
   }
 
   getConfig() {

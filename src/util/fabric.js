@@ -119,7 +119,6 @@ class FabricClient {
     } else {
       channel = this.channels[channelName];
     }
-    console.warn(channel);
     return channel;
   }
 
@@ -345,7 +344,7 @@ class FabricClient {
       logger.info('Successfully loaded user from persistence, user:', user.toString());
 
       const request = {
-        targets: [self.fabric_client.newPeer(self.config.peerGrpcUrl)], // peerAddress
+        targets: [self.peer], // peerAddress
         chaincodePath,
         chaincodeId: chaincodeName,
         chaincodeVersion,
@@ -396,7 +395,7 @@ class FabricClient {
 
       txID = self.fabric_client.newTransactionID();
       const request = {
-        targets: [self.fabric_client.newPeer(self.config.peerGrpcUrl)], // peerAddress
+        targets: [self.peer], // peerAddress
         chaincodeId: chaincodeName,
         chaincodeVersion,
         args,
@@ -765,7 +764,6 @@ export default function getFabricClientSingleton() {
         return Promise.resolve(__fabricClient);
       });
   }
-  logger.info('get fabric client');
   return Promise.resolve(__fabricClient);
 }
 
