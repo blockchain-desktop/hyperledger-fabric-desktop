@@ -173,6 +173,19 @@ class ContractDiv extends React.Component {
       { $set: { disable1: true, disable2: true, result: 'instantiated successfully' } },
       {}, () => {
       });
+      // 实例化成功后，更新todolistcopy
+      const li = {
+        name: this.props.citem.name,
+        version: this.props.citem.version,
+        channel: this.props.citem.channel,
+        path: this.props.citem.path,
+        key: this.props.citem.key,
+        disable1: true,
+        disable2: true,
+        result: 'instantiated successfully',
+      };
+      this.props.ctodocopy.push(li);
+      this.props.conAddCopy(this.props.ctodocopy);
     }
   }
 
@@ -199,7 +212,8 @@ class ContractDiv extends React.Component {
           .then(this.handleInstantiateChaincodeCallBack, this.handleInstantiateChaincodeCallBack);
       }
       if (e.key === '3') {
-        // 删除链码操作,实质上Fabric1.1版本中并未提供删除链码的任何操作，这里只是提供在安装链码未成功的场景下给用户删除的操作
+        // 删除链码操作,实质上Fabric1.1版本中并未提供删除链码的任何操作，
+        // 这里只是提供在安装链码未成功的场景下给用户删除的操作
         const contract = {
           name: this.props.citem.name,
           version: this.props.citem.version,
@@ -308,6 +322,8 @@ class ListToDo extends React.Component {
               citem={item}
               ctodo={this.props.todo}
               cdelete={this.props.onDelete}
+              ctodocopy={this.props.todocopy}
+              conAddCopy={this.props.onAddCopy}
             />))
         }
       </div>
@@ -362,8 +378,9 @@ export default class ChaincodeInstallContent extends React.Component {
                   }
                 });
             }
-            // 对于对于只安装未曾实例化的链码和已在某个通道实例化但是想在其他通道实例化的链码，不显示在查询得到的结果中，
-            // 需要重新create contract,但是不会允许再次安装，只暴露实例化操作
+            // 出于这样的考虑：不鼓励用户安装链码后不使用链码(即实例化链码)，所以在用户添加新的链码时，用户即需指定一个channel,
+            // 但是出于用户安装链码忘记实例化，或者暂时不实例化的情况的考虑，对于这样的链码，当用户进入链码安装界面查看链码的数据时，不进行展示，
+            // 但是会在用户重新添加的相同的链码时只暴露实例化操作
           }
         });
         obj.setState({ channelList: channellist });
@@ -391,12 +408,13 @@ export default class ChaincodeInstallContent extends React.Component {
       language: localStorage.getItem('language'),
       channelList: [],
     };
-
+    // todolist包括各种情形下的智能合约,todolistcopy只包含实例化成功后的智能合约
     this.showModal = this.showModal.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
     this.saveFormRef = this.saveFormRef.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleChangeCopy = this.handleChangeCopy.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
   }
 
@@ -425,7 +443,7 @@ export default class ChaincodeInstallContent extends React.Component {
         result: 'added successfully',
       };
       // 对于对于只安装未曾实例化的链码和已在某个通道实例化但是想在其他通道实例化的链码，不显示在初始化时查询得到的结果中，
-      // 对于这样已经安装过的链码，再进行二次操作时，需要重新create contract,但是不允许安装，只允许实例化
+      // 对于这样已经安装过的链码，再进行重新添加链码时，不允许安装，只允许实例化
       getFabricClientSingleton().then((fabricClient) => {
         fabricClient.queryInstalledChaincodes().then((result) => {
           if (result != null || result.length !== 0) {
@@ -460,6 +478,10 @@ export default class ChaincodeInstallContent extends React.Component {
 
   handleChange(newlist) {
     this.setState({ todolist: newlist });
+  }
+
+  handleChangeCopy(newlist) {
+    this.setState({ todolistcopy: newlist });
   }
 
   handleSelect(value) {
@@ -501,7 +523,7 @@ export default class ChaincodeInstallContent extends React.Component {
     const selectStyle = {
       display: 'block',
       position: 'absolute',
-      left: '640px',
+      right: '40px',
       top: '60px',
     };
     return (
@@ -515,7 +537,12 @@ export default class ChaincodeInstallContent extends React.Component {
             onCreate={this.handleCreate}
           />
         </div>
-        <ListToDo todo={this.state.todolist} onDelete={this.handleChange} />
+        <ListToDo
+          todo={this.state.todolist}
+          onDelete={this.handleChange}
+          todocopy={this.state.todolistcopy}
+          onAddCopy={this.handleChangeCopy}
+        />
         <div style={selectStyle} >
           <Select
             defaultValue="allchannels"
