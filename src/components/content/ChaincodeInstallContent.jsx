@@ -1,7 +1,8 @@
+/* eslint-disable array-callback-return */
 // Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
 
 import React from 'react';
-import { Button, Form, Input, Modal, Menu, Dropdown, Icon } from 'antd';
+import { Button, Form, Input, Modal, Menu, Dropdown, Icon, Select } from 'antd';
 import moment from 'moment';
 import getFabricClientSingleton from '../../util/fabric';
 import { getChaincodeDBSingleton } from '../../util/createDB';
@@ -10,6 +11,7 @@ const db = getChaincodeDBSingleton();
 
 const logger = require('electron-log');
 
+const Option = Select.Option;
 // 弹出层窗口组件
 const FormItem = Form.Item;
 
@@ -27,16 +29,22 @@ const CollectionCreateForm = Form.create()(
       }
       callback();
     }
-    static channelValidator(rule, value, callback) {
-      if (!/^[A-Za-z0-9]+$/.test(value)) {
-        callback('only letters and digitals！');
-      }
-      callback();
-    }
     constructor(props) {
       super(props);
+      const obj = this;
+      getFabricClientSingleton().then((fabricClient) => {
+        fabricClient.queryChannels().then((result) => {
+          const channels = [];
+          for (let i = 0; i < result.length; i++) {
+          // console.log('channel_id: ' + result[i].channel_id);
+            channels.push(result[i].channel_id);
+          }
+          obj.setState({ channellist: channels });
+        });
+      });
       this.state = {
         language: localStorage.getItem('language'),
+        channellist: [],
       };
     }
     render() {
@@ -73,9 +81,16 @@ const CollectionCreateForm = Form.create()(
             </FormItem>
             <FormItem label={this.state.language === 'cn' ? '通道' : 'Channel'} style={formItemStyle}>
               {getFieldDecorator('channel', {
-                rules: [{ required: true, message: 'channel name can not be null!' }, { validator: CollectionCreateForm.channelValidator }],
+                rules: [{ required: true, message: 'channel name can not be null!' }],
               })(
-                <Input placeholder="channel name" />,
+                <Select
+                  placeholder="select a channel"
+                >
+                  {
+                    this.state.channellist.map(channel =>
+                      <Option key={channel} value={channel}>{channel}</Option>)
+                  }
+                </Select>,
               )}
             </FormItem>
             <FormItem label={this.state.language === 'cn' ? '路径' : 'Path'} style={formItemStyle}>
@@ -132,6 +147,7 @@ class ContractDiv extends React.Component {
       // 更新持久化数据库
       db.update({ name: this.props.citem.name,
         version: this.props.citem.version,
+        channel: this.props.citem.channel,
       },
       { $set: { disable1: true, result: 'installed successfully' } },
       {}, () => {
@@ -152,6 +168,7 @@ class ContractDiv extends React.Component {
       // 更新持久化数据库
       db.update({ name: this.props.citem.name,
         version: this.props.citem.version,
+        channel: this.props.citem.channel,
       },
       { $set: { disable1: true, disable2: true, result: 'instantiated successfully' } },
       {}, () => {
@@ -181,33 +198,32 @@ class ContractDiv extends React.Component {
           [''])
           .then(this.handleInstantiateChaincodeCallBack, this.handleInstantiateChaincodeCallBack);
       }
-      // if (e.key === '3') {
-      //   // 删除链码操作
-      //   const contract = {
-      //     name: this.props.citem.name,
-      //     version: this.props.citem.version,
-      //     channel: this.props.citem.channel,
-      //     path: this.props.citem.path,
-      //     description: this.props.citem.description,
-      //   };
-      //   // 从todolist对象集中删除链码对象
-      //   const index = ContractDiv.findArray(this.props.ctodo,
-      //     contract.name,
-      //     contract.version,
-      //     contract.channel);
-      //   this.props.ctodo.splice(index, 1);
-      //   this.props.cdelete(this.props.ctodo);
-      //   // 删除持久化数据库中的记录
-      //   db.remove({ name: contract.name,
-      //     version: contract.version,
-      //     channel: contract.channel }, {}, (err) => {
-      //     if (err) {
-      //       logger.info('remove the document failed! ');
-      //     } else {
-      //       logger.info('you have remove the contract!');
-      //     }
-      //   });
-      // }
+      if (e.key === '3') {
+        // 删除链码操作,实质上Fabric1.1版本中并未提供删除链码的任何操作，这里只是提供在安装链码未成功的场景下给用户删除的操作
+        const contract = {
+          name: this.props.citem.name,
+          version: this.props.citem.version,
+          channel: this.props.citem.channel,
+          path: this.props.citem.path,
+        };
+        // 从todolist对象集中删除链码对象
+        const index = ContractDiv.findArray(this.props.ctodo,
+          contract.name,
+          contract.version,
+          contract.channel);
+        this.props.ctodo.splice(index, 1);
+        this.props.cdelete(this.props.ctodo);
+        // 删除持久化数据库中的记录
+        db.remove({ name: contract.name,
+          version: contract.version,
+          channel: contract.channel }, {}, (err) => {
+          if (err) {
+            logger.info('remove the contract failed! ');
+          } else {
+            logger.info('you have remove the contract!');
+          }
+        });
+      }
     });
   }
 
@@ -215,8 +231,8 @@ class ContractDiv extends React.Component {
     const ConTractDivStyle = {
       height: '200px',
       width: '240px',
-      marginBottom: '20px',
-      marginRight: '20px',
+      marginBottom: '15px',
+      marginRight: '15px',
       display: 'block',
       alignItems: 'center',
       border: '1px solid rgb(217, 217, 217)',
@@ -252,7 +268,7 @@ class ContractDiv extends React.Component {
       <Menu onClick={this.handleMenuClick}>
         <Menu.Item key="1" disabled={this.state.disable1}>install</Menu.Item>
         <Menu.Item key="2" disabled={this.state.disable2}>instantiate</Menu.Item>
-        {/* <Menu.Item key="3" >delete</Menu.Item> */}
+        <Menu.Item key="3" >delete</Menu.Item>
       </Menu>
     );
     return (
@@ -288,7 +304,7 @@ class ListToDo extends React.Component {
         {
           this.props.todo.map(item =>
             (<ContractDiv
-              key={item.name + item.version}
+              key={item.name + item.version + item.channel}
               citem={item}
               ctodo={this.props.todo}
               cdelete={this.props.onDelete}
@@ -308,45 +324,52 @@ export default class ChaincodeInstallContent extends React.Component {
     super(props);
     const arr = [];
     const obj = this;
-    // 首先查询数据库,判断数据库是否为空
-    db.find({}, (err, docs) => {
-    // 如果数据库为空，则从网络中查询链码情况并记录在数据库中
-      if (docs.length === 0 || docs == null) {
-        getFabricClientSingleton().then((fabricClient) => {
-          fabricClient.queryInstalledChaincodes().then((result) => {
-            for (let i = 0; i < result.length; i++) {
-              const doc = {
-                name: result[i].name,
-                version: result[i].version,
-                path: result[i].path,
-                channel: 'mychannel',
-                key: moment().format('YYYYMMDDHHmmss'),
-                disable1: true,
-                disable2: false,
-                result: 'installed successfully',
-              };
-              db.insert(doc, (error) => {
-                if (error) {
-                  logger.info('insert into database failed');
-                }
-              });
+    getFabricClientSingleton().then((fabricClient) => {
+      // 先查询通道，不论数据库是否为空，都需要查询通道，获得通道数据
+      fabricClient.queryChannels().then((result) => {
+        // 对于channel来说，查询的数据中并没有'allchannels'此项，加上此项仅是为了界面展示需要
+        const channellist = ['allchannels'];
+        for (let i = 0; i < result.length; i++) {
+          channellist.push(result[i].channel_id);
+        }
+        // console.log('channel_list_length: ' + channellist.length);
+        // 查询数据库,判断数据库是否为空
+        db.find({}, (err, docs) => {
+          // 如果数据库为空，则从网络中查询链码情况并记录在数据库中
+          if (docs.length === 0 || docs == null) {
+            // 对于单个peer上的链码来说，name+version作为标识链码的唯一主键，从网络中查询时，只查询实例化过的链码
+            for (let i = 1; i < channellist.length; i++) {
+              fabricClient.queryInstantiatedChaincodes(channellist[i]).then(
+                (chaincodes) => {
+                  if (chaincodes != null || chaincodes.length !== 0) {
+                    for (let k = 0; k < chaincodes.length; k++) {
+                      const doc = {
+                        name: chaincodes[k].name,
+                        version: chaincodes[k].version,
+                        path: chaincodes[k].path,
+                        channel: channellist[i],
+                        key: moment().format('YYYYMMDDHHmmss'),
+                        disable1: true,
+                        disable2: true,
+                        result: 'instantiated successfully',
+                      };
+                      db.insert(doc, (error) => {
+                        if (error) {
+                          logger.info('insert into database failed');
+                        }
+                      });
+                    }
+                  }
+                });
             }
-          });
-          fabricClient.queryInstantiatedChaincodes('mychannel').then((result) => {
-            for (let i = 0; i < result.length; i++) {
-              db.update({
-                name: result[i].name,
-                version: result[i].version,
-              },
-              { $set: { disable2: true, result: 'instantiated successfully' } },
-              {}, () => {
-              });
-            }
-          });
+            // 对于对于只安装未曾实例化的链码和已在某个通道实例化但是想在其他通道实例化的链码，不显示在查询得到的结果中，
+            // 需要重新create contract,但是不会允许再次安装，只暴露实例化操作
+          }
         });
-      }
+        obj.setState({ channelList: channellist });
+      });
     });
-    // 从数据库中查询链码情况
+    // 如果数据库不为空，则从数据库中查询链码情况
     setTimeout(() => {
       db.find({}, (err, doc) => {
         //  console.log('doc length: ' + doc.length);
@@ -355,14 +378,18 @@ export default class ChaincodeInstallContent extends React.Component {
         }
         // console.log(arr);
         arr.sort(ChaincodeInstallContent.sortkey);
+        // todolistcopy为todolist的副本，作为通道切换时回到原数据使用
         obj.setState({ todolist: arr });
+        obj.setState({ todolistcopy: arr });
       });
-    }, 100);
+    }, 400);
 
     this.state = {
       visible: false,
-      todolist: arr,
+      todolist: [],
+      todolistcopy: [],
       language: localStorage.getItem('language'),
+      channelList: [],
     };
 
     this.showModal = this.showModal.bind(this);
@@ -370,6 +397,7 @@ export default class ChaincodeInstallContent extends React.Component {
     this.handleCreate = this.handleCreate.bind(this);
     this.saveFormRef = this.saveFormRef.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleSelect = this.handleSelect.bind(this);
   }
 
   showModal() {
@@ -396,20 +424,33 @@ export default class ChaincodeInstallContent extends React.Component {
         disable2: false,
         result: 'added successfully',
       };
-
-      // 新增智能合约对象加入todolist数组
-      const list = this.state.todolist;
-      list.push(li);
-      this.setState({ todolist: list });
-      // logger.info('the contract list:', this.state.todolist);
-      // 新增智能合约对象插入数据库
-      db.insert(li, (error) => {
-        if (error) {
-          logger.info('contract inserting into database failed');
-        }
+      // 对于对于只安装未曾实例化的链码和已在某个通道实例化但是想在其他通道实例化的链码，不显示在初始化时查询得到的结果中，
+      // 对于这样已经安装过的链码，再进行二次操作时，需要重新create contract,但是不允许安装，只允许实例化
+      getFabricClientSingleton().then((fabricClient) => {
+        fabricClient.queryInstalledChaincodes().then((result) => {
+          if (result != null || result.length !== 0) {
+            for (let i = 0; i < result.length; i++) {
+              if (li.name === result[i].name && li.version === result[i].version) {
+                li.disable1 = true;
+                li.result = 'installed successfully';
+              }
+            }
+          }
+          // 新增智能合约对象加入todolist数组
+          const list = this.state.todolist;
+          list.push(li);
+          this.setState({ todolist: list });
+          // logger.info('the contract list:', this.state.todolist);
+          // 新增智能合约对象插入数据库
+          db.insert(li, (error) => {
+            if (error) {
+              logger.info('contract inserting into database failed');
+            }
+          });
+          form.resetFields();
+          this.setState({ visible: false });
+        });
       });
-      form.resetFields();
-      this.setState({ visible: false });
     });
   }
 
@@ -421,6 +462,21 @@ export default class ChaincodeInstallContent extends React.Component {
     this.setState({ todolist: newlist });
   }
 
+  handleSelect(value) {
+    console.log('choosen channel: ' + value);
+    if (value === 'allchannels') {
+      this.setState({ todolist: this.state.todolistcopy });
+    } else {
+      const contractlist = this.state.todolistcopy;
+      // eslint-disable-next-line consistent-return
+      const newtodolist = contractlist.filter((item) => {
+        if (item.channel === value) {
+          return item;
+        }
+      });
+      this.setState({ todolist: newtodolist });
+    }
+  }
   render() {
     const outerDivStyle = {
       padding: '20px',
@@ -430,8 +486,8 @@ export default class ChaincodeInstallContent extends React.Component {
     const plusDivStyle = {
       height: '200px',
       width: '240px',
-      marginBottom: '20px',
-      marginRight: '20px',
+      marginBottom: '15px',
+      marginRight: '15px',
       display: 'block',
       alignItems: 'center',
       float: 'left',
@@ -442,7 +498,12 @@ export default class ChaincodeInstallContent extends React.Component {
       height: '100%',
       width: '100%',
     };
-
+    const selectStyle = {
+      display: 'block',
+      position: 'absolute',
+      left: '640px',
+      top: '60px',
+    };
     return (
       <div style={outerDivStyle}>
         <div style={plusDivStyle}>
@@ -455,6 +516,18 @@ export default class ChaincodeInstallContent extends React.Component {
           />
         </div>
         <ListToDo todo={this.state.todolist} onDelete={this.handleChange} />
+        <div style={selectStyle} >
+          <Select
+            defaultValue="allchannels"
+            style={{ width: 120 }}
+            onSelect={this.handleSelect}
+          >
+            {
+              this.state.channelList.map(channel =>
+                <Option key={channel} value={channel}>{channel}</Option>)
+            }
+          </Select>
+        </div>
       </div>
     );
   }

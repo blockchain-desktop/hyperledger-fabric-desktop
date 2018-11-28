@@ -623,8 +623,7 @@ class FabricClient {
   createChannelTX(channelName) {
     return new Promise((resolve, reject) => {
       const txPath = path.join(__dirname, '../../resources/key/tx');
-      const cmd = 'cd ' + txPath + ' && configtxgen -profile OneOrgChannel -outputCreateChannelTx ' + channelName + '.tx -channelID ' + channelName;
-      exec(cmd, (err, stdout, stderr) => {
+      const cmd = 'cd ' + txPath + ' && ./configtxgen -profile OneOrgChannel -outputCreateChannelTx ' + channelName + '.tx -channelID ' + channelName; exec(cmd, (err, stdout, stderr) => {
         if (err) {
           console.log(err);
           reject('fail');
