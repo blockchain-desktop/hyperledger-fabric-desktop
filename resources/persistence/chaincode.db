@@ -1,2 +1,0 @@
-{"name":"mycc","version":"1","channel":"mychannel","path":"mychaincode","description":"asset","key":"20181113162437","disable1":true,"disable2":true,"result":"instantiated successfully","time":"2018-11-13 16:25:07","_id":"F42wBiM7i3OTZaYc"}
-{"name":"fabcar1","version":"1.0","channel":"mychannel","path":"github.com/hyperledger/fabric-dev-network/chaincode/fabcar/go","description":"dada","key":"20181113162349","disable1":true,"disable2":true,"result":"instantiated successfully","time":"2018-11-13 16:24:00","_id":"uGI8CyIUGXQzqmAY"}
