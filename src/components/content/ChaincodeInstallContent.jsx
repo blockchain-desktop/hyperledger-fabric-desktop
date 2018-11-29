@@ -2,15 +2,10 @@
 // Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
 
 import React from 'react';
-import { Button, Form, Input, Modal, Menu, Dropdown, Icon, Select } from 'antd';
-import moment from 'moment';
+import { Button, Form, Input, Modal, Menu, Dropdown, Icon, Select, Tag } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
-import { getChaincodeDBSingleton } from '../../util/createDB';
 
-const db = getChaincodeDBSingleton();
-
-const logger = require('electron-log');
-
+// const logger = require('electron-log');
 const Option = Select.Option;
 // 弹出层窗口组件
 const FormItem = Form.Item;
@@ -144,14 +139,6 @@ class ContractDiv extends React.Component {
       this.setState({ disable1: true });
       this.setState({ result: 'installed successfully' });
       this.setState({ signal: '1' });
-      // 更新持久化数据库
-      db.update({ name: this.props.citem.name,
-        version: this.props.citem.version,
-        channel: this.props.citem.channel,
-      },
-      { $set: { disable1: true, result: 'installed successfully' } },
-      {}, () => {
-      });
     }
   }
   // 对实例化链码进行操作
@@ -165,14 +152,18 @@ class ContractDiv extends React.Component {
       this.setState({ icontype: 'check-circle', iconcolor: '#52c41a' });
       this.setState({ disable2: true });
       this.setState({ result: 'instantiated successfully' });
-      // 更新持久化数据库
-      db.update({ name: this.props.citem.name,
+      // 实例化成功后，更新todolistcopy
+      const li = {
+        name: this.props.citem.name,
         version: this.props.citem.version,
         channel: this.props.citem.channel,
-      },
-      { $set: { disable1: true, disable2: true, result: 'instantiated successfully' } },
-      {}, () => {
-      });
+        path: this.props.citem.path,
+        disable1: true,
+        disable2: true,
+        result: 'instantiated successfully',
+      };
+      this.props.ctodocopy.push(li);
+      this.props.conAddCopy(this.props.ctodocopy);
     }
   }
 
@@ -199,7 +190,8 @@ class ContractDiv extends React.Component {
           .then(this.handleInstantiateChaincodeCallBack, this.handleInstantiateChaincodeCallBack);
       }
       if (e.key === '3') {
-        // 删除链码操作,实质上Fabric1.1版本中并未提供删除链码的任何操作，这里只是提供在安装链码未成功的场景下给用户删除的操作
+        // 删除链码操作,实质上Fabric1.1版本中并未提供删除链码的任何操作，
+        // 这里只是提供在安装链码未成功的场景下给用户删除的操作
         const contract = {
           name: this.props.citem.name,
           version: this.props.citem.version,
@@ -213,16 +205,6 @@ class ContractDiv extends React.Component {
           contract.channel);
         this.props.ctodo.splice(index, 1);
         this.props.cdelete(this.props.ctodo);
-        // 删除持久化数据库中的记录
-        db.remove({ name: contract.name,
-          version: contract.version,
-          channel: contract.channel }, {}, (err) => {
-          if (err) {
-            logger.info('remove the contract failed! ');
-          } else {
-            logger.info('you have remove the contract!');
-          }
-        });
       }
     });
   }
@@ -260,6 +242,10 @@ class ContractDiv extends React.Component {
       padding: '0 5px',
       backgroundColor: 'rgb(216, 216, 216)',
     };
+    const channeltagStyle = {
+      marginLeft: '12px',
+      color: '#1E90FF',
+    };
     const DropdownStyle = {
       display: 'block',
       margin: '16px',
@@ -279,9 +265,7 @@ class ContractDiv extends React.Component {
               <span style={nameSpanStyle}>{this.props.citem.name}</span>
               <span style={versionSpanStyle}>{this.props.citem.version}</span>
             </p>
-            <p style={PStyle}>
-              <span>{this.props.citem.description}</span>
-            </p>
+            <Tag style={channeltagStyle} >#{this.props.citem.channel}</Tag>
             <p style={PStyle}>
               <span><Icon type={this.state.icontype} theme="outlined" style={{ color: this.state.iconcolor }} />&nbsp;</span>
               <span>{this.state.result}</span>
@@ -308,6 +292,8 @@ class ListToDo extends React.Component {
               citem={item}
               ctodo={this.props.todo}
               cdelete={this.props.onDelete}
+              ctodocopy={this.props.todocopy}
+              conAddCopy={this.props.onAddCopy}
             />))
         }
       </div>
@@ -317,13 +303,14 @@ class ListToDo extends React.Component {
 
 // 全局组件
 export default class ChaincodeInstallContent extends React.Component {
-  static sortkey(a, b) {
-    return parseInt(a.key, 10) - parseInt(b.key, 10);
-  }
   constructor(props) {
     super(props);
     const arr = [];
     const obj = this;
+    // 对于某个peer上的链码来说，name+version作为标识链码的唯一主键，从网络中查询时，只查询实例化过的链码
+    // 出于这样的考虑：不鼓励用户安装链码后不使用链码(即实例化链码)，所以在用户添加新的链码时，用户即需指定一个channel,
+    // 但是出于用户安装链码忘记实例化以及在多个通道实例化的考虑，对于这样的链码，当用户进入链码安装界面查看链码的数据时，不进行展示，
+    // 但是会在用户重新添加的相同的链码时只暴露实例化操作
     getFabricClientSingleton().then((fabricClient) => {
       // 先查询通道，不论数据库是否为空，都需要查询通道，获得通道数据
       fabricClient.queryChannels().then((result) => {
@@ -333,56 +320,32 @@ export default class ChaincodeInstallContent extends React.Component {
           channellist.push(result[i].channel_id);
         }
         // console.log('channel_list_length: ' + channellist.length);
-        // 查询数据库,判断数据库是否为空
-        db.find({}, (err, docs) => {
-          // 如果数据库为空，则从网络中查询链码情况并记录在数据库中
-          if (docs.length === 0 || docs == null) {
-            // 对于单个peer上的链码来说，name+version作为标识链码的唯一主键，从网络中查询时，只查询实例化过的链码
-            for (let i = 1; i < channellist.length; i++) {
-              fabricClient.queryInstantiatedChaincodes(channellist[i]).then(
-                (chaincodes) => {
-                  if (chaincodes != null || chaincodes.length !== 0) {
-                    for (let k = 0; k < chaincodes.length; k++) {
-                      const doc = {
-                        name: chaincodes[k].name,
-                        version: chaincodes[k].version,
-                        path: chaincodes[k].path,
-                        channel: channellist[i],
-                        key: moment().format('YYYYMMDDHHmmss'),
-                        disable1: true,
-                        disable2: true,
-                        result: 'instantiated successfully',
-                      };
-                      db.insert(doc, (error) => {
-                        if (error) {
-                          logger.info('insert into database failed');
-                        }
-                      });
-                    }
-                  }
-                });
-            }
-            // 对于对于只安装未曾实例化的链码和已在某个通道实例化但是想在其他通道实例化的链码，不显示在查询得到的结果中，
-            // 需要重新create contract,但是不会允许再次安装，只暴露实例化操作
-          }
-        });
+        // 每次进入页面初始化时，都需要从网络中查询数据
+        for (let i = 1; i < channellist.length; i++) {
+          fabricClient.queryInstantiatedChaincodes(channellist[i]).then(
+            (chaincodes) => {
+              if (chaincodes != null || chaincodes.length !== 0) {
+                for (let k = 0; k < chaincodes.length; k++) {
+                  const doc = {
+                    name: chaincodes[k].name,
+                    version: chaincodes[k].version,
+                    path: chaincodes[k].path,
+                    channel: channellist[i],
+                    disable1: true,
+                    disable2: true,
+                    result: 'instantiated successfully',
+                  };
+                  arr.push(doc);
+                }
+                // todolistcopy为todolist的副本，只包含所有实例化的链码的数据，作为通道切换时的原数据使用
+                obj.setState({ todolist: arr });
+                obj.setState({ todolistcopy: arr });
+              }
+            });
+        }
         obj.setState({ channelList: channellist });
       });
     });
-    // 如果数据库不为空，则从数据库中查询链码情况
-    setTimeout(() => {
-      db.find({}, (err, doc) => {
-        //  console.log('doc length: ' + doc.length);
-        for (let i = 0; i < doc.length; i++) {
-          arr.push(doc[i]);
-        }
-        // console.log(arr);
-        arr.sort(ChaincodeInstallContent.sortkey);
-        // todolistcopy为todolist的副本，作为通道切换时回到原数据使用
-        obj.setState({ todolist: arr });
-        obj.setState({ todolistcopy: arr });
-      });
-    }, 400);
 
     this.state = {
       visible: false,
@@ -391,12 +354,12 @@ export default class ChaincodeInstallContent extends React.Component {
       language: localStorage.getItem('language'),
       channelList: [],
     };
-
     this.showModal = this.showModal.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
     this.saveFormRef = this.saveFormRef.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleChangeCopy = this.handleChangeCopy.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
   }
 
@@ -419,37 +382,72 @@ export default class ChaincodeInstallContent extends React.Component {
         version: values.version,
         path: values.path,
         channel: values.channel,
-        key: moment().format('YYYYMMDDHHmmss'),
         disable1: false,
         disable2: false,
         result: 'added successfully',
       };
-      // 对于对于只安装未曾实例化的链码和已在某个通道实例化但是想在其他通道实例化的链码，不显示在初始化时查询得到的结果中，
-      // 对于这样已经安装过的链码，再进行二次操作时，需要重新create contract,但是不允许安装，只允许实例化
-      getFabricClientSingleton().then((fabricClient) => {
-        fabricClient.queryInstalledChaincodes().then((result) => {
-          if (result != null || result.length !== 0) {
-            for (let i = 0; i < result.length; i++) {
-              if (li.name === result[i].name && li.version === result[i].version) {
-                li.disable1 = true;
-                li.result = 'installed successfully';
-              }
-            }
-          }
-          // 新增智能合约对象加入todolist数组
+      // flag用来标志链码，flag=0标志链码只被添加，flag=1标志链码被安装，flag=2标志链码被实例化
+      let flag = 0;
+      // 对于已经安装过的链码分为只安装忘记实例化的链码和已在某个通道实例化但是想在其他通道实例化的链码
+      const listcopy = this.state.todolistcopy;
+      for (let k = 0; k < listcopy.length; k++) {
+        // 在todolistcopy中查询该链码是否被实例化，对于已在某个通道实例化但是想在其他通道实例化的链码则重新插入一条记录
+        if (listcopy[k].name === li.name && listcopy[k].version === li.version
+            && listcopy[k].channel !== li.channel) {
+          li.disable1 = true;
+          li.result = 'installed successfully';
+          listcopy.push(li);
+          flag = 2;
           const list = this.state.todolist;
           list.push(li);
           this.setState({ todolist: list });
-          // logger.info('the contract list:', this.state.todolist);
-          // 新增智能合约对象插入数据库
-          db.insert(li, (error) => {
-            if (error) {
-              logger.info('contract inserting into database failed');
+          break;
+        }
+      }
+      // 对于只被安装但忘记实例化的链码，则在原链码上进行操作
+      getFabricClientSingleton().then((fabricClient) => {
+        fabricClient.queryInstalledChaincodes().then((result) => {
+          if (result != null || result.length !== 0) {
+            // 从所有查询到的已安装的链码中进行比对，查看该链码是否被安装过
+            for (let i = 0; i < result.length; i++) {
+              console.log('result: ');
+              console.log(result[i]);
+              // 查询此链码是否为已安装,未被实例化
+              if (li.name === result[i].name && li.version === result[i].version && flag !== 2) {
+                flag = 1;
+                // 如果该链码已安装未被实例化，则查询界面中是否已经渲染
+                let isvisible = 0;
+                // 如果界面中有渲染，则不进行任何动作
+                const elements = this.state.todolist;
+                console.log('elements length:' + elements.length);
+                for (let j = 0; j < elements.length; j++) {
+                  if (li.name === elements[j].name && li.version === elements[j].version
+                      && li.channel === elements[j].channel) {
+                    isvisible = 1;
+                    break;
+                  }
+                }
+                console.log('isvisible: ' + isvisible);
+                // 如果界面中没渲染,则渲染出来
+                if (isvisible === 0) {
+                  li.disable1 = true;
+                  li.result = 'installed successfully';
+                  elements.push(li);
+                  this.setState({ todolist: elements });
+                }
+                break;
+              }
             }
-          });
-          form.resetFields();
-          this.setState({ visible: false });
+          }
+          // 如果链码从未安装过，未曾安装过的链码则直接插入todolist对象中
+          if (flag === 0) {
+            const todo = this.state.todolist;
+            todo.push(li);
+            this.setState({ todolist: todo });
+          }
         });
+        form.resetFields();
+        this.setState({ visible: false });
       });
     });
   }
@@ -460,6 +458,10 @@ export default class ChaincodeInstallContent extends React.Component {
 
   handleChange(newlist) {
     this.setState({ todolist: newlist });
+  }
+
+  handleChangeCopy(newlist) {
+    this.setState({ todolistcopy: newlist });
   }
 
   handleSelect(value) {
@@ -501,7 +503,7 @@ export default class ChaincodeInstallContent extends React.Component {
     const selectStyle = {
       display: 'block',
       position: 'absolute',
-      left: '640px',
+      right: '40px',
       top: '60px',
     };
     return (
@@ -515,10 +517,15 @@ export default class ChaincodeInstallContent extends React.Component {
             onCreate={this.handleCreate}
           />
         </div>
-        <ListToDo todo={this.state.todolist} onDelete={this.handleChange} />
+        <ListToDo
+          todo={this.state.todolist}
+          onDelete={this.handleChange}
+          todocopy={this.state.todolistcopy}
+          onAddCopy={this.handleChangeCopy}
+        />
         <div style={selectStyle} >
           <Select
-            defaultValue="allchannels"
+            placeholder="all channels"
             style={{ width: 120 }}
             onSelect={this.handleSelect}
           >
