@@ -166,10 +166,10 @@ class ContractDiv extends React.Component {
       const listcopy = this.props.ctodocopy;
       // listcopy.push(li);
       // this.props.conAddCopy(listcopy);
-      logger.log('listcopy: ');
-      logger.log(listcopy);
-      logger.log('todolist: ');
-      logger.log(this.props.ctodo);
+      logger.info('listcopy: ');
+      logger.info(listcopy);
+      logger.info('todolist: ');
+      logger.info(this.props.ctodo);
     }
   }
 
@@ -347,7 +347,7 @@ export default class ChaincodeInstallContent extends React.Component {
                   };
                   arr.push(doc);
                 }
-                // todolistcopy为todolist的副本，只包含所有实例化的链码的数据，作为通道切换时的原数据使用
+                // todolistcopy为todolist的副本，作为通道切换时的原数据使用
                 obj.setState({ todolist: arr });
                 obj.setState({ todolistcopy: arr });
                 // console.log('初始化的todolist: ');
@@ -484,7 +484,7 @@ export default class ChaincodeInstallContent extends React.Component {
   }
 
   handleSelect(value) {
-    logger.log('choosen channel: ' + value);
+    logger.info('choosen channel: ' + value);
     if (value === 'allchannels') {
       this.setState({ todolist: this.state.todolistcopy });
     } else {
