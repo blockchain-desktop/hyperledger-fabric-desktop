@@ -400,7 +400,7 @@ export default class DataContent extends React.Component {
           width="640px"
           centered
         >
-          <strong>Tx:</strong>{this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].tx : '1'}<br />
+          <strong>Tx:</strong>{this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].tx : ''}<br />
           <strong>Creator MSP:</strong>{this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].creatorMSP : ''}<br />
           <strong>Endorser:</strong>{this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].endorser : ''}<br />
           <strong>Chaincode Name:</strong>{this.state.block[this.state.currentBlock] ? this.state.block[this.state.currentBlock][this.state.currentTransaction].chaincodeName : ''}<br />
