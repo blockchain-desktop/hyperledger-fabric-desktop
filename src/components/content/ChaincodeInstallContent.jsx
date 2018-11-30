@@ -5,7 +5,8 @@ import React from 'react';
 import { Button, Form, Input, Modal, Menu, Dropdown, Icon, Select, Tag } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
 
-// const logger = require('electron-log');
+const logger = require('electron-log');
+
 const Option = Select.Option;
 // 弹出层窗口组件
 const FormItem = Form.Item;
@@ -153,17 +154,22 @@ class ContractDiv extends React.Component {
       this.setState({ disable2: true });
       this.setState({ result: 'instantiated successfully' });
       // 实例化成功后，更新todolistcopy
-      const li = {
-        name: this.props.citem.name,
-        version: this.props.citem.version,
-        channel: this.props.citem.channel,
-        path: this.props.citem.path,
-        disable1: true,
-        disable2: true,
-        result: 'instantiated successfully',
-      };
-      this.props.ctodocopy.push(li);
-      this.props.conAddCopy(this.props.ctodocopy);
+      // const li = {
+      //   name: this.props.citem.name,
+      //   version: this.props.citem.version,
+      //   channel: this.props.citem.channel,
+      //   path: this.props.citem.path,
+      //   disable1: true,
+      //   disable2: true,
+      //   result: 'instantiated successfully',
+      // };
+      const listcopy = this.props.ctodocopy;
+      // listcopy.push(li);
+      // this.props.conAddCopy(listcopy);
+      logger.log('listcopy: ');
+      logger.log(listcopy);
+      logger.log('todolist: ');
+      logger.log(this.props.ctodo);
     }
   }
 
@@ -237,6 +243,10 @@ class ContractDiv extends React.Component {
       fontSize: '16px',
     };
     const versionSpanStyle = {
+      display: 'inline-block',
+      width: '40px',
+      textAlign: 'center',
+      borderRadius: '4px',
       fontSize: '12px',
       marginLeft: '12px',
       padding: '0 5px',
@@ -340,6 +350,10 @@ export default class ChaincodeInstallContent extends React.Component {
                 // todolistcopy为todolist的副本，只包含所有实例化的链码的数据，作为通道切换时的原数据使用
                 obj.setState({ todolist: arr });
                 obj.setState({ todolistcopy: arr });
+                // console.log('初始化的todolist: ');
+                // console.log(this.state.todolist);
+                // console.log('初始化的todolistcopy: ');
+                // console.log(this.state.todolistcopy);
               }
             });
         }
@@ -396,11 +410,12 @@ export default class ChaincodeInstallContent extends React.Component {
             && listcopy[k].channel !== li.channel) {
           li.disable1 = true;
           li.result = 'installed successfully';
-          listcopy.push(li);
           flag = 2;
           const list = this.state.todolist;
           list.push(li);
           this.setState({ todolist: list });
+          // console.log('链码已被实例化后的todolist: ');
+          // console.log(this.state.todolist);
           break;
         }
       }
@@ -410,8 +425,8 @@ export default class ChaincodeInstallContent extends React.Component {
           if (result != null || result.length !== 0) {
             // 从所有查询到的已安装的链码中进行比对，查看该链码是否被安装过
             for (let i = 0; i < result.length; i++) {
-              console.log('result: ');
-              console.log(result[i]);
+              // console.log('result: ');
+            //  console.log(result[i]);
               // 查询此链码是否为已安装,未被实例化
               if (li.name === result[i].name && li.version === result[i].version && flag !== 2) {
                 flag = 1;
@@ -419,7 +434,7 @@ export default class ChaincodeInstallContent extends React.Component {
                 let isvisible = 0;
                 // 如果界面中有渲染，则不进行任何动作
                 const elements = this.state.todolist;
-                console.log('elements length:' + elements.length);
+                // console.log('elements length:' + elements.length);
                 for (let j = 0; j < elements.length; j++) {
                   if (li.name === elements[j].name && li.version === elements[j].version
                       && li.channel === elements[j].channel) {
@@ -427,13 +442,15 @@ export default class ChaincodeInstallContent extends React.Component {
                     break;
                   }
                 }
-                console.log('isvisible: ' + isvisible);
+                // console.log('isvisible: ' + isvisible);
                 // 如果界面中没渲染,则渲染出来
                 if (isvisible === 0) {
                   li.disable1 = true;
                   li.result = 'installed successfully';
                   elements.push(li);
                   this.setState({ todolist: elements });
+                  // console.log('链码已经安装但是忘记被实例化的todolist: ');
+                  // console.log(this.state.todolist);
                 }
                 break;
               }
@@ -446,6 +463,8 @@ export default class ChaincodeInstallContent extends React.Component {
             this.setState({ todolist: todo });
           }
         });
+        // console.log('contract list: ');
+        // console.log(this.state.todolist);
         form.resetFields();
         this.setState({ visible: false });
       });
@@ -465,7 +484,7 @@ export default class ChaincodeInstallContent extends React.Component {
   }
 
   handleSelect(value) {
-    console.log('choosen channel: ' + value);
+    logger.log('choosen channel: ' + value);
     if (value === 'allchannels') {
       this.setState({ todolist: this.state.todolistcopy });
     } else {
