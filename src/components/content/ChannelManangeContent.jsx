@@ -160,3 +160,11 @@ export default class ChannelManangeContent extends React.Component {
     );
   }
 }
+/*
+*  1.显示通道，包含通道成员等信息(可简化，目前暂未在SDK找到查找通道成员的方法)
+*  2.创建通道，用户可以通过客户端来制定哪些组织可加入通道， 即可通过客户端生成用户自定义的yaml文件
+*            (1)前端，用户添加组织，包括组织名称，MSPID， MSPDir，AnchorPeers，MSPDir即msp证书的目录
+*           （2）后台，通过用户所输入的，生成yaml文件，并配置好证书，后面创建通道跟现有操作保持一致
+*  3.更新通道，用户可以通过更新通道来新增成员，该成员在创建通道时未定义在yaml文件内
+*
+* */
