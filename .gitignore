@@ -2,8 +2,10 @@ node_modules
 out
 .eslintcache
 .idea
-/resources/persistence/
-/resources/key/
+/resources/persistence/:
+/resources/key/users:
+/resources/key/tx:
+!.gitkeep
 
 # fabric network
 fabric/fabcar/hfc-key-store
