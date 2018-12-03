@@ -1,5 +1,7 @@
+/* eslint-disable react/no-string-refs,react/no-find-dom-node */
 import React from 'react';
-import { Select, Button, message, Input } from 'antd';
+import ReactDOM from 'react-dom';
+import { Select, Button, message, Input, Icon } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
 
 const Option = Select.Option;
@@ -36,6 +38,10 @@ export default class ChannelManangeContent extends React.Component {
       channelName: '',
       channelNameValue: '',
       channellist: [],
+      certDir: '',
+      certlabel: '',
+      yamllabel: '',
+      yamlFile: '',
     };
 
     this.onChangeChannel = this.onChangeChannel.bind(this);
@@ -48,8 +54,16 @@ export default class ChannelManangeContent extends React.Component {
     this.handleCreateChannelFailed = this.handleCreateChannelFailed.bind(this);
     this.handleCreateChannelCallback = this.handleCreateChannelCallback.bind(this);
     this.handleAddToChannelCallback = this.handleAddToChannelCallback.bind(this);
+    this.orgCertDirImport = this.orgCertDirImport.bind(this);
+    this.yamlFileImport = this.yamlFileImport.bind(this);
   }
 
+  componentDidMount() {
+    const input = ReactDOM.findDOMNode(this.refs.certDirSupport);
+    input.setAttribute('webkitdirectory', '');
+    input.setAttribute('directory', '');
+    input.setAttribute('multiple', '');
+  }
   onChangeChannel(event) {
     this.setState({ channelName: event.target.value });
     this.setState({ channelNameValue: event.target.value });
@@ -115,12 +129,55 @@ export default class ChannelManangeContent extends React.Component {
     this.setState({ channelNameValue: '' });
   }
 
+  orgCertDirImport() {
+    const selectedFile = document.getElementById('cerFiles').files[0];// 获取读取的File对象
+    this.setState({ certDir: selectedFile.path });
+    const cerArray = selectedFile.path.split('/');
+    this.setState({ certlabel: cerArray[cerArray.length - 1] });
+  }
+
+  yamlFileImport() {
+    const selectedFile = document.getElementById('yamlFile').files[0];// 获取读取的File对象
+    this.setState({ yamlFile: selectedFile.path });
+    const yamlArray = selectedFile.path.split('/');
+    this.setState({ yamllabel: yamlArray[yamlArray.length - 1] });
+  }
+
   render() {
     const outerDivStyle = {
       padding: '24px',
     };
     const spanStyle = {
       marginRight: '10px',
+      display: 'inline-block',
+    };
+    const SpanStyle = {
+      marginTop: '30px',
+    };
+    const fileStyle = {
+      width: '0.1px',
+      height: '0.1px',
+      opacity: 0,
+      overflow: 'hidden',
+      position: 'absolute',
+      zIndex: -1,
+    };
+    const labelStyle = {
+      fontSize: '1.1em',
+      border: '1px solid rgb(217, 217, 217)',
+      borderRadius: '4px',
+      display: 'block',
+      width: '270px',
+      height: '32px',
+      verticalAlign: 'middle',
+      textAlign: 'center',
+      lineHeight: '30px',
+      cursor: 'pointer',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      marginLeft: '124px',
+      marginTop: '-25px',
     };
     const selectStyle = {
       width: 180,
@@ -131,13 +188,23 @@ export default class ChannelManangeContent extends React.Component {
       marginRight: '20px',
       width: 180,
     };
-    const divFirstStyle = {
+    const DivStyle = {
       marginBottom: '30px',
     };
     return (
       <div style={outerDivStyle}>
-        <div style={divFirstStyle}>
-          <span style={spanStyle}>Create a channel: </span>
+        <div style={DivStyle}>
+          <span style={SpanStyle}>Org certificate : </span>
+          <input type="file" id="cerFiles" name="cerFiles" style={fileStyle} onChange={this.orgCertDirImport} ref="certDirSupport" />
+          <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', paddingLeft: '7px', paddingRight: '7px' }} />{this.state.certlabel} </label>
+        </div>
+        <div style={DivStyle}>
+          <span style={SpanStyle}>Configtx yaml : </span>
+          <input type="file" id="yamlFile" name="yamlFile" style={fileStyle} onChange={this.yamlFileImport} />
+          <label htmlFor="yamlFile" style={labelStyle} ><Icon type="copy" theme="outlined" style={{ color: '#0083FA', paddingLeft: '7px', paddingRight: '7px' }} />{this.state.yamllabel} </label>
+        </div>
+        <div style={DivStyle}>
+          <span style={spanStyle}>Create a channel : </span>
           <Input placeholder="channel name" style={InputStyle} value={this.state.channelNameValue} onChange={this.onChangeChannel} />
           <Button type="primary" onClick={this.handleCreateChannel}>Submit</Button>
         </div>
