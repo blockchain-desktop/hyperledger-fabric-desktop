@@ -437,7 +437,6 @@ class FabricClient {
    */
   importCer(keyPath, certPath) {
     // -------------------- admin start ---------
-    this._setupChannelOnce('mychannel');
     logger.info('start to create admin user.');
     return this.fabric_client.createUser({
       username: this.config.username,
@@ -447,7 +446,20 @@ class FabricClient {
         signedCert: certPath,
       },
     })
-      .then(() => Promise.resolve('success'));
+      .then((user) => {
+        if (user && user.isEnrolled()) {
+          logger.info('Successfully loaded user1 from persistence, user:', user.toString());
+        } else {
+          logger.error('Failed to get user1.... run registerUser.js');
+          return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
+        }
+        logger.info('create fabric client success');
+        return Promise.resolve('success');
+      })
+      .catch((err) => {
+        logger.error(`Fail to instantiate chaincode. Error message: ${err.stack}` ? err.stack : err);
+        return Promise.reject('fail');
+      });
     // ---------------admin finish ---------------
   }
 
@@ -703,16 +715,7 @@ export default function getFabricClientSingleton() {
     return __fabricClient._gitConfig()
       .then(__fabricClient._config)
       .then(__fabricClient._enrollUser)
-      .then((user) => {
-        if (user && user.isEnrolled()) {
-          logger.info('Successfully loaded user1 from persistence, user:', user.toString());
-        } else {
-          logger.error('Failed to get user1.... run registerUser.js');
-          return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
-        }
-        logger.info('create fabric client success');
-        return Promise.resolve(__fabricClient);
-      });
+      .then(() => Promise.resolve(__fabricClient));
   }
   return Promise.resolve(__fabricClient);
 }

@@ -7,6 +7,8 @@ import UserLayout from './components/UserLayout';
 import LoadingLayout from './components/LoadingLayout';
 
 import { getConfigDBSingleton } from './util/createDB';
+// import generateYaml from './util/generateYaml';
+// import getFabricClientSingleton from './util/fabric';
 
 
 const logger = require('electron-log');
@@ -68,6 +70,7 @@ export default class App extends React.Component {
     //   fabricClient.queryChannels()
     //     .then((result1) => {
     //       console.log('query channel', result1);
+    //       generateYaml(result1);
     //     });
     // });
   }

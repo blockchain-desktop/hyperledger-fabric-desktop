@@ -7,6 +7,8 @@ import getFabricClientSingleton from '../../util/fabric';
 
 const logger = require('electron-log');
 
+const Common = localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common');
+
 const Option = Select.Option;
 // 弹出层窗口组件
 const FormItem = Form.Item;
@@ -15,13 +17,13 @@ const CollectionCreateForm = Form.create()(
   class extends React.Component {
     static nameValidator(rule, value, callback) {
       if (!/^[A-Za-z0-9]+$/.test(value)) {
-        callback('only letters and digitals！');
+        callback(Common.WARN.onlyLetterAndDigital);
       }
       callback();
     }
     static versionValidator(rule, value, callback) {
       if (!/^\d+(.\d+)?$/.test(value)) {
-        callback('only digitals and dot！');
+        callback(Common.WARN.onlyDigitalAndDot);
       }
       callback();
     }
@@ -52,35 +54,37 @@ const CollectionCreateForm = Form.create()(
       return (
         <Modal
           visible={visible}
-          title={this.state.language === 'cn' ? '添加合约' : 'New Contract'}
-          okText={this.state.language === 'cn' ? '确认' : 'create'}
-          cancelText={this.state.language === 'cn' ? '取消' : 'cancel'}
+          title={Common.NEW_CONTRACT}
+          okText={Common.CREATE}
+          cancelText={Common.CANCEL}
           onCancel={onCancel}
           onOk={onCreate}
           centered
           width="480px"
         >
           <Form layout="vertical">
-            <FormItem label={this.state.language === 'cn' ? '名称' : 'Name'} style={formItemStyle}>
+            <FormItem label={Common.NAME} style={formItemStyle}>
               {getFieldDecorator('name', {
-                rules: [{ required: true, message: 'chaincode name can not be null!' }, { validator: CollectionCreateForm.nameValidator }],
+                rules: [{ required: true, message: Common.WARN.chaincodeName },
+                  { validator: CollectionCreateForm.nameValidator }],
               })(
-                <Input placeholder="chaincode name" />,
+                <Input placeholder={Common.CONTRACT_NAME + Common.NAME} />,
               )}
             </FormItem>
-            <FormItem label={this.state.language === 'cn' ? '版本' : 'Version'} style={formItemStyle}>
+            <FormItem label={Common.VERSION} style={formItemStyle}>
               {getFieldDecorator('version', {
-                rules: [{ required: true, message: 'chaincode version can not be null!' }, { validator: CollectionCreateForm.versionValidator }],
+                rules: [{ required: true, message: Common.WARN.chaincodeVersion },
+                  { validator: CollectionCreateForm.versionValidator }],
               })(
-                <Input placeholder="chaincode version" />,
+                <Input placeholder={Common.CONTRACT_NAME + Common.VERSION} />,
               )}
             </FormItem>
-            <FormItem label={this.state.language === 'cn' ? '通道' : 'Channel'} style={formItemStyle}>
+            <FormItem label={Common.CHANNEL_NAME} style={formItemStyle}>
               {getFieldDecorator('channel', {
-                rules: [{ required: true, message: 'channel name can not be null!' }],
+                rules: [{ required: true, message: Common.WARN.channelName }],
               })(
                 <Select
-                  placeholder="select a channel"
+                  placeholder={Common.SELECT + Common.CHANNEL_NAME}
                 >
                   {
                     this.state.channellist.map(channel =>
@@ -89,11 +93,11 @@ const CollectionCreateForm = Form.create()(
                 </Select>,
               )}
             </FormItem>
-            <FormItem label={this.state.language === 'cn' ? '路径' : 'Path'} style={formItemStyle}>
+            <FormItem label={Common.PATH} style={formItemStyle}>
               {getFieldDecorator('path', {
-                rules: [{ required: true, message: 'chaincode path can not be null!' }],
+                rules: [{ required: true, message: Common.WARN.chaincodePath }],
               })(
-                <Input placeholder="chaincode path" />,
+                <Input placeholder={Common.CONTRACT_NAME + Common.PATH} />,
               )}
             </FormItem>
           </Form>
