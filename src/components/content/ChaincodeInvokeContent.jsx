@@ -1,10 +1,10 @@
 // Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
 
 import React from 'react';
-import { Button, Input, Select, Radio } from 'antd';
+import { Button, Input, Select, Radio, message } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
-import { getInvokeDBSingleton } from '../../util/createDB';
 
+const Common = localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common');
 
 const logger = require('electron-log');
 
@@ -68,7 +68,7 @@ export default class ChaincodeInvokeContent extends React.Component {
           });
           promises.push(promise);
         }
-        this.setState({ channelList, });
+        this.setState({ channelList });
         return Promise.all(promises);
       }).then((result) => {
         const contractList = {};
@@ -118,13 +118,13 @@ export default class ChaincodeInvokeContent extends React.Component {
           this.state.fcn,
           this.state.args,
           this.state.channel)
-          .then(this.onClickCallback, this.onClickCallback);
+          .then(this.onClickCallback, this.errorHandler);
       } else if (this.state.type === 'invoke') {
         fabricClient.invokeCc(this.state.contract,
           this.state.fcn,
           this.state.args,
           this.state.channel)
-          .then(this.onClickCallback, this.onClickCallback);
+          .then(this.onClickCallback, this.errorHandler);
       } else {
         logger.error('Chaincode calling type is invalid.');
       }
@@ -135,6 +135,9 @@ export default class ChaincodeInvokeContent extends React.Component {
     this.setState({ result });
   }
 
+  errorHandler() {
+    message.error(Common.ERROR.queryFailed);
+  }
   // getConfig() {
   //   db.find({}, (err, data) => {
   //     if (data.length !== 0) {
@@ -190,7 +193,7 @@ export default class ChaincodeInvokeContent extends React.Component {
       <div style={outerDivStyle}>
 
         <div style={divStyle}>
-          {this.state.language === 'cn' ? '通道名称：' : 'channel:'}
+          {Common.CHANNEL_NAME}
           <div style={inputDivStyle}>
             <Select
               style={inputStyle}
@@ -203,27 +206,29 @@ export default class ChaincodeInvokeContent extends React.Component {
         </div>
 
         <div style={divStyle}>
-          {this.state.language === 'cn' ? '智能合约：' : 'contract：'}
+          {Common.CONTRACT_NAME}
           <div style={inputDivStyle}>
             <Select
               style={inputStyle}
               value={this.state.contract}
               onChange={this.contractChange}
             >
-              {this.state.contractList[this.state.channel] ? this.state.contractList[this.state.channel].map(city => <Option key={city}>{city}</Option>) : null}
+              {this.state.contractList[this.state.channel] ?
+                this.state.contractList[this.state.channel]
+                  .map(city => <Option key={city}>{city}</Option>) : null}
             </Select>
           </div>
         </div>
 
         <div style={divStyle}>
-          {this.state.language === 'cn' ? '函数名称：' : 'function ：'}
+          {Common.FUNCTION_NAME}
           <div style={inputDivStyle}>
             <Input type="text" value={this.state.fcn} placeholder="function name" style={inputStyle} onChange={this.fcnChange} />
           </div>
         </div>
 
         <div style={divStyle}>
-          {this.state.language === 'cn' ? '参数：' : 'parameter：'}
+          {Common.PARAMETER}
           <div style={inputDivStyle}>
             <Select mode="tags" style={inputStyle} placeholder="parameter" onChange={this.argsChange}>
               <Option value="null">null</Option>
@@ -232,7 +237,7 @@ export default class ChaincodeInvokeContent extends React.Component {
         </div>
 
         <div style={divStyle}>
-          {this.state.language === 'cn' ? '方法：' : ' method:'}
+          {Common.METHOD}
           <div style={inputDivStyle}>
             <Radio.Group value={this.state.type} buttonStyle="solid" onChange={this.typeChange}>
               <Radio.Button value="query">query</Radio.Button>
@@ -251,7 +256,7 @@ export default class ChaincodeInvokeContent extends React.Component {
         </div>
 
         <div style={divStyle}>
-          <Button type="primary" style={buttonStyle} onClick={this.onClick}>{this.state.language === 'cn' ? '发送' : 'send'}</Button>
+          <Button type="primary" style={buttonStyle} onClick={this.onClick}>{Common.SEND}</Button>
         </div>
 
       </div>

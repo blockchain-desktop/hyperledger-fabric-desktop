@@ -1,7 +1,7 @@
 // Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
 
 import React from 'react';
-import { Col, Row, Table, Modal, Select } from 'antd';
+import { Col, Row, Table, Modal, Select, message } from 'antd';
 import { getQueryBlockSingleton, deleteQueryBlockSingleton } from '../../util/queryBlock';
 import getFabricClientSingleton from '../../util/fabric';
 
@@ -10,6 +10,7 @@ const logger = require('electron-log');
 const { Column, ColumnGroup } = Table;
 const Option = Select.Option;
 
+const Common = localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common');
 
 export default class DataContent extends React.Component {
   constructor(props) {
@@ -32,7 +33,6 @@ export default class DataContent extends React.Component {
       height: 0,
       timer: null,
       pageSize: 4,
-      language: localStorage.getItem('language'),
       block: [],
       listData: [],
       transaction: [],
@@ -78,6 +78,9 @@ export default class DataContent extends React.Component {
               }
             });
         });
+      }, () => {
+        message.error(Common.ERROR.connectFailed, 5);
+        this.setState({ loading: false });
       });
   }
 
@@ -278,7 +281,7 @@ export default class DataContent extends React.Component {
               >
                 <ColumnGroup title={
                   <div style={{ width: '100%', textAlign: 'center', fontSize: '130%' }}>
-                    <strong>{this.state.language === 'cn' ? '最近区块' : 'Current Blocks'}</strong>
+                    <strong>{Common.CURRENT_BLOCKS}</strong>
                     <Select style={{ width: '20%', float: 'right' }} defaultValue={this.state.currentChannel} onChange={this.channelChange}>
                       {this.state.optionChildren}
                     </Select>
@@ -296,7 +299,7 @@ export default class DataContent extends React.Component {
                   />
                   <Column
                     align="center"
-                    title={this.state.language === 'cn' ? '哈希值' : 'Block Hash'}
+                    title={Common.BLOCK_HASH}
                     key="hash"
                     render={(text, record) => (
                       <span>
@@ -306,7 +309,7 @@ export default class DataContent extends React.Component {
                   />
                   <Column
                     align="center"
-                    title={this.state.language === 'cn' ? '数量' : 'Transaction Num'}
+                    title={Common.TRANSACTION_NUM}
                     dataIndex="num"
                     width="20%"
                     key="num"
@@ -327,7 +330,7 @@ export default class DataContent extends React.Component {
         <Modal
           title={
             <div style={{ width: '100%', textAlign: 'center', fontSize: '130%' }}>
-              <strong>{this.state.language === 'cn' ? '区块' : 'Block Detail'}</strong>
+              <strong>{Common.BLOCK_DETAIL}</strong>
             </div>
           }
           visible={this.state.blockModal}
@@ -345,7 +348,7 @@ export default class DataContent extends React.Component {
               align="right"
               title={
                 <div style={{ width: '100%', textAlign: 'left' }}>
-                  <strong>{this.state.language === 'cn' ? '区块头信息' : 'Block Header'}</strong>
+                  <strong>{Common.BLOCK_HEADER}</strong>
                 </div>
               }
               width="20%"
@@ -370,7 +373,7 @@ export default class DataContent extends React.Component {
               dataIndex="tx"
               title={
                 <div style={{ width: '100%', textAlign: 'left' }}>
-                  <strong>{this.state.language === 'cn' ? '交易列表' : 'Transactions'}</strong>
+                  <strong>{Common.TRANSACTIONS}</strong>
                 </div>
               }
               width="46%"
@@ -390,7 +393,7 @@ export default class DataContent extends React.Component {
         <Modal
           title={
             <div style={{ width: '100%', textAlign: 'center', fontSize: '130%' }}>
-              <strong>{this.state.language === 'cn' ? '交易信息' : 'Transaction Detail'}</strong>
+              <strong>{Common.TRANSACTION_DETAIL}</strong>
             </div>
           }
           visible={this.state.transactionModal}
