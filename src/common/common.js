@@ -40,7 +40,7 @@ Common.INFO = {
   addChannelSuccess: 'Add to channel successfully!',
   createChanelSuccess: 'Channel created successfully!',
 };
-goi
+
 Common.TIP = {
   creatChannel: 'Import the configtx.yaml and certificate files before creating the channel. The configtx.yaml file defines the configuration of the channel to be created. The certificate should be consistent with the path defined by configtx.yaml.',
 };
