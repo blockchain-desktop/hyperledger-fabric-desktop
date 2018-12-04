@@ -54,7 +54,7 @@ export default class DataContent extends React.Component {
     getFabricClientSingleton()
       .then(fabricClient => fabricClient.queryChannels())
       .then((channelName) => {
-        console.log('query channel', channelName[0].channel_id);
+        logger.info('query channel', channelName[0].channel_id);
         const chanelList = [];
         const optionChildren = [];
         for (let i = 0; i < channelName.length; i++) {
@@ -73,7 +73,7 @@ export default class DataContent extends React.Component {
                   this.setState({ height });
                 }
                 this.setState({ block });
-                console.warn('blocks:', this.state.block);
+                logger.info('blocks:', this.state.block);
                 this.setState({ loading: false });
               }
             });
@@ -99,7 +99,7 @@ export default class DataContent extends React.Component {
             qb.isNeedToQuery(this.state.currentChannel);
           });
       });
-    }, 3000000);
+    }, 3000);
   }
 
   componentWillUnmount() {
@@ -124,7 +124,7 @@ export default class DataContent extends React.Component {
             this.setState({ height });
           }
           this.setState({ block });
-          console.warn('blocks:', this.state.block);
+          logger.info('blocks:', this.state.block);
           this.setState({ loading: false });
         }
       });
@@ -133,12 +133,12 @@ export default class DataContent extends React.Component {
 
   channelChange(value) {
     this.setState({ loading: true });
-    console.warn(value);
+    logger.info(value);
     this.setState({ currentChannel: value, currentPage: 0 });
     getQueryBlockSingleton().then((qb) => {
       qb.queryBlockFromDatabase(this.state.currentPage, value).then((block) => {
         if (block !== 'Data does not need change') {
-          console.warn('blocks:', block);
+          logger.info('blocks:', block);
           if (this.state.currentPage === 0) {
             const height = parseInt(block[0].id, 0) + 1;
             this.setState({ height });

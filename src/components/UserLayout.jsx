@@ -92,7 +92,6 @@ export default class UserLayout extends React.Component {
     this.setState({ certPath: selectedFile.path });
     const cerArray = selectedFile.path.split('/');
     this.setState({ certlabel: cerArray[cerArray.length - 1] });
-    console.warn(selectedFile.path);
   }
 
   tlsPeerImport() {

@@ -9,6 +9,8 @@ import getFabricClientSingleton from '../../util/fabric';
 const { exec } = require('child_process');
 const path = require('path');
 
+const logger = require('electron-log');
+
 const Common = localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common');
 
 export default class ChannelManangeContent extends React.Component {
@@ -55,7 +57,7 @@ export default class ChannelManangeContent extends React.Component {
   }
 
   handleChannelChange(value) {
-    console.log('channel choosed: ' + value);
+    logger.info('channel choosed: ' + value);
     this.setState({ channel: value });
   }
 
@@ -92,7 +94,7 @@ export default class ChannelManangeContent extends React.Component {
   }
 
   handleCreateChannel() {
-    console.log('the to-create channel name: ' + this.state.channelName);
+    logger.info('the to-create channel name: ' + this.state.channelName);
     getFabricClientSingleton().then((fabricClient) => {
       fabricClient.createChannel(this.state.channelName).then(this.handleCreateChannelCallback,
         this.handleCreateChannelCallback);
@@ -118,10 +120,10 @@ export default class ChannelManangeContent extends React.Component {
     const txPath = path.join(__dirname, '../../../resources/key/tx/');
     const cmd = 'cp -r ' + selectedFile.path + ' ' + txPath; exec(cmd, (err, stdout, stderr) => {
       if (err) {
-        console.log(err);
+        logger.info(err);
       }
-      console.log(`stdout: ${stdout}`);
-      console.log(`stderr: ${stderr}`);
+      logger.info(`stdout: ${stdout}`);
+      logger.info(`stderr: ${stderr}`);
     });
   }
 
@@ -133,10 +135,10 @@ export default class ChannelManangeContent extends React.Component {
     const txPath = path.join(__dirname, '../../../resources/key/tx/');
     const cmd = 'cp ' + selectedFile.path + ' ' + txPath; exec(cmd, (err, stdout, stderr) => {
       if (err) {
-        console.log(err);
+        logger.info(err);
       }
-      console.log(`stdout: ${stdout}`);
-      console.log(`stderr: ${stderr}`);
+      logger.info(`stdout: ${stdout}`);
+      logger.info(`stderr: ${stderr}`);
     });
   }
 
