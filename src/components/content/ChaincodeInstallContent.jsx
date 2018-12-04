@@ -412,7 +412,7 @@ export default class ChaincodeInstallContent extends React.Component {
         // 错误处理: 如果在todolistcopy中查询到已安装并且实例化相同的链码，则提示错误信息
         if (listcopy[k].name === li.name && listcopy[k].version === li.version
             && listcopy[k].channel === li.channel) {
-          message.error('the chincode has been instantiated！');
+          message.error(Common.ERROR.instatiateTwice);
           break;
         }
         // 在todolistcopy中查询该链码是否被实例化，对于已在某个通道实例化但是想在其他通道实例化的链码则重新插入一条记录
