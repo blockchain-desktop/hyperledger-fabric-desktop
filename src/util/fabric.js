@@ -567,11 +567,11 @@ class FabricClient {
       const txPath = path.join(__dirname, '../../resources/key/tx');
       const cmd = 'cd ' + txPath + ' && ./configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ' + channelName + '.tx -channelID ' + channelName; exec(cmd, (err, stdout, stderr) => {
         if (err) {
-          console.log(err);
+          logger.error(err);
           reject('fail');
         }
-        console.log(`stdout: ${stdout}`);
-        console.log(`stderr: ${stderr}`);
+        logger.info(`stdout: ${stdout}`);
+        logger.info(`stderr: ${stderr}`);
         resolve('success');
       });
     });
@@ -647,7 +647,7 @@ class FabricClient {
     return channel.getGenesisBlock(request)
       // })
       .then((block) => {
-        console.warn(' block ::%j', block);
+        logger.info(' block ::%j', block);
         const tempTargets = [];
         tempTargets.push(self.peer);
         const genesisBlock = block;
