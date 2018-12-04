@@ -286,7 +286,7 @@ class ContractDiv extends React.Component {
             </p>
           </div>
           <div style={DropdownStyle}>
-            <Dropdown.Button overlay={menu} type="primary">{this.state.language === 'cn' ? '操作' : 'operations'}</Dropdown.Button>
+            <Dropdown.Button overlay={menu} type="primary">{Common.OPERATIONS}</Dropdown.Button>
           </div>
         </div>
       </div>
@@ -538,7 +538,7 @@ export default class ChaincodeInstallContent extends React.Component {
     return (
       <div style={outerDivStyle}>
         <div style={plusDivStyle}>
-          <Button icon="plus" style={buttonStyle} onClick={this.showModal}> {this.state.language === 'cn' ? '添加合约' : ' Add contract'}</Button>
+          <Button icon="plus" style={buttonStyle} onClick={this.showModal}> {Common.ADD_CONTRACT}</Button>
           <CollectionCreateForm
             wrappedComponentRef={this.saveFormRef}
             visible={this.state.visible}

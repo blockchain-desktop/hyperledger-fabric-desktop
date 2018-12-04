@@ -123,7 +123,7 @@ class QueryBlock {
           db.find({ id: j.toString(), channel: channelName }, (err, data) => {
             if (data.length === 0) {
               return fabricClient.queryBlock(j, channelName).then((block) => {
-                console.warn('_getBlockArray: ', block);
+                logger.info('_getBlockArray: ', block);
                 resolve(self._getBlock(block, channelName));
               });
             }
