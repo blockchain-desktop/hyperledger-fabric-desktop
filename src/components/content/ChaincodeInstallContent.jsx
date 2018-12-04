@@ -2,7 +2,7 @@
 // Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
 
 import React from 'react';
-import { Button, Form, Input, Modal, Menu, Dropdown, Icon, Select, Tag } from 'antd';
+import { Button, Form, Input, Modal, Menu, Dropdown, Icon, Select, Tag, message } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
 
 const logger = require('electron-log');
@@ -222,7 +222,7 @@ class ContractDiv extends React.Component {
   render() {
     const ConTractDivStyle = {
       height: '200px',
-      width: '240px',
+      width: '230px',
       marginBottom: '15px',
       marginRight: '15px',
       display: 'block',
@@ -409,6 +409,12 @@ export default class ChaincodeInstallContent extends React.Component {
       // 对于已经安装过的链码分为只安装忘记实例化的链码和已在某个通道实例化但是想在其他通道实例化的链码
       const listcopy = this.state.todolistcopy;
       for (let k = 0; k < listcopy.length; k++) {
+        // 错误处理: 如果在todolistcopy中查询到已安装并且实例化相同的链码，则提示错误信息
+        if (listcopy[k].name === li.name && listcopy[k].version === li.version
+            && listcopy[k].channel === li.channel) {
+          message.error('the chincode has been instantiated！');
+          break;
+        }
         // 在todolistcopy中查询该链码是否被实例化，对于已在某个通道实例化但是想在其他通道实例化的链码则重新插入一条记录
         if (listcopy[k].name === li.name && listcopy[k].version === li.version
             && listcopy[k].channel !== li.channel) {
@@ -510,7 +516,7 @@ export default class ChaincodeInstallContent extends React.Component {
     };
     const plusDivStyle = {
       height: '200px',
-      width: '240px',
+      width: '230px',
       marginBottom: '15px',
       marginRight: '15px',
       display: 'block',
@@ -526,7 +532,7 @@ export default class ChaincodeInstallContent extends React.Component {
     const selectStyle = {
       display: 'block',
       position: 'absolute',
-      right: '40px',
+      right: '60px',
       top: '60px',
     };
     return (
