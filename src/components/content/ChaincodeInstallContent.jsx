@@ -473,8 +473,8 @@ export default class ChaincodeInstallContent extends React.Component {
             this.setState({ todolist: todo });
           }
         });
-        // console.log('contract list: ');
-        // console.log(this.state.todolist);
+        //  console.log('contract list: ');
+        //  console.log(this.state.todolist);
         form.resetFields();
         this.setState({ visible: false });
       });
