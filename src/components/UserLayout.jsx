@@ -2,7 +2,7 @@
 
 // TODO: 登录页（秘钥导入页面）
 import React from 'react';
-import { Button, Input, Layout, Icon } from 'antd';
+import { Button, Input, Layout, Icon, message } from 'antd';
 import getFabricClientSingleton from '../util/fabric';
 import { getConfigDBSingleton } from '../util/createDB';
 
@@ -18,7 +18,7 @@ const { Content } = Layout;
 
 const bcgd = path.join(__dirname, '../../resources/styles/image/blc.jpg');
 
-// const styles = path.join(__dirname,'content/styles/css/UserLayoutCss.css');
+const Common = localStorage.getItem('language') === 'cn' ? require('../common/common_cn') : require('../common/common');
 
 export default class UserLayout extends React.Component {
   constructor(props) {
@@ -54,21 +54,24 @@ export default class UserLayout extends React.Component {
   }
 
   onClick() {
-    db.update({ id: 0 },
-      { $set: { isSign: 2,
-        peerGrpcUrl: this.state.peerGrpcUrl,
-        peerEventUrl: this.state.peerEventUrl,
-        ordererUrl: this.state.ordererUrl,
-        username: this.state.username,
-        tlsPeerPath: this.state.tlsPeerPath,
-        tlsOrdererPath: this.state.tlsOrdererPath,
-        path: 'resources/key/users/' } },
-      {}, () => {
-      });
+
     getFabricClientSingleton().then((fabricClient) => {
       fabricClient.importCer(this.state.keyPath, this.state.certPath).then((result) => {
+        db.update({ id: 0 },
+          { $set: { isSign: 2,
+            peerGrpcUrl: this.state.peerGrpcUrl,
+            peerEventUrl: this.state.peerEventUrl,
+            ordererUrl: this.state.ordererUrl,
+            username: this.state.username,
+            tlsPeerPath: this.state.tlsPeerPath,
+            tlsOrdererPath: this.state.tlsOrdererPath,
+            path: 'resources/key/users/' } },
+          {}, () => {
+          });
         this.props.onGetChildMessage(2);
-        logger.info(result);
+        logger.info('result', result);
+      }, () => {
+        message.error(Common.ERROR.certificateFailed);
       });
     });
 
