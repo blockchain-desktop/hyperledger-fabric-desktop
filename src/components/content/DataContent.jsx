@@ -280,9 +280,9 @@ export default class DataContent extends React.Component {
                   total: this.state.height }}
               >
                 <ColumnGroup title={
-                  <div style={{ width: '100%', textAlign: 'center', fontSize: '130%' }}>
-                    <strong>{Common.CURRENT_BLOCKS}</strong>
-                    <Select style={{ width: '20%', float: 'right' }} defaultValue={this.state.currentChannel} onChange={this.channelChange}>
+                  <div style={{ width: '100%', fontSize: '130%' }}>
+                    <span style={{ marginLeft: '18%' }}><strong>{Common.CURRENT_BLOCKS}</strong></span>
+                    <Select style={{ width: '25%', float: 'right' }} defaultValue={this.state.currentChannel} onChange={this.channelChange}>
                       {this.state.optionChildren}
                     </Select>
                   </div>

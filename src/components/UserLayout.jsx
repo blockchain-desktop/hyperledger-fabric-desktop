@@ -54,18 +54,20 @@ export default class UserLayout extends React.Component {
   }
 
   onClick() {
-
+    db.update({ id: 0 },
+      { $set: { peerGrpcUrl: this.state.peerGrpcUrl,
+        peerEventUrl: this.state.peerEventUrl,
+        ordererUrl: this.state.ordererUrl,
+        username: this.state.username,
+        tlsPeerPath: this.state.tlsPeerPath,
+        tlsOrdererPath: this.state.tlsOrdererPath,
+        path: 'resources/key/users/' } },
+      {}, () => {
+      });
     getFabricClientSingleton().then((fabricClient) => {
       fabricClient.importCer(this.state.keyPath, this.state.certPath).then((result) => {
         db.update({ id: 0 },
-          { $set: { isSign: 2,
-            peerGrpcUrl: this.state.peerGrpcUrl,
-            peerEventUrl: this.state.peerEventUrl,
-            ordererUrl: this.state.ordererUrl,
-            username: this.state.username,
-            tlsPeerPath: this.state.tlsPeerPath,
-            tlsOrdererPath: this.state.tlsOrdererPath,
-            path: 'resources/key/users/' } },
+          { $set: { isSign: 2 } },
           {}, () => {
           });
         this.props.onGetChildMessage(2);
@@ -90,6 +92,7 @@ export default class UserLayout extends React.Component {
     this.setState({ certPath: selectedFile.path });
     const cerArray = selectedFile.path.split('/');
     this.setState({ certlabel: cerArray[cerArray.length - 1] });
+    console.warn(selectedFile.path);
   }
 
   tlsPeerImport() {

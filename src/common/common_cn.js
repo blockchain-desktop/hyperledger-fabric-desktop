@@ -1,3 +1,5 @@
+// Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
+
 class Common {
 
 }
@@ -31,11 +33,21 @@ Common.WARN = {
   onlyDigitalAndDot: '只能是数字和点！',
 };
 
+Common.INFO = {
+  addChannelSuccess: '添加节点成功!',
+  createChanelSuccess: '链码版本不能为空!',
+};
+
+Common.TIP = {
+  creatChannel: '在创建通道前先将configtx.yaml和证书文件导入，configtx.yaml文件定义了将要创建通道的配置，证书请与configtx.yaml所定义的路径保持一致。',
+};
 
 Common.ERROR = {
-  certificateFailed: 'Failed to generate certificate, please select the correct certificate!',
-  queryFailed: 'The query failed, please confirm the correct parameters!',
-  connectFailed: 'Connection failed, node address error or tls certificate is wrong',
+  certificateFailed: '生成证书失败，请选择正确的证书!',
+  queryFailed: '查询失败请确认参数是否正确!',
+  connectFailed: '连接失败，节点地址错误或tls证书错误！',
+  addChannelFailed: '添加节点失败，请确认通道是否存在或节点是否在通道配置文件中定义！',
+  createChanelFailed: '创建通道失败，请确认configtx.yaml文件和证书是否正确或通道是否已经被定义！',
 };
 
 module.exports = Common;

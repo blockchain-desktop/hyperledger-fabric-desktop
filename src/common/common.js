@@ -1,3 +1,5 @@
+// Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
+
 class Common {
 
 }
@@ -32,10 +34,21 @@ Common.WARN = {
   onlyDigitalAndDot: 'only digital and dot！',
 };
 
+Common.INFO = {
+  addChannelSuccess: 'Add to channel successfully!',
+  createChanelSuccess: 'Channel created successfully!',
+};
+
+Common.TIP = {
+  creatChannel: 'Import the configtx.yaml and certificate files before creating the channel. The configtx.yaml file defines the configuration of the channel to be created. The certificate should be consistent with the path defined by configtx.yaml.',
+};
+
 Common.ERROR = {
   certificateFailed: 'Failed to generate certificate, please select the correct certificate!',
   queryFailed: 'The query failed, please confirm the correct parameters!',
-  connectFailed: 'Connection failed, node address error or tls certificate is wrong',
+  connectFailed: 'Connection failed, node address error or tls certificate is wrong!',
+  addChannelFailed: 'Add to channel failed, please confirm whether the channel exists or whether the node is defined in the channel configuration file!',
+  createChanelFailed: 'Channel created failed, please confirm that the configtx.yaml file and certificate are correct or the channel has been defined!',
 };
 
 module.exports = Common;

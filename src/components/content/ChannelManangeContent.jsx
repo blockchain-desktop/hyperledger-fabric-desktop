@@ -1,50 +1,31 @@
+// Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
+
 /* eslint-disable react/no-string-refs,react/no-find-dom-node */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Select, Button, message, Input, Icon } from 'antd';
+import { Button, message, Input, Icon, Tooltip } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
 
-const Option = Select.Option;
+const { exec } = require('child_process');
+const path = require('path');
+
+const Common = localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common');
 
 export default class ChannelManangeContent extends React.Component {
   constructor(props) {
     super(props);
-    const obj = this;
-    getFabricClientSingleton().then((fabricClient) => {
-      fabricClient.queryChannels().then((result) => {
-        console.log('the result: ');
-        console.log(result);
-        // 第一次进入页面时，持久化数组为空时，则把查询得到的peer所在的channel存储在持久化数组中完成初始化
-        if (localStorage.getItem('channels') == null) {
-          const channels = [];
-          for (let i = 0; i < result.length; i++) {
-            console.log('channel_id: ' + result[i].channel_id);
-            channels.push(result[i].channel_id);
-            localStorage.setItem('channels', JSON.stringify(channels));
-          }
-          console.log('channels: ' + channels);
-        } else {
-          console.log('channel stored: ');
-          console.log(JSON.parse(localStorage.getItem('channels')));
-        }
-        // 第二次及以后进入页面时，则以持久化数组为准
-        const channels = JSON.parse(localStorage.getItem('channels'));
-        obj.setState({ channellist: channels });
-      });
-    });
 
     this.state = {
       channel: '',
+      channelValue: '',
       channelName: '',
       channelNameValue: '',
-      channellist: [],
-      certDir: '',
-      certlabel: '',
-      yamllabel: '',
-      yamlFile: '',
+      certLabel: '',
+      yamlLabel: '',
     };
 
     this.onChangeChannel = this.onChangeChannel.bind(this);
+    this.onChangeAddChannel = this.onChangeAddChannel.bind(this);
     this.handleChannelChange = this.handleChannelChange.bind(this);
     this.handleAddToChannelSuccess = this.handleAddToChannelSuccess.bind(this);
     this.handleAddtoChannelFailed = this.handleAddtoChannelFailed.bind(this);
@@ -68,6 +49,10 @@ export default class ChannelManangeContent extends React.Component {
     this.setState({ channelName: event.target.value });
     this.setState({ channelNameValue: event.target.value });
   }
+  onChangeAddChannel(event) {
+    this.setState({ channel: event.target.value });
+    this.setState({ channelValue: event.target.value });
+  }
 
   handleChannelChange(value) {
     console.log('channel choosed: ' + value);
@@ -75,17 +60,17 @@ export default class ChannelManangeContent extends React.Component {
   }
 
   handleAddToChannelSuccess() {
-    message.success('Add to channel successfully!');
+    message.success(Common.INFO.addChannelSuccess);
   }
 
   handleAddtoChannelFailed() {
-    message.error('Add to channel failed!');
+    message.error(Common.ERROR.addChannelFailed);
   }
   handleCreateChannelSuccess() {
-    message.success('Channel created successfully!');
+    message.success(Common.INFO.createChanelSuccess);
   }
   handleCreateChannelFailed() {
-    message.error('Channel created failed!');
+    message.error(Common.ERROR.createChanelFailed);
   }
 
   handleAddToChannel() {
@@ -103,6 +88,7 @@ export default class ChannelManangeContent extends React.Component {
       // 如果加入通道成功
       this.handleAddToChannelSuccess();
     }
+    this.setState({ channelValue: '' });
   }
 
   handleCreateChannel() {
@@ -119,28 +105,39 @@ export default class ChannelManangeContent extends React.Component {
       this.handleCreateChannelFailed();
     } else {
       // 创建通道成功
-      const channels = this.state.channellist;
-      channels.push(this.state.channelName);
-      this.setState({ channellist: channels });
       this.handleCreateChannelSuccess();
       // 持久化
-      localStorage.setItem('channels', JSON.stringify(channels));
     }
     this.setState({ channelNameValue: '' });
   }
 
   orgCertDirImport() {
     const selectedFile = document.getElementById('cerFiles').files[0];// 获取读取的File对象
-    this.setState({ certDir: selectedFile.path });
     const cerArray = selectedFile.path.split('/');
-    this.setState({ certlabel: cerArray[cerArray.length - 1] });
+    this.setState({ certLabel: cerArray[cerArray.length - 1] });
+    const txPath = path.join(__dirname, '../../../resources/key/tx/');
+    const cmd = 'cp -r ' + selectedFile.path + ' ' + txPath; exec(cmd, (err, stdout, stderr) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(`stdout: ${stdout}`);
+      console.log(`stderr: ${stderr}`);
+    });
   }
 
   yamlFileImport() {
     const selectedFile = document.getElementById('yamlFile').files[0];// 获取读取的File对象
     this.setState({ yamlFile: selectedFile.path });
     const yamlArray = selectedFile.path.split('/');
-    this.setState({ yamllabel: yamlArray[yamlArray.length - 1] });
+    this.setState({ yamlLabel: yamlArray[yamlArray.length - 1] });
+    const txPath = path.join(__dirname, '../../../resources/key/tx/');
+    const cmd = 'cp ' + selectedFile.path + ' ' + txPath; exec(cmd, (err, stdout, stderr) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(`stdout: ${stdout}`);
+      console.log(`stderr: ${stderr}`);
+    });
   }
 
   render() {
@@ -179,29 +176,40 @@ export default class ChannelManangeContent extends React.Component {
       marginLeft: '124px',
       marginTop: '-25px',
     };
-    const selectStyle = {
-      width: 180,
-      marginRight: '20px',
-      marginLeft: '10px',
-    };
     const InputStyle = {
       marginRight: '20px',
       width: 180,
     };
+    const AddInputStyle = {
+      marginRight: '20px',
+      marginLeft: '12px',
+      width: 180,
+    };
     const DivStyle = {
+      width: '80%',
       marginBottom: '30px',
+    };
+    const TipDivStyle = {
+      width: '10%',
+      display: 'inline-block',
+      float: 'right',
     };
     return (
       <div style={outerDivStyle}>
-        <div style={DivStyle}>
-          <span style={SpanStyle}>Org certificate : </span>
-          <input type="file" id="cerFiles" name="cerFiles" style={fileStyle} onChange={this.orgCertDirImport} ref="certDirSupport" />
-          <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', paddingLeft: '7px', paddingRight: '7px' }} />{this.state.certlabel} </label>
+        <div style={TipDivStyle}>
+          <Tooltip placement="topLeft" title={Common.TIP.creatChannel} style={{ width: '20px' }}>
+            <Icon type="question-circle" style={{ fontSize: '20px' }} />
+          </Tooltip>
         </div>
         <div style={DivStyle}>
           <span style={SpanStyle}>Configtx yaml : </span>
           <input type="file" id="yamlFile" name="yamlFile" style={fileStyle} onChange={this.yamlFileImport} />
-          <label htmlFor="yamlFile" style={labelStyle} ><Icon type="copy" theme="outlined" style={{ color: '#0083FA', paddingLeft: '7px', paddingRight: '7px' }} />{this.state.yamllabel} </label>
+          <label htmlFor="yamlFile" style={labelStyle} ><Icon type="copy" theme="outlined" style={{ color: '#0083FA', paddingLeft: '7px', paddingRight: '7px' }} />{this.state.yamlLabel} </label>
+        </div>
+        <div style={DivStyle}>
+          <span style={SpanStyle}>Org certificate : </span>
+          <input type="file" id="cerFiles" name="cerFiles" style={fileStyle} onChange={this.orgCertDirImport} ref="certDirSupport" />
+          <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', paddingLeft: '7px', paddingRight: '7px' }} />{this.state.certLabel} </label>
         </div>
         <div style={DivStyle}>
           <span style={spanStyle}>Create a channel : </span>
@@ -210,16 +218,7 @@ export default class ChannelManangeContent extends React.Component {
         </div>
         <div>
           <span style={spanStyle}>Add to channel :</span>
-          <Select
-            defaultValue="mychannel"
-            style={selectStyle}
-            onSelect={this.handleChannelChange}
-          >
-            {
-              this.state.channellist.map(channel =>
-                <Option key={channel} value={channel}>{channel}</Option>)
-            }
-          </Select>
+          <Input placeholder="channel name" style={AddInputStyle} value={this.state.channelValue} onChange={this.onChangeAddChannel} />
           <Button type="primary" onClick={this.handleAddToChannel}>Submit</Button>
         </div>
 
