@@ -174,7 +174,7 @@ export default class ChannelManangeContent extends React.Component {
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
       overflow: 'hidden',
-      marginLeft: '124px',
+      marginLeft: '136px',
       marginTop: '-25px',
     };
     const sslInputStyle = {
@@ -206,9 +206,9 @@ export default class ChannelManangeContent extends React.Component {
       width: '15%',
     };
     const TipDivStyle = {
-      width: '10%',
       display: 'inline-block',
       float: 'right',
+      marginRight: '20px',
     };
     const asteriskStyle = {
       float: 'left',
@@ -217,8 +217,8 @@ export default class ChannelManangeContent extends React.Component {
     return (
       <div style={outerDivStyle}>
         <div style={TipDivStyle}>
-          <Tooltip placement="topLeft" title={this.state.Common.TIP.creatChannel} style={{ width: '20px' }}>
-            <Icon type="question-circle" style={{ fontSize: '20px' }} />
+          <Tooltip placement="topLeft" title={this.state.Common.TIP.creatChannel} style={{ width: '16px' }}>
+            <Icon type="question-circle" style={{ fontSize: '16px', color: '#0083FA' }} />
           </Tooltip>
         </div>
         <div style={DivStyle}>
