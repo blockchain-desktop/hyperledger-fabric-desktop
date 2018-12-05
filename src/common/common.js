@@ -25,6 +25,7 @@ Common.PATH = 'Path';
 Common.SELECT = 'select a ';
 Common.ADD_CONTRACT = 'Add contract';
 Common.OPERATIONS = 'operations';
+Common.LOGIN = 'Sign in';
 
 
 Common.WARN = {

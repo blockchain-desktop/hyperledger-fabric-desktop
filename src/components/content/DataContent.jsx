@@ -10,8 +10,6 @@ const logger = require('electron-log');
 const { Column, ColumnGroup } = Table;
 const Option = Select.Option;
 
-const Common = localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common');
-
 export default class DataContent extends React.Component {
   constructor(props) {
     super(props);
@@ -32,6 +30,7 @@ export default class DataContent extends React.Component {
       currentPage: 0,
       height: 0,
       timer: null,
+      Common: localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common'),
       pageSize: 4,
       block: [],
       listData: [],
@@ -79,7 +78,7 @@ export default class DataContent extends React.Component {
             });
         });
       }, () => {
-        message.error(Common.ERROR.connectFailed, 5);
+        message.error(this.state.Common.ERROR.connectFailed, 5);
         this.setState({ loading: false });
       });
   }
@@ -281,7 +280,7 @@ export default class DataContent extends React.Component {
               >
                 <ColumnGroup title={
                   <div style={{ width: '100%', fontSize: '130%' }}>
-                    <span style={{ marginLeft: '18%' }}><strong>{Common.CURRENT_BLOCKS}</strong></span>
+                    <span style={{ marginLeft: '18%' }}><strong>{this.state.Common.CURRENT_BLOCKS}</strong></span>
                     <Select style={{ width: '22%', float: 'right' }} defaultValue={this.state.currentChannel} onChange={this.channelChange}>
                       {this.state.optionChildren}
                     </Select>
@@ -299,7 +298,7 @@ export default class DataContent extends React.Component {
                   />
                   <Column
                     align="center"
-                    title={Common.BLOCK_HASH}
+                    title={this.state.Common.BLOCK_HASH}
                     key="hash"
                     render={(text, record) => (
                       <span>
@@ -309,7 +308,7 @@ export default class DataContent extends React.Component {
                   />
                   <Column
                     align="center"
-                    title={Common.TRANSACTION_NUM}
+                    title={this.state.Common.TRANSACTION_NUM}
                     dataIndex="num"
                     width="20%"
                     key="num"
@@ -330,7 +329,7 @@ export default class DataContent extends React.Component {
         <Modal
           title={
             <div style={{ width: '100%', textAlign: 'center', fontSize: '130%' }}>
-              <strong>{Common.BLOCK_DETAIL}</strong>
+              <strong>{this.state.Common.BLOCK_DETAIL}</strong>
             </div>
           }
           visible={this.state.blockModal}
@@ -348,7 +347,7 @@ export default class DataContent extends React.Component {
               align="right"
               title={
                 <div style={{ width: '100%', textAlign: 'left' }}>
-                  <strong>{Common.BLOCK_HEADER}</strong>
+                  <strong>{this.state.Common.BLOCK_HEADER}</strong>
                 </div>
               }
               width="20%"
@@ -373,7 +372,7 @@ export default class DataContent extends React.Component {
               dataIndex="tx"
               title={
                 <div style={{ width: '100%', textAlign: 'left' }}>
-                  <strong>{Common.TRANSACTIONS}</strong>
+                  <strong>{this.state.Common.TRANSACTIONS}</strong>
                 </div>
               }
               width="46%"
@@ -393,7 +392,7 @@ export default class DataContent extends React.Component {
         <Modal
           title={
             <div style={{ width: '100%', textAlign: 'center', fontSize: '130%' }}>
-              <strong>{Common.TRANSACTION_DETAIL}</strong>
+              <strong>{this.state.Common.TRANSACTION_DETAIL}</strong>
             </div>
           }
           visible={this.state.transactionModal}

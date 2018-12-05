@@ -25,6 +25,7 @@ Common.PATH = '路径';
 Common.SELECT = '选择一个';
 Common.ADD_CONTRACT = '添加合约';
 Common.OPERATIONS = '操作';
+Common.LOGIN = '登录';
 
 Common.WARN = {
   chaincodeName: '链码名称不能为空!',

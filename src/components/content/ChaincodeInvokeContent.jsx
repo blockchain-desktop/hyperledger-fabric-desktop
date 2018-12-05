@@ -4,8 +4,6 @@ import React from 'react';
 import { Button, Input, Select, Radio, message } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
 
-const Common = localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common');
-
 const logger = require('electron-log');
 
 const { TextArea } = Input;
@@ -15,6 +13,7 @@ export default class ChaincodeInvokeContent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      Common: localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common'),
       result: '',
       value: '',
       channel: '',
@@ -22,7 +21,6 @@ export default class ChaincodeInvokeContent extends React.Component {
       fcn: '',
       args: '',
       type: 'query',
-      language: localStorage.getItem('language'),
       channelList: [],
       contractList: {},
     };
@@ -136,7 +134,7 @@ export default class ChaincodeInvokeContent extends React.Component {
   }
 
   errorHandler() {
-    message.error(Common.ERROR.queryFailed);
+    message.error(this.state.Common.ERROR.queryFailed);
   }
   // getConfig() {
   //   db.find({}, (err, data) => {
@@ -193,7 +191,7 @@ export default class ChaincodeInvokeContent extends React.Component {
       <div style={outerDivStyle}>
 
         <div style={divStyle}>
-          {Common.CHANNEL_NAME}
+          {this.state.Common.CHANNEL_NAME}
           <div style={inputDivStyle}>
             <Select
               style={inputStyle}
@@ -206,7 +204,7 @@ export default class ChaincodeInvokeContent extends React.Component {
         </div>
 
         <div style={divStyle}>
-          {Common.CONTRACT_NAME}
+          {this.state.Common.CONTRACT_NAME}
           <div style={inputDivStyle}>
             <Select
               style={inputStyle}
@@ -221,14 +219,14 @@ export default class ChaincodeInvokeContent extends React.Component {
         </div>
 
         <div style={divStyle}>
-          {Common.FUNCTION_NAME}
+          {this.state.Common.FUNCTION_NAME}
           <div style={inputDivStyle}>
             <Input type="text" value={this.state.fcn} placeholder="function name" style={inputStyle} onChange={this.fcnChange} />
           </div>
         </div>
 
         <div style={divStyle}>
-          {Common.PARAMETER}
+          {this.state.Common.PARAMETER}
           <div style={inputDivStyle}>
             <Select mode="tags" style={inputStyle} placeholder="parameter" onChange={this.argsChange}>
               <Option value="null">null</Option>
@@ -237,7 +235,7 @@ export default class ChaincodeInvokeContent extends React.Component {
         </div>
 
         <div style={divStyle}>
-          {Common.METHOD}
+          {this.state.Common.METHOD}
           <div style={inputDivStyle}>
             <Radio.Group value={this.state.type} buttonStyle="solid" onChange={this.typeChange}>
               <Radio.Button value="query">query</Radio.Button>
@@ -256,7 +254,7 @@ export default class ChaincodeInvokeContent extends React.Component {
         </div>
 
         <div style={divStyle}>
-          <Button type="primary" style={buttonStyle} onClick={this.onClick}>{Common.SEND}</Button>
+          <Button type="primary" style={buttonStyle} onClick={this.onClick}>{this.state.Common.SEND}</Button>
         </div>
 
       </div>

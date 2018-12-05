@@ -7,8 +7,6 @@ import getFabricClientSingleton from '../../util/fabric';
 
 const logger = require('electron-log');
 
-const Common = localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common');
-
 const Option = Select.Option;
 // 弹出层窗口组件
 const FormItem = Form.Item;
@@ -17,13 +15,13 @@ const CollectionCreateForm = Form.create()(
   class extends React.Component {
     static nameValidator(rule, value, callback) {
       if (!/^[A-Za-z0-9]+$/.test(value)) {
-        callback(Common.WARN.onlyLetterAndDigital);
+        callback(this.state.Common.WARN.onlyLetterAndDigital);
       }
       callback();
     }
     static versionValidator(rule, value, callback) {
       if (!/^\d+(.\d+)?$/.test(value)) {
-        callback(Common.WARN.onlyDigitalAndDot);
+        callback(this.state.Common.WARN.onlyDigitalAndDot);
       }
       callback();
     }
@@ -41,7 +39,7 @@ const CollectionCreateForm = Form.create()(
         });
       });
       this.state = {
-        language: localStorage.getItem('language'),
+        Common: localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common'),
         channellist: [],
       };
     }
@@ -54,37 +52,37 @@ const CollectionCreateForm = Form.create()(
       return (
         <Modal
           visible={visible}
-          title={Common.NEW_CONTRACT}
-          okText={Common.CREATE}
-          cancelText={Common.CANCEL}
+          title={this.state.Common.NEW_CONTRACT}
+          okText={this.state.Common.CREATE}
+          cancelText={this.state.Common.CANCEL}
           onCancel={onCancel}
           onOk={onCreate}
           centered
           width="480px"
         >
           <Form layout="vertical">
-            <FormItem label={Common.NAME} style={formItemStyle}>
+            <FormItem label={this.state.Common.NAME} style={formItemStyle}>
               {getFieldDecorator('name', {
-                rules: [{ required: true, message: Common.WARN.chaincodeName },
+                rules: [{ required: true, message: this.state.Common.WARN.chaincodeName },
                   { validator: CollectionCreateForm.nameValidator }],
               })(
-                <Input placeholder={Common.CONTRACT_NAME + Common.NAME} />,
+                <Input placeholder={this.state.Common.CONTRACT_NAME + this.state.Common.NAME} />,
               )}
             </FormItem>
-            <FormItem label={Common.VERSION} style={formItemStyle}>
+            <FormItem label={this.state.Common.VERSION} style={formItemStyle}>
               {getFieldDecorator('version', {
-                rules: [{ required: true, message: Common.WARN.chaincodeVersion },
+                rules: [{ required: true, message: this.state.Common.WARN.chaincodeVersion },
                   { validator: CollectionCreateForm.versionValidator }],
               })(
-                <Input placeholder={Common.CONTRACT_NAME + Common.VERSION} />,
+                <Input placeholder={this.state.Common.CONTRACT_NAME + this.state.Common.VERSION} />,
               )}
             </FormItem>
-            <FormItem label={Common.CHANNEL_NAME} style={formItemStyle}>
+            <FormItem label={this.state.Common.CHANNEL_NAME} style={formItemStyle}>
               {getFieldDecorator('channel', {
-                rules: [{ required: true, message: Common.WARN.channelName }],
+                rules: [{ required: true, message: this.state.Common.WARN.channelName }],
               })(
                 <Select
-                  placeholder={Common.SELECT + Common.CHANNEL_NAME}
+                  placeholder={this.state.Common.SELECT + this.state.Common.CHANNEL_NAME}
                 >
                   {
                     this.state.channellist.map(channel =>
@@ -93,11 +91,11 @@ const CollectionCreateForm = Form.create()(
                 </Select>,
               )}
             </FormItem>
-            <FormItem label={Common.PATH} style={formItemStyle}>
+            <FormItem label={this.state.Common.PATH} style={formItemStyle}>
               {getFieldDecorator('path', {
-                rules: [{ required: true, message: Common.WARN.chaincodePath }],
+                rules: [{ required: true, message: this.state.Common.WARN.chaincodePath }],
               })(
-                <Input placeholder={Common.CONTRACT_NAME + Common.PATH} />,
+                <Input placeholder={this.state.Common.CONTRACT_NAME + this.state.Common.PATH} />,
               )}
             </FormItem>
           </Form>
@@ -126,7 +124,7 @@ class ContractDiv extends React.Component {
       result: this.props.citem.result,
       icontype: 'check-circle',
       iconcolor: '#52c41a',
-      language: localStorage.getItem('language'),
+      Common: localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common'),
     };
     this.handleMenuClick = this.handleMenuClick.bind(this);
     this.handleInstallChaincodeCallBack = this.handleInstallChaincodeCallBack.bind(this);
@@ -286,7 +284,7 @@ class ContractDiv extends React.Component {
             </p>
           </div>
           <div style={DropdownStyle}>
-            <Dropdown.Button overlay={menu} type="primary">{Common.OPERATIONS}</Dropdown.Button>
+            <Dropdown.Button overlay={menu} type="primary">{this.state.Common.OPERATIONS}</Dropdown.Button>
           </div>
         </div>
       </div>
@@ -369,7 +367,7 @@ export default class ChaincodeInstallContent extends React.Component {
       visible: false,
       todolist: [],
       todolistcopy: [],
-      language: localStorage.getItem('language'),
+      Common: localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common'),
       channelList: [],
     };
     this.showModal = this.showModal.bind(this);
@@ -412,7 +410,7 @@ export default class ChaincodeInstallContent extends React.Component {
         // 错误处理: 如果在todolistcopy中查询到已安装并且实例化相同的链码，则提示错误信息
         if (listcopy[k].name === li.name && listcopy[k].version === li.version
             && listcopy[k].channel === li.channel) {
-          message.error(Common.ERROR.instatiateTwice);
+          message.error(this.state.Common.ERROR.instatiateTwice);
           break;
         }
         // 在todolistcopy中查询该链码是否被实例化，对于已在某个通道实例化但是想在其他通道实例化的链码则重新插入一条记录
@@ -538,7 +536,7 @@ export default class ChaincodeInstallContent extends React.Component {
     return (
       <div style={outerDivStyle}>
         <div style={plusDivStyle}>
-          <Button icon="plus" style={buttonStyle} onClick={this.showModal}> {Common.ADD_CONTRACT}</Button>
+          <Button icon="plus" style={buttonStyle} onClick={this.showModal}> {this.state.Common.ADD_CONTRACT}</Button>
           <CollectionCreateForm
             wrappedComponentRef={this.saveFormRef}
             visible={this.state.visible}

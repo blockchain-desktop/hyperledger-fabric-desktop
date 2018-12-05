@@ -5,29 +5,30 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Button, message, Input, Icon, Tooltip } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
+import { copyDir, copyFile } from '../../util/tools';
 
-const { exec } = require('child_process');
 const path = require('path');
-
 const logger = require('electron-log');
-
-const Common = localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common');
 
 export default class ChannelManangeContent extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      Common: localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common'),
       channel: '',
       channelValue: '',
       channelName: '',
       channelNameValue: '',
       certLabel: '',
       yamlLabel: '',
+      configProfile: 'TwoOrgsChannel',
+      sslTarget: 'orderer.example.com',
     };
 
     this.onChangeChannel = this.onChangeChannel.bind(this);
     this.onChangeAddChannel = this.onChangeAddChannel.bind(this);
+    this.onChangeConfigProfile = this.onChangeConfigProfile.bind(this);
     this.handleChannelChange = this.handleChannelChange.bind(this);
     this.handleAddToChannelSuccess = this.handleAddToChannelSuccess.bind(this);
     this.handleAddtoChannelFailed = this.handleAddtoChannelFailed.bind(this);
@@ -37,6 +38,7 @@ export default class ChannelManangeContent extends React.Component {
     this.handleCreateChannelFailed = this.handleCreateChannelFailed.bind(this);
     this.handleCreateChannelCallback = this.handleCreateChannelCallback.bind(this);
     this.handleAddToChannelCallback = this.handleAddToChannelCallback.bind(this);
+    this.sslTargetChange = this.sslTargetChange.bind(this);
     this.orgCertDirImport = this.orgCertDirImport.bind(this);
     this.yamlFileImport = this.yamlFileImport.bind(this);
   }
@@ -55,6 +57,9 @@ export default class ChannelManangeContent extends React.Component {
     this.setState({ channel: event.target.value });
     this.setState({ channelValue: event.target.value });
   }
+  onChangeConfigProfile(event) {
+    this.setState({ configProfile: event.target.value });
+  }
 
   handleChannelChange(value) {
     logger.info('channel choosed: ' + value);
@@ -62,23 +67,27 @@ export default class ChannelManangeContent extends React.Component {
   }
 
   handleAddToChannelSuccess() {
-    message.success(Common.INFO.addChannelSuccess);
+    message.success(this.state.Common.INFO.addChannelSuccess);
   }
 
   handleAddtoChannelFailed() {
-    message.error(Common.ERROR.addChannelFailed);
+    message.error(this.state.Common.ERROR.addChannelFailed);
   }
   handleCreateChannelSuccess() {
-    message.success(Common.INFO.createChanelSuccess);
+    message.success(this.state.Common.INFO.createChanelSuccess);
   }
   handleCreateChannelFailed() {
-    message.error(Common.ERROR.createChanelFailed);
+    message.error(this.state.Common.ERROR.createChanelFailed);
+  }
+
+  sslTargetChange(event) {
+    this.setState({ sslTarget: event.target.value });
   }
 
   handleAddToChannel() {
     getFabricClientSingleton().then((fabricClient) => {
-      fabricClient.joinChannel(this.state.channel).then(this.handleAddToChannelCallback,
-        this.handleAddToChannelCallback);
+      fabricClient.joinChannel(this.state.channel, this.state.sslTarget)
+        .then(this.handleAddToChannelCallback, this.handleAddToChannelCallback);
     });
   }
 
@@ -96,8 +105,9 @@ export default class ChannelManangeContent extends React.Component {
   handleCreateChannel() {
     logger.info('the to-create channel name: ' + this.state.channelName);
     getFabricClientSingleton().then((fabricClient) => {
-      fabricClient.createChannel(this.state.channelName).then(this.handleCreateChannelCallback,
-        this.handleCreateChannelCallback);
+      fabricClient.createChannel(this.state.channelName,
+        this.state.configProfile, this.state.sslTarget)
+        .then(this.handleCreateChannelCallback, this.handleCreateChannelCallback);
     });
   }
 
@@ -117,14 +127,9 @@ export default class ChannelManangeContent extends React.Component {
     const selectedFile = document.getElementById('cerFiles').files[0];// 获取读取的File对象
     const cerArray = selectedFile.path.split('/');
     this.setState({ certLabel: cerArray[cerArray.length - 1] });
-    const txPath = path.join(__dirname, '../../../resources/key/tx/');
-    const cmd = 'cp -r ' + selectedFile.path + ' ' + txPath; exec(cmd, (err, stdout, stderr) => {
-      if (err) {
-        logger.info(err);
-      }
-      logger.info(`stdout: ${stdout}`);
-      logger.info(`stderr: ${stderr}`);
-    });
+    const dirList = selectedFile.path.split('/');
+    const txPath = path.join(__dirname, '../../../resources/key/tx/' + dirList[dirList.length - 1]);
+    copyDir(selectedFile.path, txPath);
   }
 
   yamlFileImport() {
@@ -132,14 +137,8 @@ export default class ChannelManangeContent extends React.Component {
     this.setState({ yamlFile: selectedFile.path });
     const yamlArray = selectedFile.path.split('/');
     this.setState({ yamlLabel: yamlArray[yamlArray.length - 1] });
-    const txPath = path.join(__dirname, '../../../resources/key/tx/');
-    const cmd = 'cp ' + selectedFile.path + ' ' + txPath; exec(cmd, (err, stdout, stderr) => {
-      if (err) {
-        logger.info(err);
-      }
-      logger.info(`stdout: ${stdout}`);
-      logger.info(`stderr: ${stderr}`);
-    });
+    const txPath = path.join(__dirname, '../../../resources/key/tx/config.yaml');
+    copyFile(selectedFile.path, txPath);
   }
 
   render() {
@@ -166,7 +165,7 @@ export default class ChannelManangeContent extends React.Component {
       border: '1px solid rgb(217, 217, 217)',
       borderRadius: '4px',
       display: 'block',
-      width: '270px',
+      width: '60%',
       height: '32px',
       verticalAlign: 'middle',
       textAlign: 'center',
@@ -178,50 +177,80 @@ export default class ChannelManangeContent extends React.Component {
       marginLeft: '124px',
       marginTop: '-25px',
     };
-    const InputStyle = {
+    const sslInputStyle = {
       marginRight: '20px',
-      width: 180,
+      marginLeft: '4px',
+      width: '60%',
+    };
+    const configInputStyle = {
+      marginRight: '20px',
+      marginLeft: '21px',
+      width: '60%',
+    };
+    const CreateInputStyle = {
+      marginRight: '20px',
+      marginLeft: '4px',
+      width: '40%',
     };
     const AddInputStyle = {
       marginRight: '20px',
-      marginLeft: '12px',
-      width: 180,
+      marginLeft: '14px',
+      width: '40%',
     };
     const DivStyle = {
       width: '80%',
       marginBottom: '30px',
+    };
+    const ButtonStyle = {
+      marginRight: '20px',
+      width: '15%',
     };
     const TipDivStyle = {
       width: '10%',
       display: 'inline-block',
       float: 'right',
     };
+    const asteriskStyle = {
+      float: 'left',
+      color: '#ff0000',
+    };
     return (
       <div style={outerDivStyle}>
         <div style={TipDivStyle}>
-          <Tooltip placement="topLeft" title={Common.TIP.creatChannel} style={{ width: '20px' }}>
+          <Tooltip placement="topLeft" title={this.state.Common.TIP.creatChannel} style={{ width: '20px' }}>
             <Icon type="question-circle" style={{ fontSize: '20px' }} />
           </Tooltip>
         </div>
         <div style={DivStyle}>
-          <span style={SpanStyle}>Configtx yaml : </span>
+          <span style={asteriskStyle}>*</span>
+          <span style={SpanStyle}>configtx yaml : </span>
           <input type="file" id="yamlFile" name="yamlFile" style={fileStyle} onChange={this.yamlFileImport} />
           <label htmlFor="yamlFile" style={labelStyle} ><Icon type="copy" theme="outlined" style={{ color: '#0083FA', paddingLeft: '7px', paddingRight: '7px' }} />{this.state.yamlLabel} </label>
         </div>
         <div style={DivStyle}>
-          <span style={SpanStyle}>Org certificate : </span>
+          <span style={asteriskStyle}>*</span>
+          <span style={SpanStyle}>org certificate : </span>
           <input type="file" id="cerFiles" name="cerFiles" style={fileStyle} onChange={this.orgCertDirImport} ref="certDirSupport" />
           <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', paddingLeft: '7px', paddingRight: '7px' }} />{this.state.certLabel} </label>
         </div>
         <div style={DivStyle}>
-          <span style={spanStyle}>Create a channel : </span>
-          <Input placeholder="channel name" style={InputStyle} value={this.state.channelNameValue} onChange={this.onChangeChannel} />
-          <Button type="primary" onClick={this.handleCreateChannel}>Submit</Button>
+          <span style={asteriskStyle}>*</span>
+          <span style={spanStyle}>config profile : </span>
+          <Input placeholder="channel config profile" style={configInputStyle} value={this.state.configProfile} onChange={this.onChangeConfigProfile} />
         </div>
-        <div>
-          <span style={spanStyle}>Add to channel :</span>
+        <div style={DivStyle}>
+          <span style={spanStyle}>orderer ssl target:</span>
+          <Input type="text" style={sslInputStyle} value={this.state.sslTarget} onChange={this.sslTargetChange} />
+        </div>
+        <div style={DivStyle}>
+          <span style={spanStyle}>create a channel : </span>
+          <Input placeholder="channel name" style={CreateInputStyle} value={this.state.channelNameValue} onChange={this.onChangeChannel} />
+          <Button style={ButtonStyle} type="primary" onClick={this.handleCreateChannel}>Submit</Button>
+        </div>
+        <div style={DivStyle}>
+          <span style={spanStyle}>add to channel :</span>
           <Input placeholder="channel name" style={AddInputStyle} value={this.state.channelValue} onChange={this.onChangeAddChannel} />
-          <Button type="primary" onClick={this.handleAddToChannel}>Submit</Button>
+          <Button style={ButtonStyle} type="primary" onClick={this.handleAddToChannel}>Submit</Button>
         </div>
 
       </div>
