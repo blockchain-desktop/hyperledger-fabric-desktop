@@ -18,8 +18,6 @@ const { Content } = Layout;
 
 const bcgd = path.join(__dirname, '../../resources/styles/image/blc.jpg');
 
-const Common = localStorage.getItem('language') === 'cn' ? require('../common/common_cn') : require('../common/common');
-
 export default class UserLayout extends React.Component {
   constructor(props) {
     super(props);
@@ -28,16 +26,17 @@ export default class UserLayout extends React.Component {
       peerGrpcUrl: 'grpcs://139.198.122.54:7051',
       peerEventUrl: 'grpcs://139.198.122.54:7053',
       ordererUrl: 'grpcs://139.198.122.54:7050',
-      username: 'Org1',
+      mspid: 'Org1MSP',
       certPath: '',
       keyPath: '',
       tlsPeerPath: '',
       tlsOrdererPath: '',
+      sslTarget: 'peer0.org1.example.com',
       certlabel: '  choose a certificate ',
       keylabel: ' choose a private key',
       tlsPeerLabel: ' choose a tls peer key',
       tlsOrdererLabel: 'choose a tls orderer key',
-      language: localStorage.getItem('language'),
+      Common: localStorage.getItem('language') === 'cn' ? require('../common/common_cn') : require('../common/common'),
     };
 
     this.onClick = this.onClick.bind(this);
@@ -48,7 +47,8 @@ export default class UserLayout extends React.Component {
     this.tlsPeerImport = this.tlsPeerImport.bind(this);
     this.tlsOrdererImport = this.tlsOrdererImport.bind(this);
     this.ordererChange = this.ordererChange.bind(this);
-    this.usernameChange = this.usernameChange.bind(this);
+    this.mspidChange = this.mspidChange.bind(this);
+    this.sslTargetChange = this.sslTargetChange.bind(this);
     this.changeLangtoEn = this.changeLangtoEn.bind(this);
     this.changeLangtoCn = this.changeLangtoCn.bind(this);
   }
@@ -58,9 +58,10 @@ export default class UserLayout extends React.Component {
       { $set: { peerGrpcUrl: this.state.peerGrpcUrl,
         peerEventUrl: this.state.peerEventUrl,
         ordererUrl: this.state.ordererUrl,
-        username: this.state.username,
+        mspid: this.state.mspid,
         tlsPeerPath: this.state.tlsPeerPath,
         tlsOrdererPath: this.state.tlsOrdererPath,
+        sslTarget: this.state.sslTarget,
         path: 'resources/key/users/' } },
       {}, () => {
       });
@@ -73,7 +74,7 @@ export default class UserLayout extends React.Component {
         this.props.onGetChildMessage(2);
         logger.info('result', result);
       }, () => {
-        message.error(Common.ERROR.certificateFailed);
+        message.error(this.state.Common.ERROR.certificateFailed);
       });
     });
 
@@ -92,7 +93,6 @@ export default class UserLayout extends React.Component {
     this.setState({ certPath: selectedFile.path });
     const cerArray = selectedFile.path.split('/');
     this.setState({ certlabel: cerArray[cerArray.length - 1] });
-    console.warn(selectedFile.path);
   }
 
   tlsPeerImport() {
@@ -120,17 +120,21 @@ export default class UserLayout extends React.Component {
     this.setState({ ordererUrl: event.target.value });
   }
 
-  usernameChange(event) {
-    this.setState({ username: event.target.value });
+  mspidChange(event) {
+    this.setState({ mspid: event.target.value });
+  }
+
+  sslTargetChange(event) {
+    this.setState({ sslTarget: event.target.value });
   }
 
   changeLangtoEn() {
     localStorage.setItem('language', 'en');
-    this.setState({ language: localStorage.getItem('language') });
+    this.setState({ Common: require('../common/common') });
   }
   changeLangtoCn() {
     localStorage.setItem('language', 'cn');
-    this.setState({ language: localStorage.getItem('language') });
+    this.setState({ Common: require('../common/common_cn') });
   }
   render() {
     const LayoutStyle = {
@@ -218,6 +222,10 @@ export default class UserLayout extends React.Component {
     const buttonStyle = {
       width: '100%',
     };
+    const asteriskStyle = {
+      float: 'left',
+      color: '#ff0000',
+    };
     return (
       <Layout style={LayoutStyle}>
 
@@ -238,27 +246,33 @@ export default class UserLayout extends React.Component {
             </div>
 
             <div style={firstDivStyle}>
+              <span style={asteriskStyle}>*</span>
               <span style={spanStyle}> peer grpc url：</span>
               <Input type="text" style={InputStyle} value={this.state.peerGrpcUrl} onChange={this.peerGrpcUrlChange} />
             </div>
             <div style={divStyle}>
+              <span style={asteriskStyle}>*</span>
               <span style={spanStyle}>peer event url：</span>
               <Input type="text" style={InputStyle} value={this.state.peerEventUrl} onChange={this.peerEventUrlChange} />
             </div>
             <div style={divStyle}>
+              <span style={asteriskStyle}>*</span>
               <span style={spanStyle}>orderer url:</span>
               <Input type="text" style={InputStyle} value={this.state.ordererUrl} onChange={this.ordererChange} />
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>username:</span>
-              <Input type="text" style={InputStyle} value={this.state.username} onChange={this.usernameChange} />
+              <span style={asteriskStyle}>*</span>
+              <span style={spanStyle}>msp id:</span>
+              <Input type="text" style={InputStyle} value={this.state.mspid} onChange={this.mspidChange} />
             </div>
             <div style={divStyle}>
+              <span style={asteriskStyle}>*</span>
               <span style={spanStyle}>certificate：</span>
               <input type="file" id="cerFiles" name="cerFiles" style={fileStyle}onChange={this.cerImport} />
               <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.certlabel} </label>
             </div>
             <div style={divStyle}>
+              <span style={asteriskStyle}>*</span>
               <span style={spanStyle}>private key：</span>
               <input type="file" id="priFiles" name="priFiles" style={fileStyle} onChange={this.priImport} />
               <label htmlFor="priFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.keylabel}</label>
@@ -273,8 +287,12 @@ export default class UserLayout extends React.Component {
               <input type="file" id="tlsOrdererFiles" name="tlsOrdererFiles" style={fileStyle} onChange={this.tlsOrdererImport} />
               <label htmlFor="tlsOrdererFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsOrdererLabel} </label>
             </div>
+            <div style={divStyle}>
+              <span style={spanStyle}>ssl target:</span>
+              <Input type="text" style={InputStyle} value={this.state.sslTarget} onChange={this.sslTargetChange} />
+            </div>
             <div style={lastDivStyle}>
-              <Button type="primary" style={buttonStyle} onClick={this.onClick}>{this.state.language === 'cn' ? '登录' : 'Sign in'}</Button>
+              <Button type="primary" style={buttonStyle} onClick={this.onClick}>{this.state.Common.LOGIN}</Button>
             </div>
           </Content>
         </div>
