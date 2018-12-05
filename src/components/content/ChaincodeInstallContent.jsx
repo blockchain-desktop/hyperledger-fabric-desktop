@@ -98,6 +98,21 @@ const CollectionCreateForm = Form.create()(
                 <Input placeholder={this.state.Common.CONTRACT_NAME + this.state.Common.PATH} />,
               )}
             </FormItem>
+            {/* <FormItem label={this.state.Common.CHAINCODECONSTRUCTOR} style={formItemStyle}> */}
+            {/* {getFieldDecorator('constructor', { */}
+            {/* rules: [{ required: true,
+            message: this.state.Common.WARN.constructorParameter }], */}
+            {/* })( */}
+            {/* <Input placeholder={this.state.Common.CHAINCODECONSTRUCTOR} />, */}
+            {/* )} */}
+            {/* </FormItem> */}
+            {/* <FormItem label={this.state.Common.ENDORSEPOLICY} style={formItemStyle}> */}
+            {/* {getFieldDecorator('policy', { */}
+            {/* rules: [{ required: true, message: this.state.Common.WARN.endorsePolicy }], */}
+            {/* })( */}
+            {/* <Input placeholder={this.state.Common.ENDORSEPOLICY} />, */}
+            {/* )} */}
+            {/* </FormItem> */}
           </Form>
         </Modal>
       );

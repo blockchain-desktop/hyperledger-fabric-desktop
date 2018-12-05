@@ -30,6 +30,8 @@ export default class App extends React.Component {
 
     setTimeout(this.getConfig, 1000);
 
+    // console.log('process.platform: ');
+    // console.log(process.platform);
     // let fc;
     // const channelName = 'mychannel3';
     // getFabricClientSingleton()

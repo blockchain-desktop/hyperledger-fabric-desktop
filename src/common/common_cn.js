@@ -26,6 +26,8 @@ Common.SELECT = '选择一个';
 Common.ADD_CONTRACT = '添加合约';
 Common.OPERATIONS = '操作';
 Common.LOGIN = '登录';
+Common.CHAINCODECONSTRUCTOR = '启动参数';
+Common.ENDORSEPOLICY = '背书策略';
 
 Common.WARN = {
   chaincodeName: '链码名称不能为空!',
@@ -34,6 +36,8 @@ Common.WARN = {
   chaincodePath: '链码路径不能为空!',
   onlyLetterAndDigital: '只能是字母和数字！',
   onlyDigitalAndDot: '只能是数字和点！',
+  constructorParameter: '启动参数不能为空!',
+  endorsePolicy: '背书策略不能为空!',
 };
 
 Common.INFO = {

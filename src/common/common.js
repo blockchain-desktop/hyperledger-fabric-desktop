@@ -26,7 +26,8 @@ Common.SELECT = 'select a ';
 Common.ADD_CONTRACT = 'Add contract';
 Common.OPERATIONS = 'operations';
 Common.LOGIN = 'Sign in';
-
+Common.CHAINCODECONSTRUCTOR = 'chaincode constructor';
+Common.ENDORSEPOLICY = 'endorse policy';
 
 Common.WARN = {
   chaincodeName: 'chaincode name can not be null!',
@@ -35,6 +36,8 @@ Common.WARN = {
   chaincodePath: 'chaincode path can not be null!',
   onlyLetterAndDigital: 'only letters and digital！',
   onlyDigitalAndDot: 'only digital and dot！',
+  constructorParameter: 'consturctor can not be null!',
+  endorsePolicy: 'endorse policy can not be null!',
 };
 
 Common.INFO = {
