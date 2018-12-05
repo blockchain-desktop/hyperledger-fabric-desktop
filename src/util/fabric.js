@@ -103,10 +103,10 @@ class FabricClient {
       if (this.flag) {
         logger.info('-----------');
         this.peer = this.fabric_client.newPeer(this.config.peerGrpcUrl,
-          { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': 'peer0.' + this.config.username.toLocaleLowerCase() + '.example.com' });
+          { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': this.config.sslTarget });
         channel.addPeer(this.peer);
         this.order = this.fabric_client.newOrderer(this.config.ordererUrl,
-          { pem: Buffer.from(this.orderersCert).toString(), 'ssl-target-name-override': 'orderer.example.com' });
+          { pem: Buffer.from(this.orderersCert).toString() });
         channel.addOrderer(this.order);
       } else {
         logger.info('+++++++++++++++++');
@@ -440,7 +440,7 @@ class FabricClient {
     logger.info('start to create admin user.');
     return this.fabric_client.createUser({
       username: this.config.username,
-      mspid: this.config.username + 'MSP',
+      mspid: this.config.mspid,
       cryptoContent: {
         privateKey: keyPath,
         signedCert: certPath,
@@ -562,16 +562,16 @@ class FabricClient {
    * @returns {Promise<Array|chaincodes>}
    * @param channelName 通道名字
    */
-  createChannelTX(channelName) {
+  createChannelTX(channelName, configProfile) {
     return new Promise((resolve, reject) => {
       const txPath = path.join(__dirname, '../../resources/key/tx');
-      const cmd = 'cd ' + txPath + ' && ./configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ' + channelName + '.tx -channelID ' + channelName; exec(cmd, (err, stdout, stderr) => {
+      const cmd = 'cd ' + txPath + ' && ./configtxgen -profile ' + configProfile + ' -outputCreateChannelTx ' + channelName + '.tx -channelID ' + channelName; exec(cmd, (err, stdout, stderr) => {
         if (err) {
-          console.log(err);
+          logger.error(err);
           reject('fail');
         }
-        console.log(`stdout: ${stdout}`);
-        console.log(`stderr: ${stderr}`);
+        logger.info(`stdout: ${stdout}`);
+        logger.info(`stderr: ${stderr}`);
         resolve('success');
       });
     });
@@ -582,13 +582,14 @@ class FabricClient {
    * @returns {Promise<Array|chaincodes>}
    * @param channelName 通道名字
    */
-  createChannel(channelName) {
+  createChannel(channelName, configProfile, sslTarget) {
     const self = this;
-    return this.createChannelTX(channelName)
+    return this.createChannelTX(channelName, configProfile)
       .then((msg) => {
         logger.info(msg);
+        let channel;
         try {
-          this._setupChannelOnce(channelName);
+          channel = this._setupChannelOnce(channelName);
         } catch (err) {
           logger.error(err);
           return Promise.reject('fail');
@@ -601,6 +602,10 @@ class FabricClient {
         const stringSignature = signature.toBuffer().toString('hex');
         const tempSignatures = [];
         tempSignatures.push(stringSignature);
+        channel.removeOrderer(self.order);
+        self.order = self.fabric_client.newOrderer(self.config.ordererUrl,
+          { pem: Buffer.from(self.orderersCert).toString(), 'ssl-target-name-override': sslTarget });
+        channel.addOrderer(self.order);
         const request = {
           config: tempConfig,
           signatures: tempSignatures,
@@ -630,7 +635,7 @@ class FabricClient {
    * @returns {Promise<Array|chaincodes>}
    * @param channelName 通道名字
    */
-  joinChannel(channelName) {
+  joinChannel(channelName, sslTarget) {
     let channel;
     try {
       channel = this._setupChannelOnce(channelName);
@@ -640,14 +645,20 @@ class FabricClient {
     }
     const self = this;
 
+    channel.removeOrderer(self.order);
+    self.order = self.fabric_client.newOrderer(self.config.ordererUrl,
+      { pem: Buffer.from(self.orderersCert).toString(), 'ssl-target-name-override': sslTarget });
+    channel.addOrderer(self.order);
+
     const tempTxId = self.fabric_client.newTransactionID(); // 根据用户的证书构建新的事务ID，并自动生成nonce值。
     const request = {
       txId: tempTxId,
     };
+    logger.info(' block ::%j');
     return channel.getGenesisBlock(request)
       // })
       .then((block) => {
-        console.warn(' block ::%j', block);
+        logger.info(' block ::%j', block);
         const tempTargets = [];
         tempTargets.push(self.peer);
         const genesisBlock = block;
