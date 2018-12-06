@@ -15,13 +15,13 @@ const CollectionCreateForm = Form.create()(
   class extends React.Component {
     static nameValidator(rule, value, callback) {
       if (!/^[A-Za-z0-9]+$/.test(value)) {
-        callback(this.state.Common.WARN.onlyLetterAndDigital);
+        callback('only letters and digital！');
       }
       callback();
     }
     static versionValidator(rule, value, callback) {
       if (!/^\d+(.\d+)?$/.test(value)) {
-        callback(this.state.Common.WARN.onlyDigitalAndDot);
+        callback('only digital and dot！');
       }
       callback();
     }
