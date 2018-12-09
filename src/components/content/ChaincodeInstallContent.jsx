@@ -1,4 +1,4 @@
-/* eslint-disable array-callback-return */
+/* eslint-disable array-callback-return,max-len */
 // Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
 
 import React from 'react';
@@ -120,6 +120,53 @@ const CollectionCreateForm = Form.create()(
   },
 );
 
+// 智能合约子组件层级下的实例化链码表单组件
+const InstanitateCreateForm = Form.create()(
+  class extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        Common: localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common'),
+      };
+    }
+    render() {
+      const { visible, onCancel, onCreate, form } = this.props;
+      const { getFieldDecorator } = form;
+      return (
+        <Modal
+          visible={visible}
+          title={this.state.Common.INTANITATE}
+          okText={this.state.Common.CREATE}
+          cancelText={this.state.Common.CANCEL}
+          onCancel={onCancel}
+          onOk={onCreate}
+          centered
+          width="480px"
+        >
+          <Form layout="vertical">
+            <FormItem label={this.state.Common.CHAINCODECONSTRUCTOR}>
+              {getFieldDecorator('construct', {
+                rules: [{ required: true,
+                  message: this.state.Common.WARN.constructorParameter }],
+              })(
+                <Input placeholder={this.state.Common.CHAINCODECONSTRUCTOR} />,
+              )}
+            </FormItem>
+            <FormItem label={this.state.Common.ENDORSEPOLICY} >
+              {getFieldDecorator('policy', {
+                rules: [{ required: true, message: this.state.Common.WARN.endorsePolicy }],
+              })(
+                <Input placeholder={this.state.Common.ENDORSEPOLICY} />,
+              )}
+            </FormItem>
+          </Form>
+        </Modal>
+      );
+    }
+  },
+);
+
+
 // 智能合约窗口子组件
 class ContractDiv extends React.Component {
   static findArray(array, name, version, channel) {
@@ -134,6 +181,7 @@ class ContractDiv extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      visible: false,
       disable1: this.props.citem.disable1,
       disable2: this.props.citem.disable2,
       result: this.props.citem.result,
@@ -144,7 +192,45 @@ class ContractDiv extends React.Component {
     this.handleMenuClick = this.handleMenuClick.bind(this);
     this.handleInstallChaincodeCallBack = this.handleInstallChaincodeCallBack.bind(this);
     this.handleInstantiateChaincodeCallBack = this.handleInstantiateChaincodeCallBack.bind(this);
+    this.showModal = this.showModal.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handleCreate = this.handleCreate.bind(this);
+    this.saveFormRef = this.saveFormRef.bind(this);
   }
+  showModal() {
+    this.setState({ visible: true });
+  }
+
+  handleCancel() {
+    this.setState({ visible: false });
+  }
+
+  handleCreate() {
+    const form = this.formRef.props.form;
+    form.validateFields((err, values) => {
+      if (err) {
+        return;
+      }
+      console.log('Received values of instanitateform: ', values);
+      // 实例化链码操作
+      this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
+      this.setState({ result: 'instantiate chaincode...' });
+      getFabricClientSingleton().then((fabricClient) => {
+        fabricClient.instantiateCc(this.props.citem.channel,
+          this.props.citem.name,
+          this.props.citem.version,
+          [''])
+          .then(this.handleInstantiateChaincodeCallBack, this.handleInstantiateChaincodeCallBack);
+      });
+      form.resetFields();
+      this.setState({ visible: false });
+    });
+  }
+
+  saveFormRef(formRef) {
+    this.formRef = formRef;
+  }
+
   // 对安装链码进行操作
   handleInstallChaincodeCallBack(result) {
     if (result.indexOf('fail') > -1) {
@@ -203,14 +289,7 @@ class ContractDiv extends React.Component {
           .then(this.handleInstallChaincodeCallBack, this.handleInstallChaincodeCallBack);
       }
       if (e.key === '2') {
-        // 实例化链码操作
-        this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
-        this.setState({ result: 'instantiate chaincode...' });
-        fabricClient.instantiateCc(this.props.citem.channel,
-          this.props.citem.name,
-          this.props.citem.version,
-          [''])
-          .then(this.handleInstantiateChaincodeCallBack, this.handleInstantiateChaincodeCallBack);
+        this.showModal();
       }
       if (e.key === '3') {
         // 删除链码操作,实质上Fabric1.1版本中并未提供删除链码的任何操作，
@@ -300,6 +379,12 @@ class ContractDiv extends React.Component {
           </div>
           <div style={DropdownStyle}>
             <Dropdown.Button overlay={menu} type="primary">{this.state.Common.OPERATIONS}</Dropdown.Button>
+            <InstanitateCreateForm
+              wrappedComponentRef={this.saveFormRef}
+              visible={this.state.visible}
+              onCancel={this.handleCancel}
+              onCreate={this.handleCreate}
+            />
           </div>
         </div>
       </div>
