@@ -379,11 +379,21 @@ class FabricClient {
     const self = this;
 
     const txID = self.fabric_client.newTransactionID();
+
+    let endorsementpolicy = {
+      identities: [
+        { role: { name: 'peer', mspId: 'Org1MSP' } },
+      ],
+      policy: {
+        '1-of': [{ 'signed-by': 0 }, { 'signed-by': 1 }],
+      },
+    };
     const request = {
       targets: [self.peer], // peerAddress
       chaincodeId: chaincodeName,
-      chaincodeVersion,
-      args,
+      chaincodeVersion:chaincodeVersion,
+      args:args,
+      "endorsement-policy": endorsementpolicy,
       txId: txID,
     };
 
