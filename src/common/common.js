@@ -28,6 +28,7 @@ Common.OPERATIONS = 'operations';
 Common.LOGIN = 'Sign in';
 Common.CHAINCODECONSTRUCTOR = 'chaincode constructor';
 Common.ENDORSEPOLICY = 'endorse policy';
+Common.INTANITATE = 'Instanitate';
 
 Common.WARN = {
   chaincodeName: 'chaincode name can not be null!',

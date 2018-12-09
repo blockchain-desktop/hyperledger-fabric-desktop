@@ -28,6 +28,7 @@ Common.OPERATIONS = '操作';
 Common.LOGIN = '登录';
 Common.CHAINCODECONSTRUCTOR = '启动参数';
 Common.ENDORSEPOLICY = '背书策略';
+Common.INTANITATE = '实例化链码';
 
 Common.WARN = {
   chaincodeName: '链码名称不能为空!',
