@@ -377,19 +377,29 @@ class FabricClient {
     }
 
     const self = this;
-
+    let request=null;
     const txID = self.fabric_client.newTransactionID();
-    // args: ['']
-    //str: {"identities":[{"role":{"name":"member","mspId":"Org1MSP"}}],"policy":{"1-of":[{"signed-by":0}]}};
-    const  endorsementpolicy = JSON.parse(endorspolicy);
-    const request = {
-      targets: [self.peer], // peerAddress
-      chaincodeId: chaincodeName,
-      chaincodeVersion:chaincodeVersion,
-      args:args,
-      "endorsement-policy": endorsementpolicy,
-      txId: txID,
-    };
+    if(endorspolicy==''||endorspolicy==null||endorspolicy==undefined){
+        request = {
+            targets: [self.peer], // peerAddress
+            chaincodeId: chaincodeName,
+            chaincodeVersion:chaincodeVersion,
+            args:args,
+            txId: txID,
+        }
+    }else {
+        // args: ['']
+        //str: {"identities":[{"role":{"name":"member","mspId":"Org1MSP"}}],"policy":{"1-of":[{"signed-by":0}]}};
+        const  endorsementpolicy = JSON.parse(endorspolicy);
+         request = {
+            targets: [self.peer], // peerAddress
+            chaincodeId: chaincodeName,
+            chaincodeVersion:chaincodeVersion,
+            args:args,
+            "endorsement-policy": endorsementpolicy,
+            txId: txID,
+        };
+    }
 
     // 提案
     return channel.sendInstantiateProposal(request)
