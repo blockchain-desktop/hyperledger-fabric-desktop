@@ -219,7 +219,8 @@ class ContractDiv extends React.Component {
         fabricClient.instantiateCc(this.props.citem.channel,
           this.props.citem.name,
           this.props.citem.version,
-          values.construct)
+          values.construct,
+          values.policy)
           .then(this.handleInstantiateChaincodeCallBack, this.handleInstantiateChaincodeCallBack);
       });
       form.resetFields();

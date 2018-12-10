@@ -367,7 +367,7 @@ class FabricClient {
    * @param chaincodeVersion
    * @param args
    */
-  instantiateCc(channelName, chaincodeName, chaincodeVersion, args) {
+  instantiateCc(channelName, chaincodeName, chaincodeVersion, args, endorspolicy) {
     let channel;
     try {
       channel = this._setupChannelOnce(channelName);
@@ -379,15 +379,9 @@ class FabricClient {
     const self = this;
 
     const txID = self.fabric_client.newTransactionID();
-
-    let endorsementpolicy = {
-      identities: [
-        { role: { name: 'peer', mspId: 'Org1MSP' } },
-      ],
-      policy: {
-        '1-of': [{ 'signed-by': 0 }, { 'signed-by': 1 }],
-      },
-    };
+    // args: ['']
+    //str: {"identities":[{"role":{"name":"member","mspId":"Org1MSP"}}],"policy":{"1-of":[{"signed-by":0}]}};
+    const  endorsementpolicy = JSON.parse(endorspolicy);
     const request = {
       targets: [self.peer], // peerAddress
       chaincodeId: chaincodeName,
