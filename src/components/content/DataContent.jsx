@@ -193,8 +193,9 @@ export default class DataContent extends React.Component {
     for (let i = 0; i < this.state.block[id].num; i++) {
       const temp = {
         key: i,
-        tx: this.state.block[id][i].tx !== '' ? ((this.state.block[id][i].tx).substring(0, 30) + '...') : '000000000000000000000000000000...',
+        tx: this.state.block[id][i].tx !== '' ? ((this.state.block[id][i].tx).substring(0, 26) + '...') : '00000000000000000000000000...',
         time: this.state.block[id][i].time,
+        isValid: this.state.block[id][i].txValidationCode,
       };
       tempTransaction[i] = temp;
     }
@@ -375,12 +376,15 @@ export default class DataContent extends React.Component {
                   <strong>{this.state.Common.TRANSACTIONS}</strong>
                 </div>
               }
-              width="46%"
               render={(text, record) => (
                 <span>
                   <a href="#" onClick={() => this.showTransactionModal(record.key)}>{record.tx}</a>
                 </span>
               )}
+            />
+            <Column
+              align="center"
+              dataIndex="isValid"
             />
             <Column
               align="left"
