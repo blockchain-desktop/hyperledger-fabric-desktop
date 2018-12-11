@@ -182,7 +182,7 @@ class FabricClient {
    * @param args {[]string}
    * @param channelName {string}
    */
-  // {"pkBill":"test", "billFrom":"huangjishun", "acceptorId":"GUOXIN_id"}
+  // {"pkBill":"test11", "billFrom":"huangjishun", "acceptorId":"GUOXIN_id"}
   invokeCc(chaincodeId, fcn, args, channelName, peerList, certList, sslTargetList) {
     logger.info(`start invoke, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`);
     let channel;
@@ -309,12 +309,14 @@ class FabricClient {
         logger.info('Successfully sent transaction to the orderer.');
       } else {
         logger.error(`Failed to order the transaction. Error code: ${results[0].status}`);
+        return Promise.resolve('调用');
       }
 
       if (results && results[1] && results[1].event_status === 'VALID') {
         logger.info('Successfully committed the change to the ledger by the peer');
       } else {
         logger.info(`Transaction failed to be committed to the ledger due to ::${results[1].event_status}`);
+        return Promise.resolve('交易失败');
       }
       logger.info('Invoke result:', results);
 
@@ -386,7 +388,7 @@ class FabricClient {
     const self = this;
     let request = null;
     const txID = self.fabric_client.newTransactionID();
-    if (endorspolicy == '' || endorspolicy == null || endorspolicy == undefined) {
+    if (endorspolicy === '' || endorspolicy == null) {
       request = {
         targets: [self.peer], // peerAddress
         chaincodeId: chaincodeName,
@@ -396,7 +398,8 @@ class FabricClient {
       };
     } else {
       // args: ['']
-      // str: {"identities":[{"role":{"name":"member","mspId":"Org1MSP"}}],"policy":{"1-of":[{"signed-by":0}]}};
+      // str: {"identities":[{"role":{"name":"member","mspId":"Org1MSP"}}],
+      // "policy":{"1-of":[{"signed-by":0}]}};
       const endorsementpolicy = JSON.parse(endorspolicy);
       request = {
         targets: [self.peer], // peerAddress
@@ -447,15 +450,12 @@ class FabricClient {
     }
 
     return channel.queryBlock(blockNumber)
-      .then((block) => {
-        console.warn('block: ', block);
-        return Promise.resolve(block);
-      });
+      .then(block => Promise.resolve(block));
   }
 
   /**
    * 获取区块链信息，包含区块高度height
-   * @returns {Promise<blockInfo>}
+   * @returns {Promise<BlockInfo>}
    * @param channelName
    */
   queryInfo(channelName) {
@@ -605,7 +605,15 @@ class FabricClient {
   createChannelTX(channelName, configProfile) {
     return new Promise((resolve, reject) => {
       const txPath = path.join(__dirname, '../../resources/key/tx');
-      const cmd = 'cd ' + txPath + ' && ./configtxgen -profile ' + configProfile + ' -outputCreateChannelTx ' + channelName + '.tx -channelID ' + channelName; exec(cmd, (err, stdout, stderr) => {
+      let cmd;
+      if (process.platform === 'linux') {
+        cmd = 'cd ' + txPath + ' && ./configtxgen_linux -profile ' + configProfile + ' -outputCreateChannelTx ' + channelName + '.tx -channelID ' + channelName;
+      } else if (process.platform === 'darwin') {
+        cmd = 'cd ' + txPath + ' && ./configtxgen_darwin -profile ' + configProfile + ' -outputCreateChannelTx ' + channelName + '.tx -channelID ' + channelName;
+      } else {
+        cmd = 'cd ' + txPath + ' && ./configtxgen_windows -profile ' + configProfile + ' -outputCreateChannelTx ' + channelName + '.tx -channelID ' + channelName;
+      }
+      exec(cmd, (err, stdout, stderr) => {
         if (err) {
           logger.error(err);
           reject('fail');
@@ -642,10 +650,12 @@ class FabricClient {
         const stringSignature = signature.toBuffer().toString('hex');
         const tempSignatures = [];
         tempSignatures.push(stringSignature);
-        channel.removeOrderer(self.order);
-        self.order = self.fabric_client.newOrderer(self.config.ordererUrl,
-          { pem: Buffer.from(self.orderersCert).toString(), 'ssl-target-name-override': sslTarget });
-        channel.addOrderer(self.order);
+        if (self.orderersCert) {
+          channel.removeOrderer(self.order);
+          self.order = self.fabric_client.newOrderer(self.config.ordererUrl,
+            { pem: Buffer.from(self.orderersCert).toString(), 'ssl-target-name-override': sslTarget });
+          channel.addOrderer(self.order);
+        }
         const request = {
           config: tempConfig,
           signatures: tempSignatures,
@@ -685,10 +695,12 @@ class FabricClient {
     }
     const self = this;
 
-    channel.removeOrderer(self.order);
-    self.order = self.fabric_client.newOrderer(self.config.ordererUrl,
-      { pem: Buffer.from(self.orderersCert).toString(), 'ssl-target-name-override': sslTarget });
-    channel.addOrderer(self.order);
+    if (self.orderersCert) {
+      channel.removeOrderer(self.order);
+      self.order = self.fabric_client.newOrderer(self.config.ordererUrl,
+        { pem: Buffer.from(self.orderersCert).toString(), 'ssl-target-name-override': sslTarget });
+      channel.addOrderer(self.order);
+    }
 
     const tempTxId = self.fabric_client.newTransactionID(); // 根据用户的证书构建新的事务ID，并自动生成nonce值。
     const request = {

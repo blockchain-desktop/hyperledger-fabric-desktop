@@ -5,9 +5,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Button, message, Input, Icon, Tooltip } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
-import { copyDir, copyFile } from '../../util/tools';
+import { copyDir, copyFile, deleteDir } from '../../util/tools';
 
 const path = require('path');
+const fs = require('fs');
 const logger = require('electron-log');
 
 export default class ChannelManangeContent extends React.Component {
@@ -125,11 +126,14 @@ export default class ChannelManangeContent extends React.Component {
 
   orgCertDirImport() {
     const selectedFile = document.getElementById('cerFiles').files[0];// 获取读取的File对象
-    const cerArray = selectedFile.path.split('/');
-    this.setState({ certLabel: cerArray[cerArray.length - 1] });
-    const dirList = selectedFile.path.split('/');
-    const txPath = path.join(__dirname, '../../../resources/key/tx/' + dirList[dirList.length - 1]);
-    copyDir(selectedFile.path, txPath);
+    if (selectedFile) {
+      const cerArray = selectedFile.path.split('/');
+      this.setState({ certLabel: cerArray[cerArray.length - 1] });
+      const dirList = selectedFile.path.split('/');
+      const txPath = path.join(__dirname, '../../../resources/key/tx/' + dirList[dirList.length - 1]);
+      deleteDir(txPath);
+      copyDir(selectedFile.path, txPath);
+    }
   }
 
   yamlFileImport() {
