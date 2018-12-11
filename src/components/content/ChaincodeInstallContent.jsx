@@ -155,7 +155,7 @@ const InstanitateCreateForm = Form.create()(
 
 // 智能合约窗口子组件
 class ContractDiv extends React.Component {
-  static findArray(array, name, version, channel) {
+  static findIndexinArray(array, name, version, channel) {
     for (let i = 0; i < array.length; i++) {
       if (array[i].name === name && array[i].version === version && array[i].channel === channel) {
         return i;
@@ -234,6 +234,13 @@ class ContractDiv extends React.Component {
       this.setState({ disable1: true });
       this.setState({ result: 'installed successfully' });
       this.setState({ signal: '1' });
+      const listcopy = this.props.ctodocopy;
+      // 查询链码的下标
+      const index = ContractDiv.findIndexinArray(listcopy, this.props.citem.name, this.props.citem.version, this.props.citem.channel);
+      listcopy[index].disable1 = true;
+      this.props.conChangeCopy(listcopy);
+      console.log('lict copy; ');
+      console.log(listcopy);
     }
   }
   // 实例化链码的响应函数
@@ -248,23 +255,13 @@ class ContractDiv extends React.Component {
       this.setState({ icontype: 'check-circle', iconcolor: '#52c41a' });
       this.setState({ disable2: true });
       this.setState({ result: 'instantiated successfully' });
-      // 实例化成功后，更新todolistcopy
-      // const li = {
-      //   name: this.props.citem.name,
-      //   version: this.props.citem.version,
-      //   channel: this.props.citem.channel,
-      //   path: this.props.citem.path,
-      //   disable1: true,
-      //   disable2: true,
-      //   result: 'instantiated successfully',
-      // };
-      // const listcopy = this.props.ctodocopy;
-      // listcopy.push(li);
-      // this.props.conAddCopy(listcopy);
-      // logger.info('listcopy: ');
-      // logger.info(listcopy);
-      // logger.info('todolist: ');
-      // logger.info(this.props.ctodo);
+      const listcopy = this.props.ctodocopy;
+      // 考虑到已经安装但未被实例化的链码，所以只能再查询一次
+      const index = ContractDiv.findIndexinArray(listcopy, this.props.citem.name, this.props.citem.version, this.props.citem.channel);
+      listcopy[index].disable2 = true;
+      this.props.conChangeCopy(listcopy);
+      console.log('lict copy; ');
+      console.log(listcopy);
     }
   }
 
@@ -424,7 +421,7 @@ class ListToDo extends React.Component {
               ctodo={this.props.todo}
               cdelete={this.props.onDelete}
               ctodocopy={this.props.todocopy}
-              conAddCopy={this.props.onAddCopy}
+              conChangeCopy={this.props.onChangeCopy}
             />))
         }
       </div>
@@ -450,7 +447,8 @@ export default class ChaincodeInstallContent extends React.Component {
         for (let i = 0; i < result.length; i++) {
           channellist.push(result[i].channel_id);
         }
-        // console.log('channel_list_length: ' + channellist.length);
+        console.log('channel_list_length: ' + channellist.length);
+        console.log(channellist);
         // 每次进入页面初始化时，都需要从网络中查询数据
         for (let i = 1; i < channellist.length; i++) {
           fabricClient.queryInstantiatedChaincodes(channellist[i]).then(
@@ -488,6 +486,7 @@ export default class ChaincodeInstallContent extends React.Component {
       todolistcopy: [],
       Common: localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common'),
       channelList: [],
+      disabled: false,
     };
     this.showModal = this.showModal.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -613,9 +612,17 @@ export default class ChaincodeInstallContent extends React.Component {
   handleSelect(value) {
     logger.info('choosen channel: ' + value);
     if (value === 'allchannels') {
+      // 只有当此选项时才可以添加新的智能合约
+      this.setState({ disabled: false });
+      // allchannels获取的是所有通道的所有已实例化的链码
       this.setState({ todolist: this.state.todolistcopy });
     } else {
+      // 设置不可添加新的合约
+      this.setState({ disabled: true });
+      // 从todolistcopy获得各个通道已实例化的链码
       const contractlist = this.state.todolistcopy;
+      console.log('todolistcopy when select:');
+      console.log(contractlist);
       // eslint-disable-next-line consistent-return
       const newtodolist = contractlist.filter((item) => {
         if (item.channel === value) {
@@ -655,7 +662,7 @@ export default class ChaincodeInstallContent extends React.Component {
     return (
       <div style={outerDivStyle}>
         <div style={plusDivStyle}>
-          <Button icon="plus" style={buttonStyle} onClick={this.showModal}> {this.state.Common.ADD_CONTRACT}</Button>
+          <Button icon="plus" style={buttonStyle} onClick={this.showModal} disabled={this.state.disabled}> {this.state.Common.ADD_CONTRACT}</Button>
           <CollectionCreateForm
             wrappedComponentRef={this.saveFormRef}
             visible={this.state.visible}
@@ -667,7 +674,7 @@ export default class ChaincodeInstallContent extends React.Component {
           todo={this.state.todolist}
           onDelete={this.handleChange}
           todocopy={this.state.todolistcopy}
-          onAddCopy={this.handleChangeCopy}
+          onChangeCopy={this.handleChangeCopy}
         />
         <div style={selectStyle} >
           <Select
