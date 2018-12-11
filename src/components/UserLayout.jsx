@@ -150,7 +150,7 @@ export default class UserLayout extends React.Component {
       backgroundImage: 'url(' + bcgd + ')',
     };
     const contentStyle = {
-      padding: '40px 26px 20px 16px',
+      padding: '30px 26px 30px 26px',
       backgroundColor: '#fff',
       width: '400px',
       height: 'auto',
@@ -171,7 +171,7 @@ export default class UserLayout extends React.Component {
     const LoginStyle = {
       display: 'block',
       alignItems: 'center',
-      padding: '12px 0',
+      padding: '10px 0',
     };
     const fontStyle = {
       fontSize: '38px',
@@ -214,10 +214,10 @@ export default class UserLayout extends React.Component {
       margin: '10px 8px 20px 8px',
     };
     const divStyle = {
-      margin: '20px 8px',
+      margin: '20px 6px',
     };
     const lastDivStyle = {
-      margin: '32px 8px',
+      margin: '32px 6px',
     };
     const buttonStyle = {
       width: '100%',

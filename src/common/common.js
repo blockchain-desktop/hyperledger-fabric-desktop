@@ -29,6 +29,9 @@ Common.LOGIN = 'Sign in';
 Common.ADD_PEERS = 'add a peer';
 Common.PEER = 'peers';
 Common.SUBMIT = 'submit';
+Common.CHAINCODECONSTRUCTOR = 'chaincode constructor';
+Common.ENDORSEPOLICY = 'endorse policy';
+Common.INTANITATE = 'Instanitate';
 
 Common.WARN = {
   chaincodeName: 'chaincode name can not be null!',
@@ -37,6 +40,8 @@ Common.WARN = {
   chaincodePath: 'chaincode path can not be null!',
   onlyLetterAndDigital: 'only letters and digital！',
   onlyDigitalAndDot: 'only digital and dot！',
+  constructorParameter: 'consturctor can not be null!',
+  endorsePolicy: 'endorse policy can not be null!',
 };
 
 Common.INFO = {

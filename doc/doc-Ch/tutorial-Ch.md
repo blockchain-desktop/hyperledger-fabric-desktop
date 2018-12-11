@@ -26,7 +26,7 @@
 ![登录页面](../img/img-Ch/signin.png)
 
 注意：在hyperledger fabric体系的角色里，存在peer\orderer\user三种角色，客户端面向user角色，在user角色下，存在admin和
-普通user两种，admin可安装和调用链码，而普通user只可调用链码。
+普通user两种，admin可安装和实例化(invoke和instantiate)链码，而普通user只可调用和查询(invoke和query)链码。
 
 如：我们在本地运行fabric网络后，peer grpc url 填 grpc://localhost:7051, peer event url 填 grpc://localhost:7053，
 orderer url 填 grpc://localhost:7050, username 填 Org1Admin，选择certificate文件为signcerts文件夹下的

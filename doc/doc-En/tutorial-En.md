@@ -35,8 +35,8 @@ After successful adding, click the `Sign in` button.
 
 > Note!  <br />
 > In hyperledger fabric,there are three or more roles,eg.,peer,orderer,user. The desktop is oriented to the role 'user',
-> and there are two kinds: 'admin user' and 'normal user'. 'Admin user' can install and invoke the chaincode while 'normal user' can only
-> invoke the chaincode.
+> and there are two kinds: 'admin user' and 'normal user'. 'Admin user' can install and instantiate the chaincode while
+> 'normal user' can only invoke and query the chaincode.
 
 ##### Block Dashboard
 
