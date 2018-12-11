@@ -70,7 +70,7 @@ class FabricClient {
    *
    */
   _enrollUser(self) {
-    const usrName = self.config.username;
+    const usrName = self.config.mspid;
     // logger.info('start to load member user.');
     return FabricClientSDK.newDefaultKeyValueStore({ path: self.store_path,
     }).then((stateStore) => {
@@ -106,7 +106,7 @@ class FabricClient {
           { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': this.config.sslTarget });
         channel.addPeer(this.peer);
         this.order = this.fabric_client.newOrderer(this.config.ordererUrl,
-          { pem: Buffer.from(this.orderersCert).toString() });
+          { pem: Buffer.from(this.orderersCert).toString(), 'ssl-target-name-override': 'orderer.example.com' });
         channel.addOrderer(this.order);
       } else {
         logger.info('+++++++++++++++++');
@@ -182,7 +182,8 @@ class FabricClient {
    * @param args {[]string}
    * @param channelName {string}
    */
-  invokeCc(chaincodeId, fcn, args, channelName) {
+  // {"pkBill":"test", "billFrom":"huangjishun", "acceptorId":"GUOXIN_id"}
+  invokeCc(chaincodeId, fcn, args, channelName, peerList, certList, sslTargetList) {
     logger.info(`start invoke, chaincodeId:${chaincodeId}, functionName:${fcn}, args:${args}`);
     let channel;
     try {
@@ -193,7 +194,7 @@ class FabricClient {
     }
     let txID;
     const fabricClient = this.fabric_client;
-
+    const self = this;
     return this._enrollUser(this).then((user) => {
       if (user && user.isEnrolled()) {
         logger.info('Successfully loaded user1 from persistence');
@@ -205,10 +206,17 @@ class FabricClient {
       // get a transaction id object based on the current user assigned to fabric client
       txID = fabricClient.newTransactionID();
       logger.info('Assigning transaction_id: ', txID._transaction_id);
-
+      const tempTargets = [];
+      tempTargets.push(self.peer);
+      for (let i = 0; i < peerList.length; i++) {
+        const peerCert = fs.readFileSync(certList[i]);
+        const peer = self.fabric_client.newPeer((peerList[i]),
+          { pem: Buffer.from(peerCert).toString(), 'ssl-target-name-override': sslTargetList[i] });
+        tempTargets.push(peer);
+      }
       // must send the proposal to endorsing peers
       const request = {
-        // targets: let default to the peer assigned to the client
+        targets: tempTargets,
         chaincodeId,
         fcn,
         args: FabricClient._argsNullHelper(args),
@@ -254,7 +262,7 @@ class FabricClient {
         // get an eventhub once the fabric client has a user assigned. The user
         // is required bacause the event registration must be signed
         const eventHub = fabricClient.newEventHub();
-        eventHub.setPeerAddr(this.config.peerEventUrl);
+        eventHub.setPeerAddr(self.config.peerEventUrl, { pem: Buffer.from(self.peerCert).toString(), 'ssl-target-name-override': self.config.sslTarget });
 
         // using resolve the promise so that result status may be processed
         // under the then clause rather than having the catch clause process
@@ -290,7 +298,6 @@ class FabricClient {
           });
         });
         promises.push(txPromise);
-
         return Promise.all(promises);
       }
       logger.error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
@@ -426,7 +433,10 @@ class FabricClient {
     }
 
     return channel.queryBlock(blockNumber)
-      .then(block => Promise.resolve(block));
+      .then((block) => {
+        console.warn('block: ', block);
+        return Promise.resolve(block);
+      });
   }
 
   /**
@@ -455,7 +465,7 @@ class FabricClient {
     // -------------------- admin start ---------
     logger.info('start to create admin user.');
     return this.fabric_client.createUser({
-      username: this.config.username,
+      username: this.config.mspid,
       mspid: this.config.mspid,
       cryptoContent: {
         privateKey: keyPath,

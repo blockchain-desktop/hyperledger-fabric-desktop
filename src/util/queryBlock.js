@@ -167,6 +167,7 @@ class QueryBlock {
           writes: {
             0: block.data.data[i.toString()].payload.data.actions ? block.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset['0'].rwset.writes : '',
           },
+          txValidationCode: block.metadata.metadata['2'][i.toString()] === 0 ? 'VALID' : 'INVALID',
         };
         if ((block.data.data[i.toString()].payload.data.actions ? block.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset.length : 0) > 1) {
           tempTransaction.reads[1] = block.data.data[i.toString()].payload.data.actions ? block.data.data[i.toString()].payload.data.actions['0'].payload.action.proposal_response_payload.extension.results.ns_rwset['1'].rwset.reads : '';

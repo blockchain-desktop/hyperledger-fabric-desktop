@@ -1,13 +1,14 @@
 // Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
 
 import React from 'react';
-import { Button, Input, Select, Radio, message } from 'antd';
+import { Button, Input, Select, Radio, message, Modal, Icon, Tag, Tooltip } from 'antd';
 import getFabricClientSingleton from '../../util/fabric';
 
 const logger = require('electron-log');
 
 const { TextArea } = Input;
 const { Option } = Select;
+
 
 export default class ChaincodeInvokeContent extends React.Component {
   constructor(props) {
@@ -23,6 +24,16 @@ export default class ChaincodeInvokeContent extends React.Component {
       type: 'query',
       channelList: [],
       contractList: {},
+      peerModal: false,
+      tlsPeerLabel: ' choose a tls peer key',
+      tlsPeerPath: '',
+      peerGrpcUrl: 'grpcs://139.198.122.54:9051',
+      peerCount: 1,
+      peerGrpUrlList: [],
+      tlsPeerPathList: [],
+      sslTargetList: [],
+      tags: [],
+      sslTarget: 'peer0.org2.example.com',
     };
 
     this.onClick = this.onClick.bind(this);
@@ -32,6 +43,14 @@ export default class ChaincodeInvokeContent extends React.Component {
     this.typeChange = this.typeChange.bind(this);
     this.channelChange = this.channelChange.bind(this);
     this.onClickCallback = this.onClickCallback.bind(this);
+    this.errorHandler = this.errorHandler.bind(this);
+    this.peerModalHandleOk = this.peerModalHandleOk.bind(this);
+    this.peerModalHandleCancel = this.peerModalHandleCancel.bind(this);
+    this.tlsPeerImport = this.tlsPeerImport.bind(this);
+    this.peerGrpcUrlChange = this.peerGrpcUrlChange.bind(this);
+    this.sslTargetChange = this.sslTargetChange.bind(this);
+    this.showPeerModal = this.showPeerModal.bind(this);
+    this.handleClose = this.handleClose.bind(this);
 
     let fc;
     getFabricClientSingleton()
@@ -108,6 +127,8 @@ export default class ChaincodeInvokeContent extends React.Component {
   // }
 
   onClick() {
+    logger.info('peerUrl', this.state.peerGrpUrlList);
+    logger.info('tlsPeerPath', this.state.tlsPeerPathList);
     this.setState({ result: '' });
 
     getFabricClientSingleton().then((fabricClient) => {
@@ -121,7 +142,10 @@ export default class ChaincodeInvokeContent extends React.Component {
         fabricClient.invokeCc(this.state.contract,
           this.state.fcn,
           this.state.args,
-          this.state.channel)
+          this.state.channel,
+          this.state.peerGrpUrlList,
+          this.state.tlsPeerPathList,
+          this.state.sslTargetList)
           .then(this.onClickCallback, this.errorHandler);
       } else {
         logger.error('Chaincode calling type is invalid.');
@@ -131,6 +155,27 @@ export default class ChaincodeInvokeContent extends React.Component {
 
   onClickCallback(result) {
     this.setState({ result });
+  }
+
+  peerModalHandleOk() {
+    const peerGrpUrlList = this.state.peerGrpUrlList.concat(this.state.peerGrpcUrl);
+    const tlsPeerPathList = this.state.tlsPeerPathList.concat(this.state.tlsPeerPath);
+    const tags = this.state.tags.concat(this.state.sslTarget.length > 10 ?
+      this.state.sslTarget.substring(0, 10) : this.state.sslTarget);
+    const sslTargetList = this.state.sslTargetList.concat(this.state.sslTarget);
+    this.setState({
+      peerModal: false,
+      peerGrpUrlList,
+      tlsPeerPathList,
+      tags,
+      sslTargetList,
+    });
+  }
+
+  peerModalHandleCancel() {
+    this.setState({
+      peerModal: false,
+    });
   }
 
   errorHandler() {
@@ -168,6 +213,52 @@ export default class ChaincodeInvokeContent extends React.Component {
     this.setState({ channel: value, contract: this.state.contractList[value] ? this.state.contractList[value][0] : '' });
   }
 
+  tlsPeerImport() {
+    const selectedFile = document.getElementById('tlsPeerFiles').files[0];// 获取读取的File对象
+    this.setState({ tlsPeerPath: selectedFile.path });
+    const tlsArray = selectedFile.path.split('/');
+    this.setState({ tlsPeerLabel: tlsArray[tlsArray.length - 1] });
+  }
+
+  peerGrpcUrlChange(event) {
+    this.setState({ peerGrpcUrl: event.target.value });
+  }
+
+  sslTargetChange(event) {
+    this.setState({ sslTarget: event.target.value });
+  }
+
+  showPeerModal() {
+    this.setState({
+      peerModal: true,
+    });
+  }
+
+  handleClose(removedTag) {
+    const tempTags = this.state.tags;
+    let index = 0;
+    for (let i = 0; i < tempTags.length; i++) {
+      if ((tempTags[i].length > 10 ? tempTags[i].substring(0, 10) : tempTags[i]) === removedTag) {
+        index = i;
+        break;
+      }
+    }
+    const peerGrpUrlList = this.state.peerGrpUrlList
+      .filter(tag => tag !== this.state.peerGrpUrlList[index]);
+    const tags = this.state.tags
+      .filter(tag => tag !== this.state.tags[index]);
+    const tlsPeerPathList = this.state.tlsPeerPathList
+      .filter(tag => tag !== this.state.tlsPeerPathList[index]);
+    const sslTargetList = this.state.sslTargetList
+      .filter(tag => tag !== this.state.sslTargetList[index]);
+    this.setState({
+      tags,
+      peerGrpUrlList,
+      tlsPeerPathList,
+      sslTargetList,
+    });
+  }
+
   render() {
     const outerDivStyle = {
       padding: '0 15px',
@@ -187,6 +278,60 @@ export default class ChaincodeInvokeContent extends React.Component {
     const buttonStyle = {
       width: '100%',
     };
+    const addButtonStyle = {
+      width: '40%',
+    };
+    const spanStyle = {
+      display: 'inlineBlock',
+      fontSize: '1.2em',
+    };
+    const fileStyle = {
+      width: '0.1px',
+      height: '0.1px',
+      opacity: 0,
+      overflow: 'hidden',
+      position: 'absolute',
+      zIndex: -1,
+    };
+    const labelStyle = {
+      fontSize: '1.1em',
+      border: '1px solid rgb(217, 217, 217)',
+      borderRadius: '4px',
+      display: 'block',
+      float: 'right',
+      width: '200px',
+      height: '32px',
+      verticalAlign: 'middle',
+      textAlign: 'center',
+      lineHeight: '30px',
+      cursor: 'pointer',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      padding: '0 9px',
+    };
+    const firstDivStyle = {
+      width: '65%',
+      margin: '10px 8px 20px 8px',
+      float: 'center',
+    };
+    const asteriskStyle = {
+      float: 'left',
+      color: '#ff0000',
+    };
+    const InputStyle = {
+      width: '200px',
+      display: 'block',
+      float: 'right',
+    };
+    const modalDivStyle = {
+      width: '65%',
+      margin: '20px 8px',
+      float: 'center',
+    };
+
+    const { tags } = this.state;
+
     return (
       <div style={outerDivStyle}>
 
@@ -226,7 +371,7 @@ export default class ChaincodeInvokeContent extends React.Component {
         </div>
 
         <div style={divStyle}>
-          {this.state.Common.PARAMETER}
+          <span>{this.state.Common.PARAMETER}</span>
           <div style={inputDivStyle}>
             <Select mode="tags" style={inputStyle} placeholder="parameter" onChange={this.argsChange}>
               <Option value="null">null</Option>
@@ -245,6 +390,26 @@ export default class ChaincodeInvokeContent extends React.Component {
         </div>
 
         <div style={divStyle}>
+          {this.state.Common.PEER}
+          <div style={inputDivStyle}>
+            <Button type="dashed" style={addButtonStyle} onClick={this.showPeerModal}>
+              <Icon type="plus" />
+              {this.state.Common.ADD_PEERS}
+            </Button>
+            &emsp;
+            {tags.map((tag) => {
+              const isLongTag = tag.length > 20;
+              const tagElem = (
+                <Tag key={tag} closable afterClose={() => this.handleClose(tag)}>
+                  {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+                </Tag>
+              );
+              return isLongTag ? <Tooltip title={tag} key={tag}>{tagElem}</Tooltip> : tagElem;
+            })}
+          </div>
+        </div>
+
+        <div style={divStyle}>
           <TextArea
             placeholder="result"
             value={this.state.result}
@@ -257,6 +422,31 @@ export default class ChaincodeInvokeContent extends React.Component {
           <Button type="primary" style={buttonStyle} onClick={this.onClick}>{this.state.Common.SEND}</Button>
         </div>
 
+        <Modal
+          title={this.state.Common.ADD_PEERS}
+          visible={this.state.peerModal}
+          onOk={this.peerModalHandleOk}
+          onCancel={this.peerModalHandleCancel}
+          width="560px"
+          centered
+        >
+          <div style={firstDivStyle}>
+            <span style={asteriskStyle}>*&nbsp;</span>
+            <span style={spanStyle}>ssl target：</span>
+            <Input type="text" style={InputStyle} value={this.state.sslTarget} onChange={this.sslTargetChange} />
+          </div>
+          <div style={firstDivStyle}>
+            <span style={asteriskStyle}>*&nbsp;</span>
+            <span style={spanStyle}> peer grpc url：</span>
+            <Input type="text" style={InputStyle} value={this.state.peerGrpcUrl} onChange={this.peerGrpcUrlChange} />
+          </div>
+          <div style={modalDivStyle}>
+            <span style={asteriskStyle}>*&nbsp;</span>
+            <span style={spanStyle}>tls peer key：</span>
+            <input type="file" id="tlsPeerFiles" name="tlsPeerFiles" style={fileStyle} onChange={this.tlsPeerImport} />
+            <label htmlFor="tlsPeerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsPeerLabel} </label>
+          </div>
+        </Modal>
       </div>
     );
   }

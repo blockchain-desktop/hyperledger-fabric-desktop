@@ -26,7 +26,9 @@ Common.SELECT = 'select a ';
 Common.ADD_CONTRACT = 'Add contract';
 Common.OPERATIONS = 'operations';
 Common.LOGIN = 'Sign in';
-
+Common.ADD_PEERS = 'add a peer';
+Common.PEER = 'peers';
+Common.SUBMIT = 'submit';
 
 Common.WARN = {
   chaincodeName: 'chaincode name can not be null!',

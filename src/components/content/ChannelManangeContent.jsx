@@ -137,7 +137,7 @@ export default class ChannelManangeContent extends React.Component {
     this.setState({ yamlFile: selectedFile.path });
     const yamlArray = selectedFile.path.split('/');
     this.setState({ yamlLabel: yamlArray[yamlArray.length - 1] });
-    const txPath = path.join(__dirname, '../../../resources/key/tx/config.yaml');
+    const txPath = path.join(__dirname, '../../../resources/key/tx/configtx.yaml');
     copyFile(selectedFile.path, txPath);
   }
 
