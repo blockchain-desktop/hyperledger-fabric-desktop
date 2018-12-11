@@ -34,6 +34,7 @@ export default class ChaincodeInvokeContent extends React.Component {
       sslTargetList: [],
       tags: [],
       sslTarget: 'peer0.org2.example.com',
+      disabled: true,
     };
 
     this.onClick = this.onClick.bind(this);
@@ -207,6 +208,13 @@ export default class ChaincodeInvokeContent extends React.Component {
 
   typeChange(event) {
     this.setState({ type: event.target.value });
+    if (event.target.value === 'invoke') {
+      this.setState({ disabled: false });
+    } else {
+      this.setState({ disabled: true });
+    }
+    // console.log('event.target.value: ');
+    // console.log(event.target.value);
   }
 
   channelChange(value) {
@@ -392,7 +400,7 @@ export default class ChaincodeInvokeContent extends React.Component {
         <div style={divStyle}>
           {this.state.Common.PEER}
           <div style={inputDivStyle}>
-            <Button type="dashed" style={addButtonStyle} onClick={this.showPeerModal}>
+            <Button type="primary" ghost style={addButtonStyle} onClick={this.showPeerModal} disabled={this.state.disabled}>
               <Icon type="plus" />
               {this.state.Common.ADD_PEERS}
             </Button>
