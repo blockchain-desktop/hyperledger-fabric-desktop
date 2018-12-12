@@ -1,5 +1,7 @@
 // Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
 
+import React from 'react';
+
 class Common {
 
 }
@@ -34,6 +36,9 @@ Common.ENDORSEPOLICY = 'endorse policy';
 Common.INTANITATE = 'Instanitate';
 Common.CREATECHANNEl = 'create a channel';
 Common.ADDCHANNEL = 'add to channel';
+Common.MSP_FOLDER = 'msp folder';
+Common.CONFIG_NAME = 'config name';
+Common.CPNFIG_YAML = 'configtx.yaml file';
 
 Common.WARN = {
   chaincodeName: 'chaincode name can not be null!',

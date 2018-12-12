@@ -127,10 +127,9 @@ export default class ChannelManangeContent extends React.Component {
   orgCertDirImport() {
     const selectedFile = document.getElementById('cerFiles').files[0];// 获取读取的File对象
     if (selectedFile) {
-      const cerArray = selectedFile.path.split('/');
-      this.setState({ certLabel: cerArray[cerArray.length - 1] });
-      const dirList = selectedFile.path.split('/');
-      const txPath = path.join(__dirname, '../../../resources/key/tx/' + dirList[dirList.length - 1]);
+      const certLabel = path.basename(selectedFile.path);
+      this.setState({ certLabel });
+      const txPath = path.join(__dirname, '../../../resources/key/tx/' + certLabel);
       deleteDir(txPath);
       copyDir(selectedFile.path, txPath);
     }
@@ -139,8 +138,8 @@ export default class ChannelManangeContent extends React.Component {
   yamlFileImport() {
     const selectedFile = document.getElementById('yamlFile').files[0];// 获取读取的File对象
     this.setState({ yamlFile: selectedFile.path });
-    const yamlArray = selectedFile.path.split('/');
-    this.setState({ yamlLabel: yamlArray[yamlArray.length - 1] });
+    const yamlLabel = path.basename(selectedFile.path);
+    this.setState({ yamlLabel });
     const txPath = path.join(__dirname, '../../../resources/key/tx/configtx.yaml');
     copyFile(selectedFile.path, txPath);
   }
@@ -227,19 +226,19 @@ export default class ChannelManangeContent extends React.Component {
         </div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
-          <span style={SpanStyle}>configtx yaml : </span>
+          <span style={SpanStyle}>{this.state.Common.CPNFIG_YAML} : </span>
           <input type="file" id="yamlFile" name="yamlFile" style={fileStyle} onChange={this.yamlFileImport} />
           <label htmlFor="yamlFile" style={labelStyle} ><Icon type="copy" theme="outlined" style={{ color: '#0083FA', paddingLeft: '7px', paddingRight: '7px' }} />{this.state.yamlLabel} </label>
         </div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
-          <span style={SpanStyle}>org certificate : </span>
+          <span style={SpanStyle}>{this.state.Common.MSP_FOLDER} : </span>
           <input type="file" id="cerFiles" name="cerFiles" style={fileStyle} onChange={this.orgCertDirImport} ref="certDirSupport" />
           <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', paddingLeft: '7px', paddingRight: '7px' }} />{this.state.certLabel} </label>
         </div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
-          <span style={spanStyle}>config profile : </span>
+          <span style={spanStyle}>{this.state.Common.CONFIG_NAME} : </span>
           <Input placeholder="channel config profile" style={configInputStyle} value={this.state.configProfile} onChange={this.onChangeConfigProfile} />
         </div>
         <div style={DivStyle}>

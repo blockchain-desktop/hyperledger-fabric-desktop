@@ -34,6 +34,9 @@ Common.ENDORSEPOLICY = '背书策略';
 Common.INTANITATE = '实例化链码';
 Common.CREATECHANNEl = '创建新通道';
 Common.ADDCHANNEL = '加入通道';
+Common.MSP_FOLDER = '证书目录';
+Common.CONFIG_NAME = '配置名称';
+Common.CPNFIG_YAML = 'configtx.yaml文件';
 
 Common.WARN = {
   chaincodeName: '链码名称不能为空!',
@@ -47,8 +50,8 @@ Common.WARN = {
 };
 
 Common.INFO = {
-  addChannelSuccess: '添加节点成功!',
-  createChanelSuccess: '链码版本不能为空!',
+  addChannelSuccess: '加入通道成功!',
+  createChanelSuccess: '创建通道成功!',
 };
 
 Common.TIP = {
