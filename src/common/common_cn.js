@@ -32,6 +32,8 @@ Common.SUBMIT = '提交';
 Common.CHAINCODECONSTRUCTOR = '启动参数';
 Common.ENDORSEPOLICY = '背书策略';
 Common.INTANITATE = '实例化链码';
+Common.CREATECHANNEl = '创建新通道';
+Common.ADDCHANNEL = '加入通道';
 
 Common.WARN = {
   chaincodeName: '链码名称不能为空!',

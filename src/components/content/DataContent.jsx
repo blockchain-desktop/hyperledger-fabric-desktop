@@ -193,7 +193,7 @@ export default class DataContent extends React.Component {
     for (let i = 0; i < this.state.block[id].num; i++) {
       const temp = {
         key: i,
-        tx: this.state.block[id][i].tx !== '' ? ((this.state.block[id][i].tx).substring(0, 26) + '...') : '00000000000000000000000000...',
+        tx: this.state.block[id][i].tx !== '' ? ((this.state.block[id][i].tx).substring(0, 20) + '...') : '00000000000000000000000...',
         time: this.state.block[id][i].time,
         isValid: this.state.block[id][i].txValidationCode,
       };
@@ -385,6 +385,7 @@ export default class DataContent extends React.Component {
             <Column
               align="center"
               dataIndex="isValid"
+              width="15%"
             />
             <Column
               align="left"

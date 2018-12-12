@@ -305,7 +305,7 @@ class ContractDiv extends React.Component {
       path: this.props.citem.path,
     };
       // 从todolist对象集中删除链码对象
-    const index = ContractDiv.findArray(this.props.ctodo,
+    const index = ContractDiv.findIndexinArray(this.props.ctodo,
       contract.name,
       contract.version,
       contract.channel);

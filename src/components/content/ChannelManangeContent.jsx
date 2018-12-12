@@ -8,7 +8,7 @@ import getFabricClientSingleton from '../../util/fabric';
 import { copyDir, copyFile, deleteDir } from '../../util/tools';
 
 const path = require('path');
-const fs = require('fs');
+// const fs = require('fs');
 const logger = require('electron-log');
 
 export default class ChannelManangeContent extends React.Component {
@@ -247,14 +247,14 @@ export default class ChannelManangeContent extends React.Component {
           <Input type="text" style={sslInputStyle} value={this.state.sslTarget} onChange={this.sslTargetChange} />
         </div>
         <div style={DivStyle}>
-          <span style={spanStyle}>create a channel : </span>
+          <span style={spanStyle}>{this.state.Common.CREATECHANNEl} : </span>
           <Input placeholder="channel name" style={CreateInputStyle} value={this.state.channelNameValue} onChange={this.onChangeChannel} />
-          <Button style={ButtonStyle} type="primary" onClick={this.handleCreateChannel}>Submit</Button>
+          <Button style={ButtonStyle} type="primary" onClick={this.handleCreateChannel}>{this.state.Common.SUBMIT}</Button>
         </div>
         <div style={DivStyle}>
-          <span style={spanStyle}>add to channel :</span>
+          <span style={spanStyle}>{this.state.Common.ADDCHANNEL} :</span>
           <Input placeholder="channel name" style={AddInputStyle} value={this.state.channelValue} onChange={this.onChangeAddChannel} />
-          <Button style={ButtonStyle} type="primary" onClick={this.handleAddToChannel}>Submit</Button>
+          <Button style={ButtonStyle} type="primary" onClick={this.handleAddToChannel}>{this.state.Common.SUBMIT}</Button>
         </div>
 
       </div>
