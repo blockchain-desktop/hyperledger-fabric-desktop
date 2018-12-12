@@ -91,29 +91,29 @@ export default class UserLayout extends React.Component {
   cerImport() {
     const selectedFile = document.getElementById('cerFiles').files[0];// 获取读取的File对象
     this.setState({ certPath: selectedFile.path });
-    const cerArray = selectedFile.path.split('/');
-    this.setState({ certlabel: cerArray[cerArray.length - 1] });
+    const certlabel = path.basename(selectedFile.path);
+    this.setState({ certlabel });
   }
 
   tlsPeerImport() {
     const selectedFile = document.getElementById('tlsPeerFiles').files[0];// 获取读取的File对象
     this.setState({ tlsPeerPath: selectedFile.path });
-    const tlsArray = selectedFile.path.split('/');
-    this.setState({ tlsPeerLabel: tlsArray[tlsArray.length - 1] });
+    const tlsPeerLabel = path.basename(selectedFile.path);
+    this.setState({ tlsPeerLabel });
   }
 
   tlsOrdererImport() {
     const selectedFile = document.getElementById('tlsOrdererFiles').files[0];// 获取读取的File对象
     this.setState({ tlsOrdererPath: selectedFile.path });
-    const tlsArray = selectedFile.path.split('/');
-    this.setState({ tlsOrdererLabel: tlsArray[tlsArray.length - 1] });
+    const tlsOrdererLabel = path.basename(selectedFile.path);
+    this.setState({ tlsOrdererLabel });
   }
 
   priImport() {
     const selectedFile = document.getElementById('priFiles').files[0];// 获取读取的File对象
     this.setState({ keyPath: selectedFile.path });
-    const priArray = selectedFile.path.split('/');
-    this.setState({ keylabel: priArray[priArray.length - 1] });
+    const keylabel = path.basename(selectedFile.path);
+    this.setState({ keylabel });
   }
 
   ordererChange(event) {

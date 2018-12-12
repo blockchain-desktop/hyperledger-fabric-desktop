@@ -5,6 +5,7 @@ import { Button, Input, Select, Radio, message, Modal, Icon, Tag, Tooltip } from
 import getFabricClientSingleton from '../../util/fabric';
 
 const logger = require('electron-log');
+const path = require('path');
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -224,8 +225,9 @@ export default class ChaincodeInvokeContent extends React.Component {
   tlsPeerImport() {
     const selectedFile = document.getElementById('tlsPeerFiles').files[0];// 获取读取的File对象
     this.setState({ tlsPeerPath: selectedFile.path });
-    const tlsArray = selectedFile.path.split('/');
-    this.setState({ tlsPeerLabel: tlsArray[tlsArray.length - 1] });
+    this.setState({ yamlFile: selectedFile.path });
+    const tlsPeerLabel = path.basename(selectedFile.path);
+    this.setState({ tlsPeerLabel });
   }
 
   peerGrpcUrlChange(event) {

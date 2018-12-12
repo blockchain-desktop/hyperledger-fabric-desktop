@@ -706,11 +706,11 @@ class FabricClient {
     const request = {
       txId: tempTxId,
     };
-    logger.info(' block ::%j');
+    logger.info('txid', tempTxId);
     return channel.getGenesisBlock(request)
       // })
       .then((block) => {
-        logger.info(' block ::%j', block);
+        logger.info(' block ::%j', block.toString());
         const tempTargets = [];
         tempTargets.push(self.peer);
         const genesisBlock = block;
