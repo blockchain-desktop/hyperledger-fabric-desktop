@@ -32,6 +32,8 @@ Common.SUBMIT = 'submit';
 Common.CHAINCODECONSTRUCTOR = 'chaincode constructor';
 Common.ENDORSEPOLICY = 'endorse policy';
 Common.INTANITATE = 'Instanitate';
+Common.CREATECHANNEl = 'create a channel';
+Common.ADDCHANNEL = 'add to channel';
 
 Common.WARN = {
   chaincodeName: 'chaincode name can not be null!',
