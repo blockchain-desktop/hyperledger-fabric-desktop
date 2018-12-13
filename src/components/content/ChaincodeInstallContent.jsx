@@ -132,15 +132,14 @@ const InstanitateCreateForm = Form.create()(
           <Form layout="vertical">
             <FormItem label={this.state.Common.CHAINCODECONSTRUCTOR}>
               {getFieldDecorator('construct', {
-                rules: [{ required: true,
-                  message: this.state.Common.WARN.constructorParameter }],
+                rules: [{}],
               })(
                 <Input placeholder={this.state.Common.CHAINCODECONSTRUCTOR} />,
               )}
             </FormItem>
             <FormItem label={this.state.Common.ENDORSEPOLICY} >
               {getFieldDecorator('policy', {
-                rules: [{ required: true, message: this.state.Common.WARN.endorsePolicy }],
+                rules: [{}],
               })(
                 <Input placeholder={this.state.Common.ENDORSEPOLICY} />,
               )}
