@@ -177,27 +177,23 @@ export default class ChannelManangeContent extends React.Component {
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
       overflow: 'hidden',
-      marginLeft: '136px',
+      marginLeft: '176px',
       marginTop: '-25px',
     };
     const sslInputStyle = {
-      marginRight: '20px',
-      marginLeft: '4px',
+      marginLeft: '50px',
       width: '60%',
     };
     const configInputStyle = {
-      marginRight: '20px',
-      marginLeft: '21px',
+      marginLeft: '74px',
       width: '60%',
     };
     const CreateInputStyle = {
-      marginRight: '20px',
-      marginLeft: '4px',
+      marginLeft: '64px',
       width: '40%',
     };
     const AddInputStyle = {
-      marginRight: '20px',
-      marginLeft: '14px',
+      marginLeft: '72px',
       width: '40%',
     };
     const DivStyle = {
@@ -205,7 +201,7 @@ export default class ChannelManangeContent extends React.Component {
       marginBottom: '30px',
     };
     const ButtonStyle = {
-      marginRight: '20px',
+      marginLeft: '20px',
       width: '15%',
     };
     const TipDivStyle = {
@@ -248,12 +244,12 @@ export default class ChannelManangeContent extends React.Component {
         <div style={DivStyle}>
           <span style={spanStyle}>{this.state.Common.CREATECHANNEl} : </span>
           <Input placeholder="channel name" style={CreateInputStyle} value={this.state.channelNameValue} onChange={this.onChangeChannel} />
-          <Button style={ButtonStyle} type="primary" onClick={this.handleCreateChannel}>{this.state.Common.SUBMIT}</Button>
+          <Button style={ButtonStyle} type="primary" onClick={this.handleCreateChannel}>{this.state.Common.SUBMITCREATE}</Button>
         </div>
         <div style={DivStyle}>
           <span style={spanStyle}>{this.state.Common.ADDCHANNEL} :</span>
           <Input placeholder="channel name" style={AddInputStyle} value={this.state.channelValue} onChange={this.onChangeAddChannel} />
-          <Button style={ButtonStyle} type="primary" onClick={this.handleAddToChannel}>{this.state.Common.SUBMIT}</Button>
+          <Button style={ButtonStyle} type="primary" onClick={this.handleAddToChannel}>{this.state.Common.SUBMITJOIN}</Button>
         </div>
 
       </div>
