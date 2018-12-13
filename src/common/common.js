@@ -30,16 +30,15 @@ Common.OPERATIONS = 'operations';
 Common.LOGIN = 'Sign in';
 Common.ADD_PEERS = 'add a peer';
 Common.PEER = 'peers';
-Common.SUBMIT = 'join';
+Common.SUBMIT = 'submit';
 Common.CHAINCODECONSTRUCTOR = 'chaincode constructor';
 Common.ENDORSEPOLICY = 'endorse policy';
 Common.INTANITATE = 'Instanitate';
-Common.CREATECHANNEl = 'channel';
-Common.ADDCHANNEL = 'join channel';
+Common.CREATECHANNEl = 'create a channel';
+Common.ADDCHANNEL = 'add to channel';
 Common.MSP_FOLDER = 'msp folder';
 Common.CONFIG_NAME = 'config name';
-Common.CPNFIG_YAML = 'configtx.yaml';
-Common.SUBMITCHANNEl = 'create';
+Common.CPNFIG_YAML = 'configtx.yaml file';
 
 Common.WARN = {
   chaincodeName: 'chaincode name can not be null!',
