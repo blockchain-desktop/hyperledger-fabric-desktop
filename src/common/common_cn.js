@@ -28,15 +28,16 @@ Common.OPERATIONS = '操作';
 Common.LOGIN = '登录';
 Common.ADD_PEERS = '添加一个节点';
 Common.PEER = '节点';
-Common.SUBMIT = '提交';
+Common.SUBMIT = '加入';
 Common.CHAINCODECONSTRUCTOR = '启动参数';
 Common.ENDORSEPOLICY = '背书策略';
 Common.INTANITATE = '实例化链码';
-Common.CREATECHANNEl = '创建新通道';
+Common.CREATECHANNEl = '通道';
 Common.ADDCHANNEL = '加入通道';
 Common.MSP_FOLDER = '证书目录';
-Common.CONFIG_NAME = '配置名称';
-Common.CPNFIG_YAML = 'configtx.yaml文件';
+Common.CONFIG_NAME = '通道配置名称';
+Common.CPNFIG_YAML = 'configtx.yaml';
+Common.SUBMITCHANNEl = '创建';
 
 Common.WARN = {
   chaincodeName: '链码名称不能为空!',
