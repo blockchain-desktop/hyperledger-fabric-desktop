@@ -54,11 +54,11 @@
 
 ![Blcok](../img/img-Ch/block-detail.png)
 
-点击`交易列表`的记录，，如下:
+点击`交易列表`的任一记录，可查看交易具体信息:
 ![Transaction](../img/img-Ch/transaction-detail.png)
 
 ##### 1.2.3 链码调用
-在链码调用界面中，选择`通道`、`链码`后，输入`函数名称`、`参数`(其中参数可输入多个),选择`query`时，点击`发送`按钮，则可以查询相关信息。
+在链码调用界面中，选择`通道`、`链码`后，输入`函数名称`、`参数`(其中参数可输入多个), 如选择`query`，点击`发送`按钮，则可以查询相关信息。
 
 ![查询链码](../img/img-Ch/ccquery.png)
 
@@ -104,8 +104,6 @@
 > 注意！<br/>
 > 在MAC平台下，当你直接从程序的快捷方式打开客户端程序时，需再设置一套GUI环境变量,具体设置方法见[Desktop-FAQ](Desktop-FAQ-Ch.md)。
 
-在链码安装页面里，我们可以查看已经添加的各个智能合约.
-
 ![链码安装页面](../img/img-Ch/ccinstall.png)
 
 点击`添加合约`按钮，将会弹出`添加合约`弹窗,可添加新的智能合约。
@@ -136,29 +134,29 @@ GOPATH为`/Users/chuancey/go`，需填入的路径为：`github.com/hyperledger/
 点击确认后，即可实例化链码，如不需要，直接点击`instantiate`，实例化链码。
 
 此外，我们还可以查看不同通道下已经实例化的链码有哪些，如查看`channel1`通道下：
-
+                           
 ![查看链码](../img/img-Ch/channel1contracts.png)
 
 ##### 1.2.5 通道管理
+
+在开始前，我们要清楚通道的创建依赖于`configtx.yaml`文件。
 
 创建新通道: 选择`configtx.yaml`, 组织证书`org certificate`, 输入通道配置文件`config profile`，`orderer ssl target`, 以及
 通道名称`channel name`后，点击`提交`按钮，可创建新的通道。
 
 ![创建通道](../img/img-Ch/createChannel.png)
 
-输入通道名称后，并且可以加入通道。
-
 操作演示:
 
-假设我们的`configtx.yaml`配置如下：
+假设我们要生成只包含一个组织的通道，我们的`configtx.yaml`配置如下：
 
 ![配置文件](../img/img-Ch/configtx.png)
 
-- 选择`configtx.yaml`(选择此configtx.yaml文件)
-- 选择`org certificate`(注意标红部分，选择在configtx.yaml配置的证书目录，如果是多级目录，选择顶级目录即可)
-- 输入`config profile`(即`configtxgen -profile OneOrgChannel -outputCreateChannelTx ./config/channel.tx`命令的`- profile`选项的内容)
-- 输入 `orderer ssl target`（注意标红部分，选择在configtx.yaml配置的orderer节点域名）
-- 输入`channel name`（输入要创建的通道名称）
+- 选择`configtx.yaml file`(选择此configtx.yaml文件)
+- 选择`msp folder`(注意标红部分，选择在configtx.yaml配置的证书目录，如果是多级目录，选择顶级目录即可)
+- 输入`config name`为`OneOrgChannel`(即`configtxgen -profile OneOrgChannel -outputCreateChannelTx ./config/channel.tx`命令的`- profile`选项的内容)
+- 输入 `orderer ssl target`为`orderer.example.com`（注意标红部分，选择在configtx.yaml配置的orderer节点域名）
+- 输入`channel name` 为`channel1`（输入要创建的通道名称）
 
 ![创建通道示例](../img/img-Ch/createChannelExample.png)
 
