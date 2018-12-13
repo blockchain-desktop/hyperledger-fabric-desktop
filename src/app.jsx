@@ -64,6 +64,15 @@ export default class App extends React.Component {
     //         });
     //     });
     // });
+    //
+
+    // getFabricClientSingleton().then((fabricClient) => {
+    //   fabricClient.queryChannels()
+    //     .then((result1) => {
+    //       console.log('query channel', result1);
+    //       generateYaml(result1);
+    //     });
+    // });
   }
 
   getConfig() {
