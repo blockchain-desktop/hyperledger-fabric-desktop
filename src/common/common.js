@@ -34,11 +34,13 @@ Common.SUBMIT = 'submit';
 Common.CHAINCODECONSTRUCTOR = 'chaincode constructor';
 Common.ENDORSEPOLICY = 'endorse policy';
 Common.INTANITATE = 'Instanitate';
-Common.CREATECHANNEl = 'create a channel';
-Common.ADDCHANNEL = 'add to channel';
+Common.CREATECHANNEl = 'channel name';
+Common.ADDCHANNEL = 'join channel';
 Common.MSP_FOLDER = 'msp folder';
 Common.CONFIG_NAME = 'config name';
-Common.CPNFIG_YAML = 'configtx.yaml file';
+Common.CPNFIG_YAML = 'configtx.yaml';
+Common.SUBMITCREATE = 'create';
+Common.SUBMITJOIN = 'join';
 
 Common.WARN = {
   chaincodeName: 'chaincode name can not be null!',
