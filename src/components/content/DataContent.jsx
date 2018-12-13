@@ -54,7 +54,7 @@ export default class DataContent extends React.Component {
       .then(fabricClient => fabricClient.queryChannels())
       .then((channelName) => {
         logger.info('query channel', channelName[0].channel_id);
-        this.setState({ currentChannel: channelName[0].channel_id })
+        this.setState({ currentChannel: channelName[0].channel_id });
         const chanelList = [];
         const optionChildren = [];
         for (let i = 0; i < channelName.length; i++) {
