@@ -611,7 +611,7 @@ class FabricClient {
       } else if (process.platform === 'darwin') {
         cmd = 'cd ' + txPath + ' && ./configtxgen_darwin -profile ' + configProfile + ' -outputCreateChannelTx ' + channelName + '.tx -channelID ' + channelName;
       } else {
-        cmd = 'cd ' + txPath + ' && ./configtxgen_windows -profile ' + configProfile + ' -outputCreateChannelTx ' + channelName + '.tx -channelID ' + channelName;
+        cmd = 'cd ' + txPath + ' && configtxgen_windows -profile ' + configProfile + ' -outputCreateChannelTx ' + channelName + '.tx -channelID ' + channelName;
       }
       exec(cmd, (err, stdout, stderr) => {
         if (err) {

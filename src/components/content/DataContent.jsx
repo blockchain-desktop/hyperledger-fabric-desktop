@@ -36,7 +36,7 @@ export default class DataContent extends React.Component {
       listData: [],
       transaction: [],
       loading: true,
-      currentChannel: 'mychannel',
+      currentChannel: '',
       chanelList: [],
       optionChildren: [],
     };
@@ -54,6 +54,7 @@ export default class DataContent extends React.Component {
       .then(fabricClient => fabricClient.queryChannels())
       .then((channelName) => {
         logger.info('query channel', channelName[0].channel_id);
+        this.setState({ currentChannel: channelName[0].channel_id });
         const chanelList = [];
         const optionChildren = [];
         for (let i = 0; i < channelName.length; i++) {
@@ -282,7 +283,7 @@ export default class DataContent extends React.Component {
                 <ColumnGroup title={
                   <div style={{ width: '100%', fontSize: '130%' }}>
                     <span style={{ marginLeft: '18%' }}><strong>{this.state.Common.CURRENT_BLOCKS}</strong></span>
-                    <Select style={{ width: '22%', float: 'right' }} defaultValue={this.state.currentChannel} onChange={this.channelChange}>
+                    <Select style={{ width: '22%', float: 'right' }} value={this.state.currentChannel} onChange={this.channelChange}>
                       {this.state.optionChildren}
                     </Select>
                   </div>
