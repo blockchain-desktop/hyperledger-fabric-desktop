@@ -1,6 +1,6 @@
 // Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
 
-import React from 'react';
+// import React from 'react';
 
 class Common {
 
@@ -66,7 +66,7 @@ Common.ERROR = {
   certificateFailed: 'Failed to generate certificate, please select the correct certificate!',
   queryFailed: 'The query failed, please confirm the correct parameters!',
   connectFailed: 'Connection failed, node address error or tls certificate is wrong!',
-  instatiateTwice: 'The chaincode has been instatiated!',
+  alreadyExist: 'The chaincode already exists!',
   addChannelFailed: 'Add to channel failed, please confirm whether the channel exists or whether the node is defined in the channel configuration file!',
   createChanelFailed: 'Channel created failed, please confirm that the configtx.yaml file and certificate are correct or the channel has been defined!',
 };

@@ -61,7 +61,7 @@ Common.TIP = {
 };
 
 Common.ERROR = {
-  instatiateTwice: '该链码已经被实例化了!',
+  alreadyExist: '该链码已经存在!',
   certificateFailed: '生成证书失败，请选择正确的证书!',
   queryFailed: '查询失败请确认参数是否正确!',
   connectFailed: '连接失败，节点地址错误或tls证书错误！',
