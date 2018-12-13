@@ -177,23 +177,27 @@ export default class ChannelManangeContent extends React.Component {
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
       overflow: 'hidden',
-      marginLeft: '164px',
+      marginLeft: '136px',
       marginTop: '-25px',
     };
     const sslInputStyle = {
-      marginLeft: '32px',
+      marginRight: '20px',
+      marginLeft: '4px',
       width: '60%',
     };
     const configInputStyle = {
-      marginLeft: '56px',
+      marginRight: '20px',
+      marginLeft: '21px',
       width: '60%',
     };
     const CreateInputStyle = {
-      marginLeft: '90px',
+      marginRight: '20px',
+      marginLeft: '4px',
       width: '40%',
     };
     const AddInputStyle = {
-      marginLeft: '70px',
+      marginRight: '20px',
+      marginLeft: '14px',
       width: '40%',
     };
     const DivStyle = {
@@ -201,7 +205,7 @@ export default class ChannelManangeContent extends React.Component {
       marginBottom: '30px',
     };
     const ButtonStyle = {
-      marginLeft: '10px',
+      marginRight: '20px',
       width: '15%',
     };
     const TipDivStyle = {
@@ -244,7 +248,7 @@ export default class ChannelManangeContent extends React.Component {
         <div style={DivStyle}>
           <span style={spanStyle}>{this.state.Common.CREATECHANNEl} : </span>
           <Input placeholder="channel name" style={CreateInputStyle} value={this.state.channelNameValue} onChange={this.onChangeChannel} />
-          <Button style={ButtonStyle} type="primary" onClick={this.handleCreateChannel}>{this.state.Common.SUBMITCHANNEl}</Button>
+          <Button style={ButtonStyle} type="primary" onClick={this.handleCreateChannel}>{this.state.Common.SUBMIT}</Button>
         </div>
         <div style={DivStyle}>
           <span style={spanStyle}>{this.state.Common.ADDCHANNEL} :</span>
