@@ -384,39 +384,34 @@ class FabricClient {
       logger.error(err);
       return Promise.reject('fail');
     }
+    logger.info('args: ', args, '&& endors-policy:', endorspolicy);
 
-    const self = this;
-    let request = null;
-    const txID = self.fabric_client.newTransactionID();
-    if ((args === '' || args == null) && (endorspolicy != null || endorspolicy !== '')) {
-      request = {
-        targets: [self.peer], // peerAddress
-        chaincodeId: chaincodeName,
-        chaincodeVersion,
-        args: [''],
-        txId: txID,
-        endorspolicy,
-      };
-    } else if ((endorspolicy === '' || endorspolicy == null) && (args != null || args !== '')) {
-      request = {
-        targets: [self.peer], // peerAddress
-        chaincodeId: chaincodeName,
-        chaincodeVersion,
-        args,
-        txId: txID,
-        endorspolicy: '',
-      };
+    const txID = this.fabric_client.newTransactionID();
+
+    let endorspolicyObj;
+    let argsObj;
+    if (!args || args === '') {
+      argsObj = null;
     } else {
-      const endorsementpolicy = JSON.parse(endorspolicy);
-      request = {
-        targets: [self.peer], // peerAddress
-        chaincodeId: chaincodeName,
-        chaincodeVersion,
-        args,
-        'endorsement-policy': endorsementpolicy,
-        txId: txID,
-      };
+      argsObj = JSON.parse(args);
     }
+
+    if (!endorspolicy || endorspolicy === '') {
+      endorspolicyObj = null;
+    } else {
+      endorspolicyObj = JSON.parse(endorspolicy);
+    }
+
+    const request = {
+      targets: [this.peer], // peerAddress
+      chaincodeId: chaincodeName,
+      chaincodeVersion,
+      args: argsObj,
+      'endorsement-policy': endorspolicyObj,
+      txId: txID,
+    };
+
+
     // args: ['']
     // str: {"identities":[{"role":{"name":"member","mspId":"Org1MSP"}}],
     // "policy":{"1-of":[{"signed-by":0}]}};
@@ -436,6 +431,9 @@ class FabricClient {
       }).then((results) => {
         logger.info('Complete instantiating chaincode.', results);
         return Promise.resolve('success');
+      }, (err) => {
+        logger.info('Failed instantiating chaincode.', err.stack);
+        return Promise.resolve('fail');
       })
       .catch((err) => {
         logger.error(`Fail to instantiate chaincode. Error message: ${err.stack}` ? err.stack : err);
