@@ -230,7 +230,7 @@ export default class UserLayout extends React.Component {
       <Layout style={LayoutStyle}>
 
         <div style={backgroundStyle}>
-          <image src={bcgd} alt=" background image" />
+          <img src={bcgd} alt="background" />
         </div>
 
         <div style={contentStyle}>

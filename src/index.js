@@ -20,7 +20,7 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     icon: path.join(__dirname, '../resources/styles/image/logo/logo.iconset/icon_512x512.png'),
     width: 800,
-    height: 600,
+    height: 625,
     minWidth: 800,
     minHeight: 600,
     backgroundColor: '#fff',
