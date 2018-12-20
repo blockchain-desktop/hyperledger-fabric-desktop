@@ -17,14 +17,25 @@ if (isDevMode) enableLiveReload({ strategy: 'react-hmr' });
 
 const createWindow = async () => {
   // Create the browser window.
-  mainWindow = new BrowserWindow({
-    icon: path.join(__dirname, '../resources/styles/image/logo/logo.iconset/icon_512x512.png'),
-    width: 800,
-    height: 625,
-    minWidth: 800,
-    minHeight: 600,
-    backgroundColor: '#fff',
-  });
+  if (process.platform === 'darwin' || process.platform === 'linux') {
+    mainWindow = new BrowserWindow({
+      icon: path.join(__dirname, '../resources/styles/image/logo/logo.iconset/icon_512x512.png'),
+      width: 800,
+      height: 600,
+      minWidth: 800,
+      minHeight: 600,
+      backgroundColor: '#fff',
+    });
+  } else {
+    mainWindow = new BrowserWindow({
+      icon: path.join(__dirname, '../resources/styles/image/logo/logo.iconset/icon_512x512.png'),
+      width: 800,
+      height: 625,
+      minWidth: 800,
+      minHeight: 600,
+      backgroundColor: '#fff',
+    });
+  }
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`);

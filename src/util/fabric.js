@@ -262,7 +262,9 @@ class FabricClient {
         // get an eventhub once the fabric client has a user assigned. The user
         // is required bacause the event registration must be signed
         const eventHub = channel.newChannelEventHub(self.peer);
-        // eventHub.setPeerAddr(self.config.peerEventUrl, { pem: Buffer.from(self.peerCert).toString(), 'ssl-target-name-override': self.config.sslTarget });
+        // eventHub.setPeerAddr(self.config.peerEventUrl,
+        // { pem: Buffer.from(self.peerCert).toString(),
+        // 'ssl-target-name-override': self.config.sslTarget });
 
         // using resolve the promise so that result status may be processed
         // under the then clause rather than having the catch clause process
