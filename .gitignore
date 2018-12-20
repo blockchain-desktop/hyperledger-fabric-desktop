@@ -2,14 +2,17 @@ node_modules
 out
 .eslintcache
 .idea
-/resources/persistence/:
-/resources/key/users:
-/resources/key/tx:
-!.gitkeep
 
 # fabric network
 fabric/fabcar/hfc-key-store
 fabric/fabcar/node_modules
 
+# runtime resouces files. Ignore most files but keep folders
+resources/key/tx/*
+!resources/key/tx/configtxgen_*
 
+resources/key/users/*
+!resources/key/users/.gitkeep
 
+resources/persistence/*.db
+!resources/persistence/.gitkeep
