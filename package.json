@@ -1,7 +1,7 @@
 {
   "name": "hyperledger-fabric-desktop",
   "productName": "Fabric-Desktop",
-  "version": "0.2.0-alpha",
+  "version": "0.2.0-beta",
   "description": "My Electron application description",
   "main": "src/index.js",
   "scripts": {
@@ -37,7 +37,8 @@
       },
       "electronPackagerConfig": {
         "packageManager": "npm",
-        "ignore": [".idea|doc",
+        "ignore": [
+          ".idea|doc",
           "fabric/.*",
           "test/.*",
           "resources/key/tx/((?!configtxgen_).)+$",
