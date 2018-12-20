@@ -1,7 +1,7 @@
 {
   "name": "hyperledger-fabric-desktop",
   "productName": "Fabric-Desktop",
-  "version": "0.2.0-snapshot",
+  "version": "0.2.0-alpha",
   "description": "My Electron application description",
   "main": "src/index.js",
   "scripts": {
@@ -37,7 +37,14 @@
       },
       "electronPackagerConfig": {
         "packageManager": "npm",
-        "ignore": ".idea|resources/styles/image/logo/logo.ai",
+        "ignore": [".idea|doc",
+          "fabric/.*",
+          "test/.*",
+          "resources/key/tx/((?!configtxgen_).)+$",
+          "resources/key/users/.*",
+          "resources/persistence/.*",
+          "resources/styles/image/logo/logo.ai"
+        ],
         "icon": "resources/styles/image/logo/logo.icns"
       },
       "electronWinstallerConfig": {
