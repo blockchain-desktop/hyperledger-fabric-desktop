@@ -261,8 +261,8 @@ class FabricClient {
 
         // get an eventhub once the fabric client has a user assigned. The user
         // is required bacause the event registration must be signed
-        const eventHub = fabricClient.newEventHub();
-        eventHub.setPeerAddr(self.config.peerEventUrl, { pem: Buffer.from(self.peerCert).toString(), 'ssl-target-name-override': self.config.sslTarget });
+        const eventHub = channel.newChannelEventHub(self.peer);
+        // eventHub.setPeerAddr(self.config.peerEventUrl, { pem: Buffer.from(self.peerCert).toString(), 'ssl-target-name-override': self.config.sslTarget });
 
         // using resolve the promise so that result status may be processed
         // under the then clause rather than having the catch clause process
@@ -273,13 +273,12 @@ class FabricClient {
             resolve({ event_status: 'TIMEOUT' });
             // could use reject(new Error('Trnasaction did not complete within 30 seconds'));
           }, 3000);
-          eventHub.connect();
           eventHub.registerTxEvent(transactionIDString, (tx, code) => {
             // this is the callback for transaction event status
             // first some clean up of event listener
             clearTimeout(handle);
-            eventHub.unregisterTxEvent(transactionIDString);
-            eventHub.disconnect();
+            // eventHub.unregisterTxEvent(transactionIDString);
+            // eventHub.disconnect();
 
             // now let the application know what happened
             const returnStatus = { event_status: code, tx_id: transactionIDString };
@@ -288,7 +287,7 @@ class FabricClient {
               resolve(returnStatus);
               // could use reject(new Error('Problem with the tranaction, event status ::'+code));
             } else {
-              logger.info(`The transaction has been committed on peer ${eventHub._ep._endpoint.addr}`);
+              logger.info('The transaction has been committed on peer ', eventHub.getPeerAddr());
               resolve(returnStatus);
             }
           }, (err) => {
@@ -296,6 +295,7 @@ class FabricClient {
             // with the event registration or processing
             reject(new Error(`There was a problem with the eventhub ::${err}`));
           });
+          eventHub.connect();
         });
         promises.push(txPromise);
         return Promise.all(promises);
@@ -309,18 +309,18 @@ class FabricClient {
         logger.info('Successfully sent transaction to the orderer.');
       } else {
         logger.error(`Failed to order the transaction. Error code: ${results[0].status}`);
-        return Promise.resolve('调用');
+        return Promise.resolve('Failed to order the transaction.');
       }
 
       if (results && results[1] && results[1].event_status === 'VALID') {
         logger.info('Successfully committed the change to the ledger by the peer');
       } else {
         logger.info(`Transaction failed to be committed to the ledger due to ::${results[1].event_status}`);
-        return Promise.resolve('交易失败');
+        return Promise.resolve('Transaction failed to be committed to the ledger.');
       }
       logger.info('Invoke result:', results);
 
-      return Promise.resolve('调用成功');
+      return Promise.resolve('Success');
     })
       .catch((err) => {
         logger.error(`Failed to invoke successfully :: ${err}`);
@@ -384,39 +384,34 @@ class FabricClient {
       logger.error(err);
       return Promise.reject('fail');
     }
+    logger.info('args: ', args, '&& endors-policy:', endorspolicy);
 
-    const self = this;
-    let request = null;
-    const txID = self.fabric_client.newTransactionID();
-    if ((args === '' || args == null) && (endorspolicy != null || endorspolicy !== '')) {
-      request = {
-        targets: [self.peer], // peerAddress
-        chaincodeId: chaincodeName,
-        chaincodeVersion,
-        args: [''],
-        txId: txID,
-        endorspolicy,
-      };
-    } else if ((endorspolicy === '' || endorspolicy == null) && (args != null || args !== '')) {
-      request = {
-        targets: [self.peer], // peerAddress
-        chaincodeId: chaincodeName,
-        chaincodeVersion,
-        args,
-        txId: txID,
-        endorspolicy: '',
-      };
+    const txID = this.fabric_client.newTransactionID();
+
+    let endorspolicyObj;
+    let argsObj;
+    if (!args || args === '') {
+      argsObj = null;
     } else {
-      const endorsementpolicy = JSON.parse(endorspolicy);
-      request = {
-        targets: [self.peer], // peerAddress
-        chaincodeId: chaincodeName,
-        chaincodeVersion,
-        args,
-        'endorsement-policy': endorsementpolicy,
-        txId: txID,
-      };
+      argsObj = JSON.parse(args);
     }
+
+    if (!endorspolicy || endorspolicy === '') {
+      endorspolicyObj = null;
+    } else {
+      endorspolicyObj = JSON.parse(endorspolicy);
+    }
+
+    const request = {
+      targets: [this.peer], // peerAddress
+      chaincodeId: chaincodeName,
+      chaincodeVersion,
+      args: argsObj,
+      'endorsement-policy': endorspolicyObj,
+      txId: txID,
+    };
+
+
     // args: ['']
     // str: {"identities":[{"role":{"name":"member","mspId":"Org1MSP"}}],
     // "policy":{"1-of":[{"signed-by":0}]}};
@@ -436,6 +431,9 @@ class FabricClient {
       }).then((results) => {
         logger.info('Complete instantiating chaincode.', results);
         return Promise.resolve('success');
+      }, (err) => {
+        logger.info('Failed instantiating chaincode.', err.stack);
+        return Promise.resolve('fail');
       })
       .catch((err) => {
         logger.error(`Fail to instantiate chaincode. Error message: ${err.stack}` ? err.stack : err);

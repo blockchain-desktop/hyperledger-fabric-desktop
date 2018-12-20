@@ -452,7 +452,7 @@ export default class ChaincodeInvokeContent extends React.Component {
           </div>
           <div style={modalDivStyle}>
             <span style={asteriskStyle}>*&nbsp;</span>
-            <span style={spanStyle}>tls peer key：</span>
+            <span style={spanStyle}>tls peer cert：</span>
             <input type="file" id="tlsPeerFiles" name="tlsPeerFiles" style={fileStyle} onChange={this.tlsPeerImport} />
             <label htmlFor="tlsPeerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsPeerLabel} </label>
           </div>
