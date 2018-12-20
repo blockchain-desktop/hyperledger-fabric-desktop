@@ -23,9 +23,9 @@ export default class UserLayout extends React.Component {
     super(props);
 
     this.state = {
-      peerGrpcUrl: 'grpcs://139.198.122.54:7051',
-      peerEventUrl: 'grpcs://139.198.122.54:7053',
-      ordererUrl: 'grpcs://139.198.122.54:7050',
+      peerGrpcUrl: 'grpcs://localhost:7051',
+      peerEventUrl: 'grpcs://localhost:7053',
+      ordererUrl: 'grpcs://localhost:7050',
       mspid: 'Org1MSP',
       certPath: '',
       keyPath: '',
