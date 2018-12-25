@@ -37,6 +37,12 @@ Check [CONTRIBUTING documentation](doc/doc-En/CONTRIUTING-EN.md)  for the full d
   and assign to yourself or someone else, close after finished.
 - Maintainer: Process and coordinate the [issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues) and the [project](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/projects).
 
+## Roadmap
+- v0.1 : Basic features (block-info dashboard, chaincode invocation, chaincode installation)
+- v0.2 : Channel management, multi-channel support.  
+- v0.3 (current): CA management. (feature complete)
+- v0.4 : User experience improvement.
+
 ## License
 
 Hyperledger fabric desktop source code files are made available under the GNU GENERAL PUBLIC LICENSE,
@@ -72,10 +78,9 @@ available at http://creativecommons.org/licenses/by/4.0/.
     的进展
 
 ## 开发路线
-* v0.1.0 : 基础功能（数据看板、链码调用、链码安装）。
-* v0.2.0 : 添加通道管理等功能。
-* v0.3.0~: 逐步添加其他功能，逐步完善基础架构
-
-客户端目前处于v0.1.0版本阶段。
+* v0.1: 基础功能（数据看板、链码调用、链码安装）。
+* v0.2: 添加通道管理等功能。
+* v0.3 (当前) : 增加CA证书管理功能 (客户端达到功能完备)
+* v0.4: 优化交互，用户体验。完善易用性、优化其他辅助功能。
 
 
