@@ -20,19 +20,19 @@ const createWindow = async () => {
   if (process.platform === 'darwin' || process.platform === 'linux') {
     mainWindow = new BrowserWindow({
       icon: path.join(__dirname, '../resources/styles/image/logo/logo.iconset/icon_512x512.png'),
-      width: 800,
-      height: 600,
-      minWidth: 800,
-      minHeight: 600,
+      width: 825,
+      height: 625,
+      minWidth: 825,
+      minHeight: 625,
       backgroundColor: '#fff',
     });
   } else {
     mainWindow = new BrowserWindow({
       icon: path.join(__dirname, '../resources/styles/image/logo/logo.iconset/icon_512x512.png'),
-      width: 800,
-      height: 625,
-      minWidth: 800,
-      minHeight: 600,
+      width: 825,
+      height: 645,
+      minWidth: 825,
+      minHeight: 645,
       backgroundColor: '#fff',
     });
   }

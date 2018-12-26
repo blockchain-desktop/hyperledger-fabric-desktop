@@ -103,10 +103,10 @@ class FabricClient {
       if (this.flag) {
         logger.info('-----------');
         this.peer = this.fabric_client.newPeer(this.config.peerGrpcUrl,
-          { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': this.config.sslTarget });
+          { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': this.config.peerSSLTarget });
         channel.addPeer(this.peer);
         this.order = this.fabric_client.newOrderer(this.config.ordererUrl,
-          { pem: Buffer.from(this.orderersCert).toString(), 'ssl-target-name-override': 'orderer.example.com' });
+          { pem: Buffer.from(this.orderersCert).toString(), 'ssl-target-name-override': this.config.ordererSSLTarget });
         channel.addOrderer(this.order);
       } else {
         logger.info('+++++++++++++++++');
@@ -639,14 +639,13 @@ class FabricClient {
    * @returns {Promise<Array|chaincodes>}
    * @param channelName 通道名字
    */
-  createChannel(channelName, configProfile, sslTarget) {
+  createChannel(channelName, configProfile) {
     const self = this;
     return this.createChannelTX(channelName, configProfile)
       .then((msg) => {
         logger.info(msg);
-        let channel;
         try {
-          channel = this._setupChannelOnce(channelName);
+          this._setupChannelOnce(channelName);
         } catch (err) {
           logger.error(err);
           return Promise.reject('fail');
@@ -659,12 +658,6 @@ class FabricClient {
         const stringSignature = signature.toBuffer().toString('hex');
         const tempSignatures = [];
         tempSignatures.push(stringSignature);
-        if (self.orderersCert) {
-          channel.removeOrderer(self.order);
-          self.order = self.fabric_client.newOrderer(self.config.ordererUrl,
-            { pem: Buffer.from(self.orderersCert).toString(), 'ssl-target-name-override': sslTarget });
-          channel.addOrderer(self.order);
-        }
         const request = {
           config: tempConfig,
           signatures: tempSignatures,
@@ -694,7 +687,7 @@ class FabricClient {
    * @returns {Promise<Array|chaincodes>}
    * @param channelName 通道名字
    */
-  joinChannel(channelName, sslTarget) {
+  joinChannel(channelName) {
     let channel;
     try {
       channel = this._setupChannelOnce(channelName);
@@ -703,13 +696,6 @@ class FabricClient {
       return Promise.reject('fail');
     }
     const self = this;
-
-    if (self.orderersCert) {
-      channel.removeOrderer(self.order);
-      self.order = self.fabric_client.newOrderer(self.config.ordererUrl,
-        { pem: Buffer.from(self.orderersCert).toString(), 'ssl-target-name-override': sslTarget });
-      channel.addOrderer(self.order);
-    }
 
     const tempTxId = self.fabric_client.newTransactionID(); // 根据用户的证书构建新的事务ID，并自动生成nonce值。
     const request = {
