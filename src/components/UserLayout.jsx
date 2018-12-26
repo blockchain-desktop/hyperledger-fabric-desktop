@@ -31,7 +31,8 @@ export default class UserLayout extends React.Component {
       keyPath: '',
       tlsPeerPath: '',
       tlsOrdererPath: '',
-      sslTarget: 'peer0.org1.example.com',
+      peerSSLTarget: 'peer0.org1.example.com',
+      ordererSSLTarget: 'orderer.example.com',
       certlabel: '  choose a certificate ',
       keylabel: ' choose a private key',
       tlsPeerLabel: ' choose a peer tls cert',
@@ -48,7 +49,8 @@ export default class UserLayout extends React.Component {
     this.tlsOrdererImport = this.tlsOrdererImport.bind(this);
     this.ordererChange = this.ordererChange.bind(this);
     this.mspidChange = this.mspidChange.bind(this);
-    this.sslTargetChange = this.sslTargetChange.bind(this);
+    this.peerSSLTargetChange = this.peerSSLTargetChange.bind(this);
+    this.ordererSSLTargetChange = this.ordererSSLTargetChange.bind(this);
     this.changeLangtoEn = this.changeLangtoEn.bind(this);
     this.changeLangtoCn = this.changeLangtoCn.bind(this);
   }
@@ -61,7 +63,8 @@ export default class UserLayout extends React.Component {
         mspid: this.state.mspid,
         tlsPeerPath: this.state.tlsPeerPath,
         tlsOrdererPath: this.state.tlsOrdererPath,
-        sslTarget: this.state.sslTarget,
+        peerSSLTarget: this.state.peerSSLTarget,
+        ordererSSLTarget: this.state.ordererSSLTarget,
         path: 'resources/key/users/' } },
       {}, () => {
       });
@@ -124,8 +127,12 @@ export default class UserLayout extends React.Component {
     this.setState({ mspid: event.target.value });
   }
 
-  sslTargetChange(event) {
-    this.setState({ sslTarget: event.target.value });
+  peerSSLTargetChange(event) {
+    this.setState({ peerSSLTarget: event.target.value });
+  }
+
+  ordererSSLTargetChange(event) {
+    this.setState({ ordererSSLTarget: event.target.value });
   }
 
   changeLangtoEn() {
@@ -146,13 +153,13 @@ export default class UserLayout extends React.Component {
       height: 'auto',
       display: 'block',
       position: 'absolute',
-      minHeight: '900px',
+      minHeight: '625px',
       backgroundImage: 'url(' + bcgd + ')',
     };
     const contentStyle = {
       padding: '30px 20px 30px 20px',
       backgroundColor: '#fff',
-      width: '400px',
+      width: '425px',
       height: 'auto',
       minHeight: '900px',
       display: 'block',
@@ -289,7 +296,11 @@ export default class UserLayout extends React.Component {
             </div>
             <div style={divStyle}>
               <span style={spanStyle}>&nbsp; ssl target:</span>
-              <Input type="text" style={InputStyle} value={this.state.sslTarget} onChange={this.sslTargetChange} />
+              <Input type="text" style={InputStyle} value={this.state.peerSSLTarget} onChange={this.peerSSLTargetChange} />
+            </div>
+            <div style={divStyle}>
+              <span style={spanStyle}>&nbsp; orderer ssl target:</span>
+              <Input type="text" style={InputStyle} value={this.state.ordererSSLTarget} onChange={this.ordererSSLTargetChange} />
             </div>
             <div style={lastDivStyle}>
               <Button type="primary" style={buttonStyle} onClick={this.onClick}>{this.state.Common.LOGIN}</Button>

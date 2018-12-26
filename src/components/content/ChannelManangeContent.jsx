@@ -24,7 +24,6 @@ export default class ChannelManangeContent extends React.Component {
       certLabel: '',
       yamlLabel: '',
       configProfile: 'TwoOrgsChannel',
-      sslTarget: 'orderer.example.com',
     };
 
     this.onChangeChannel = this.onChangeChannel.bind(this);
@@ -39,7 +38,6 @@ export default class ChannelManangeContent extends React.Component {
     this.handleCreateChannelFailed = this.handleCreateChannelFailed.bind(this);
     this.handleCreateChannelCallback = this.handleCreateChannelCallback.bind(this);
     this.handleAddToChannelCallback = this.handleAddToChannelCallback.bind(this);
-    this.sslTargetChange = this.sslTargetChange.bind(this);
     this.orgCertDirImport = this.orgCertDirImport.bind(this);
     this.yamlFileImport = this.yamlFileImport.bind(this);
   }
@@ -81,13 +79,9 @@ export default class ChannelManangeContent extends React.Component {
     message.error(this.state.Common.ERROR.createChanelFailed);
   }
 
-  sslTargetChange(event) {
-    this.setState({ sslTarget: event.target.value });
-  }
-
   handleAddToChannel() {
     getFabricClientSingleton().then((fabricClient) => {
-      fabricClient.joinChannel(this.state.channel, this.state.sslTarget)
+      fabricClient.joinChannel(this.state.channel)
         .then(this.handleAddToChannelCallback, this.handleAddToChannelCallback);
     });
   }
@@ -107,7 +101,7 @@ export default class ChannelManangeContent extends React.Component {
     logger.info('the to-create channel name: ' + this.state.channelName);
     getFabricClientSingleton().then((fabricClient) => {
       fabricClient.createChannel(this.state.channelName,
-        this.state.configProfile, this.state.sslTarget)
+        this.state.configProfile)
         .then(this.handleCreateChannelCallback, this.handleCreateChannelCallback);
     });
   }
@@ -180,10 +174,6 @@ export default class ChannelManangeContent extends React.Component {
       marginLeft: '176px',
       marginTop: '-25px',
     };
-    const sslInputStyle = {
-      marginLeft: '50px',
-      width: '60%',
-    };
     const configInputStyle = {
       marginLeft: '74px',
       width: '60%',
@@ -236,10 +226,6 @@ export default class ChannelManangeContent extends React.Component {
           <span style={asteriskStyle}>*</span>
           <span style={spanStyle}>{this.state.Common.CONFIG_NAME} : </span>
           <Input placeholder="channel config profile" style={configInputStyle} value={this.state.configProfile} onChange={this.onChangeConfigProfile} />
-        </div>
-        <div style={DivStyle}>
-          <span style={spanStyle}>orderer ssl target:</span>
-          <Input type="text" style={sslInputStyle} value={this.state.sslTarget} onChange={this.sslTargetChange} />
         </div>
         <div style={DivStyle}>
           <span style={spanStyle}>{this.state.Common.CREATECHANNEl} : </span>

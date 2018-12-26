@@ -26,7 +26,7 @@ export default class ChaincodeInvokeContent extends React.Component {
       channelList: [],
       contractList: {},
       peerModal: false,
-      tlsPeerLabel: ' choose a tls peer key',
+      tlsPeerLabel: ' choose a tls peer cert',
       tlsPeerPath: '',
       peerGrpcUrl: 'grpcs://localhost:9051',
       peerCount: 1,
