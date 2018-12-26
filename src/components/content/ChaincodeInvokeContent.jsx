@@ -26,7 +26,7 @@ export default class ChaincodeInvokeContent extends React.Component {
       channelList: [],
       contractList: {},
       peerModal: false,
-      tlsPeerLabel: ' choose a tls peer cert',
+      tlsPeerLabel: ' choose a peer tls ca cert',
       tlsPeerPath: '',
       peerGrpcUrl: 'grpcs://localhost:9051',
       peerCount: 1,
@@ -279,7 +279,7 @@ export default class ChaincodeInvokeContent extends React.Component {
     };
     const inputDivStyle = {
       float: 'right',
-      width: '65%',
+      width: '68%',
       marginRight: '22%',
     };
     const inputStyle = {
@@ -321,7 +321,7 @@ export default class ChaincodeInvokeContent extends React.Component {
       padding: '0 9px',
     };
     const firstDivStyle = {
-      width: '65%',
+      width: '68%',
       margin: '10px 8px 20px 8px',
       float: 'center',
     };
@@ -335,7 +335,7 @@ export default class ChaincodeInvokeContent extends React.Component {
       float: 'right',
     };
     const modalDivStyle = {
-      width: '65%',
+      width: '68%',
       margin: '20px 8px',
       float: 'center',
     };
@@ -452,7 +452,7 @@ export default class ChaincodeInvokeContent extends React.Component {
           </div>
           <div style={modalDivStyle}>
             <span style={asteriskStyle}>*&nbsp;</span>
-            <span style={spanStyle}>tls peer cert：</span>
+            <span style={spanStyle}>tls peer ca cert：</span>
             <input type="file" id="tlsPeerFiles" name="tlsPeerFiles" style={fileStyle} onChange={this.tlsPeerImport} />
             <label htmlFor="tlsPeerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsPeerLabel} </label>
           </div>

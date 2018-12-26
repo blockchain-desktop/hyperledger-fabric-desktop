@@ -35,8 +35,8 @@ export default class UserLayout extends React.Component {
       ordererSSLTarget: 'orderer.example.com',
       certlabel: '  choose a certificate ',
       keylabel: ' choose a private key',
-      tlsPeerLabel: ' choose a peer tls cert',
-      tlsOrdererLabel: 'choose a orderer tls cert',
+      tlsPeerLabel: ' choose a peer tls ca cert',
+      tlsOrdererLabel: 'choose a orderer tls ca cert',
       Common: localStorage.getItem('language') === 'cn' ? require('../common/common_cn') : require('../common/common'),
     };
 
@@ -285,17 +285,17 @@ export default class UserLayout extends React.Component {
               <label htmlFor="priFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.keylabel}</label>
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; peer tls cert：</span>
+              <span style={spanStyle}>&nbsp; peer tls ca cert：</span>
               <input type="file" id="tlsPeerFiles" name="tlsPeerFiles" style={fileStyle} onChange={this.tlsPeerImport} />
               <label htmlFor="tlsPeerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsPeerLabel} </label>
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; orderer tls cert：</span>
+              <span style={spanStyle}>&nbsp; orderer tls ca cert：</span>
               <input type="file" id="tlsOrdererFiles" name="tlsOrdererFiles" style={fileStyle} onChange={this.tlsOrdererImport} />
               <label htmlFor="tlsOrdererFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsOrdererLabel} </label>
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; ssl target:</span>
+              <span style={spanStyle}>&nbsp; peer ssl target:</span>
               <Input type="text" style={InputStyle} value={this.state.peerSSLTarget} onChange={this.peerSSLTargetChange} />
             </div>
             <div style={divStyle}>
