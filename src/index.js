@@ -17,7 +17,7 @@ if (isDevMode) enableLiveReload({ strategy: 'react-hmr' });
 
 const createWindow = async () => {
   // Create the browser window.
-  if (process.platform === 'darwin' || process.platform === 'linux') {
+  if (process.platform === 'linux') {
     mainWindow = new BrowserWindow({
       icon: path.join(__dirname, '../resources/styles/image/logo/logo.iconset/icon_512x512.png'),
       width: 825,
@@ -45,16 +45,7 @@ const createWindow = async () => {
     await installExtension(REACT_DEVELOPER_TOOLS);
     mainWindow.webContents.openDevTools();
   }
-
-  // Emitted when the window is closed.
-  mainWindow.on('closed', () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
-  });
-
-  if (process.platform === 'darwin') {
+  if (!isDevMode && process.platform === 'darwin') {
     // Create the Application's main menu
     const template = [{
       label: 'Application',
@@ -76,6 +67,15 @@ const createWindow = async () => {
     ];
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
   }
+
+  // Emitted when the window is closed.
+  mainWindow.on('closed', () => {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    mainWindow = null;
+  });
+
 };
 
 // This method will be called when Electron has finished
