@@ -43,6 +43,17 @@ Check [CONTRIBUTING documentation](doc/doc-En/CONTRIUTING-EN.md)  for the full d
 - v0.3 (current): CA management. (feature complete)
 - v0.4 : User experience improvement.
 
+## Community
+1. Github [Issues](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues): Open to Everyone.
+1. Weekly Online Meeting:
+    * Time: 10:00 AM, Tuesday，CST(UTC +8)
+    * Access: [zoom](https://zoom.us/download#client_4meeting)
+        * Meeting Room Link: https://zoom.us/j/3890122981
+        * Meeting Room ID: 389 012 2981
+        * Open to everyone.
+1. E-Mail: blockchain.desktop(at)outlook.com
+1. Mailing List: TBA
+
 ## License
 
 Hyperledger fabric desktop source code files are made available under the GNU GENERAL PUBLIC LICENSE,
@@ -82,5 +93,25 @@ available at http://creativecommons.org/licenses/by/4.0/.
 * v0.2: 添加通道管理等功能。
 * v0.3 (当前) : 增加CA证书管理功能 (客户端达到功能完备)
 * v0.4: 优化交互，用户体验。完善易用性、优化其他辅助功能。
+
+## 社区交流
+
+1. Github [Issues](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)：完全开放
+    
+1. 每周会议：
+    * 时间：每周二，上午10点，北京时间
+    * 方式：[zoom](https://zoom.us/download#client_4meeting) 在线会议工具
+        * 会议室链接：https://zoom.us/j/3890122981   
+        * 会议室ID：389 012 2981  
+        * 无需注册完全开放，安装客户端后，打开会议室链接或输入会议室ID号即可进入会议室。
+        可通过电脑客户端、智能手机客户端、电话拨号连接。
+
+1. 微信群：  
+请添加群管理员微信（消息备注:来自Fabric-Desktop）
+![wechat](doc/img/img-Ch/wechat-admin.jpeg)
+
+1. 邮件交流：请发送邮件到blockchain.desktop(at)outlook.com
+
+1. Mailing List: 待开通
 
 

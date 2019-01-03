@@ -14,7 +14,7 @@ Fabric Desktop
 **Hyperledger Fabric Desktop** is a user-friendly cross-platform desktop application,
 which helps ordinary users to play around with Fabric network easily. 
 It is general-purpose, in other words, an API tool with GUI.
-It can be the go-to client for new comers, 
+It can be the go-to client for newcomers, 
 and also serve as a prototype which helps accelerate development of custom applications.
  
 ## Motivation
@@ -104,12 +104,12 @@ The source code repository is hosted in Github. Please see
 [https://github.com/blockchain-desktop/hyperledger-fabric-desktop](https://github.com/blockchain-desktop/hyperledger-fabric-desktop).
 
 #### Progress Report
-As v0.1.0 version, we have already implemented features including connection with peers and orderers, installation and delopyment of chaincode, 
+As v0.1.0 version, we have already implemented features including connection with peers and orderers, installation and deployment of chaincode, 
 query and invocation of chaincode, and a simple block-info dashboard. 
 The workflow of a fabric blockchain network can already be demonstrated by it.
 
 #### Roadmap
-Recently, we are focusing on documents, internationalization, quality assurence, and architecture refactoring.
+Recently, we are focusing on documents, internationalization, quality assurance, and architecture refactoring.
 After these things done, ideally before Dec. 2018, we will start v0.2.0 version to implement more features. 
 About 3 or 4-rounds development, we will reach the goal: a full-function general-purpose fabric desktop app.
 
