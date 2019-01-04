@@ -371,14 +371,17 @@ class FabricClient {
 
 
   /**
-   * 实例化链码
-   * @returns {Promise<String>}
+   * 实例化 或 升级 链码
+   * @param isInstantiate
    * @param channelName
    * @param chaincodeName
    * @param chaincodeVersion
    * @param args
+   * @param endorspolicy
+   * @returns {Promise}
    */
-  instantiateCc(channelName, chaincodeName, chaincodeVersion, args, endorspolicy) {
+  instantiateOrUpgradeCc(isInstantiate, channelName, chaincodeName,
+    chaincodeVersion, args, endorspolicy) {
     let channel;
     try {
       channel = this._setupChannelOnce(channelName);
@@ -413,30 +416,35 @@ class FabricClient {
       txId: txID,
     };
 
-
     // args: ['']
     // str: {"identities":[{"role":{"name":"member","mspId":"Org1MSP"}}],
     // "policy":{"1-of":[{"signed-by":0}]}};
     // 提案
-    return channel.sendInstantiateProposal(request)
-      .then((results) => {
-        const proposalResponses = results[0];
-        const proposal = results[1];
-        const isGood = proposalResponses && proposalResponses[0].response
-          && proposalResponses[0].response.status === 200;
-        if (!isGood) {
-          return Promise.reject('fail');
-        }
-        logger.info('Transaction proposal was good:');
-        // 提案成功后，提交
-        return channel.sendTransaction({ proposalResponses, proposal });
-      }).then((results) => {
-        logger.info('Complete instantiating chaincode.', results);
-        return Promise.resolve('success');
-      }, (err) => {
-        logger.info('Failed instantiating chaincode.', err.stack);
-        return Promise.resolve('fail');
-      })
+    let promiseResult;
+    if (isInstantiate) {
+      promiseResult = channel.sendInstantiateProposal(request);
+    } else { // upgrade
+      promiseResult = channel.sendUpgradeProposal(request);
+    }
+
+    return promiseResult.then((results) => {
+      const proposalResponses = results[0];
+      const proposal = results[1];
+      const isGood = proposalResponses && proposalResponses[0].response
+        && proposalResponses[0].response.status === 200;
+      if (!isGood) {
+        return Promise.reject('fail');
+      }
+      logger.info('Transaction proposal was good:');
+      // 提案成功后，提交
+      return channel.sendTransaction({ proposalResponses, proposal });
+    }).then((results) => {
+      logger.info('Complete instantiating chaincode.', results);
+      return Promise.resolve('success');
+    }, (err) => {
+      logger.info('Failed instantiating chaincode.', err.stack);
+      return Promise.resolve('fail');
+    })
       .catch((err) => {
         logger.error(`Fail to instantiate chaincode. Error message: ${err.stack}` ? err.stack : err);
         return Promise.reject('fail');
