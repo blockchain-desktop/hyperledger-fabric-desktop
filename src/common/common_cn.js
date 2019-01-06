@@ -32,6 +32,7 @@ Common.SUBMIT = '提交';
 Common.CHAINCODECONSTRUCTOR = '启动参数';
 Common.ENDORSEPOLICY = '背书策略';
 Common.INTANITATE = '实例化链码';
+Common.UPGRADE = '升级链码';
 Common.CREATECHANNEl = '通道名称';
 Common.ADDCHANNEL = '加入通道';
 Common.MSP_FOLDER = '证书目录';

@@ -34,6 +34,7 @@ Common.SUBMIT = 'submit';
 Common.CHAINCODECONSTRUCTOR = 'chaincode constructor';
 Common.ENDORSEPOLICY = 'endorse policy';
 Common.INTANITATE = 'Instanitate';
+Common.UPGRADE = 'Upgrade Chaincode';
 Common.CREATECHANNEl = 'channel name';
 Common.ADDCHANNEL = 'join channel';
 Common.MSP_FOLDER = 'msp folder';

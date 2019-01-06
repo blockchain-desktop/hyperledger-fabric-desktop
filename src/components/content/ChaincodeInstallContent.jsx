@@ -12,6 +12,17 @@ const ButtonGroup = Button.Group;
 // 弹出层窗口组件
 const FormItem = Form.Item;
 
+// Constant for notification
+const RESULT_INSTALL_SUCCESS = 'Installation Success';
+const RESULT_INSTALLING = 'Installing';
+const RESULT_INSTALL_FAIL = 'Installation Fail';
+
+const RESULT_INSTANTIATE_SUCCESS = 'Instantiation Success';
+const RESULT_INSTANTIATING = 'Instantiating';
+const RESULT_INSTANTIATE_FAIL = 'Instantiation Fail';
+
+const RESULT_UPGRADING = 'Upgrading';
+
 const CollectionCreateForm = Form.create()(
   class extends React.Component {
     static nameValidator(rule, value, callback) {
@@ -20,12 +31,14 @@ const CollectionCreateForm = Form.create()(
       }
       callback();
     }
+
     static versionValidator(rule, value, callback) {
       if (!/^\d+(.\d+)?$/.test(value)) {
         callback('only digital and dot！');
       }
       callback();
     }
+
     constructor(props) {
       super(props);
       const obj = this;
@@ -44,6 +57,7 @@ const CollectionCreateForm = Form.create()(
         channellist: [],
       };
     }
+
     render() {
       const { visible, onCancel, onCreate, form } = this.props;
       const { getFieldDecorator } = form;
@@ -151,6 +165,68 @@ const InstanitateCreateForm = Form.create()(
   },
 );
 
+// 智能合约子组件层级下--升级链码表单组件
+const UpgradeCreateForm = Form.create()(
+  class extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        Common: localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common'),
+      };
+    }
+    render() {
+      const { visible, onCancel, onCreate, form } = this.props;
+      const { getFieldDecorator } = form;
+      return (
+        <Modal
+          visible={visible}
+          title={this.state.Common.UPGRADE}
+          okText={this.state.Common.CREATE}
+          cancelText={this.state.Common.CANCEL}
+          onCancel={onCancel}
+          onOk={onCreate}
+          centered
+          width="480px"
+        >
+          <Form layout="vertical">
+            <FormItem label={this.state.Common.PATH}>
+              {getFieldDecorator('path', {
+                rules: [{ required: true, message: this.state.Common.WARN.chaincodePath }],
+              })(
+                <Input placeholder={this.state.Common.CONTRACT_NAME + this.state.Common.PATH} />,
+              )}
+            </FormItem>
+
+            <FormItem label={this.state.Common.VERSION}>
+              {getFieldDecorator('version', {
+                rules: [{ required: true, message: this.state.Common.WARN.chaincodeVersion }],
+              })(
+                <Input placeholder={this.state.Common.CONTRACT_NAME + this.state.Common.VERSION} />,
+              )}
+            </FormItem>
+
+            <FormItem label={this.state.Common.CHAINCODECONSTRUCTOR}>
+              {getFieldDecorator('construct', {
+                rules: [{}],
+              })(
+                <Input placeholder={this.state.Common.CHAINCODECONSTRUCTOR} />,
+              )}
+            </FormItem>
+
+            <FormItem label={this.state.Common.ENDORSEPOLICY} >
+              {getFieldDecorator('policy', {
+                rules: [{}],
+              })(
+                <Input placeholder={this.state.Common.ENDORSEPOLICY} />,
+              )}
+            </FormItem>
+          </Form>
+        </Modal>
+      );
+    }
+  },
+);
+
 
 // 智能合约窗口子组件
 class ContractDiv extends React.Component {
@@ -167,22 +243,27 @@ class ContractDiv extends React.Component {
     super(props);
     this.state = {
       visible: false,
-      disable1: this.props.citem.disable1,
-      disable2: this.props.citem.disable2,
+      visibleUpgradeForm: false,
+      disableInstall: this.props.citem.disableInstall,
+      disableInstantiate: this.props.citem.disableInstantiate,
       result: this.props.citem.result,
       icontype: 'check-circle',
       iconcolor: '#52c41a',
       Common: localStorage.getItem('language') === 'cn' ? require('../../common/common_cn') : require('../../common/common'),
     };
     this.handleMenuClick = this.handleMenuClick.bind(this);
+    this.handleUpgradeButtonClick = this.handleUpgradeButtonClick.bind(this);
     this.handleInstallChaincodeCallBack = this.handleInstallChaincodeCallBack.bind(this);
     this.handleInstantiateChaincodeCallBack = this.handleInstantiateChaincodeCallBack.bind(this);
     this.handleInstallContract = this.handleInstallContract.bind(this);
     this.handleDeleteContract = this.handleDeleteContract.bind(this);
+    // this.handleUpgradeContract = this.handleUpgradeContract.bind(this);
     this.handleInstantiateContract = this.handleInstantiateContract.bind(this);
     this.showModal = this.showModal.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+    this.handleCancelAtUpgradeForm = this.handleCancelAtUpgradeForm.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
+    this.handleCreateAtUpgradeForm = this.handleCreateAtUpgradeForm.bind(this);
     this.saveFormRef = this.saveFormRef.bind(this);
   }
   showModal() {
@@ -191,6 +272,11 @@ class ContractDiv extends React.Component {
 
   handleCancel() {
     this.setState({ visible: false });
+  }
+
+  // 取消--链码升级
+  handleCancelAtUpgradeForm() {
+    this.setState({ visibleUpgradeForm: false });
   }
 
   handleCreate() {
@@ -202,9 +288,9 @@ class ContractDiv extends React.Component {
       logger.info('Received values of instanitateform: ', values.toString());
       // 实例化链码操作带实例化参数
       this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
-      this.setState({ result: 'instantiate chaincode...' });
+      this.setState({ result: RESULT_INSTANTIATING });
       getFabricClientSingleton().then((fabricClient) => {
-        fabricClient.instantiateCc(this.props.citem.channel,
+        fabricClient.instantiateOrUpgradeCc(true, this.props.citem.channel,
           this.props.citem.name,
           this.props.citem.version,
           values.construct,
@@ -213,6 +299,43 @@ class ContractDiv extends React.Component {
       });
       form.resetFields();
       this.setState({ visible: false });
+    });
+  }
+
+  // 弹出层表单--确认--链码升级
+  handleCreateAtUpgradeForm() {
+    const form = this.formRef.props.form;
+    form.validateFields((err, values) => {
+      if (err) {
+        return;
+      }
+      logger.info('Received values of upgradeForm: ', values.toString());
+
+      // FIXME: 升级链码，首先需安装链码。 下一步考虑安装逻辑独立出来
+      getFabricClientSingleton().then((fabricClient) => {
+        // 安装链码
+        this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
+        this.setState({ result: RESULT_INSTALLING });
+        fabricClient.installCc(values.path,
+          this.props.citem.name,
+          values.version)
+          .then(() => {
+            // TODO: 升级成功时，页面内更新链码版本号
+            // 安装链码成功后，升级链码
+            this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
+            this.setState({ result: RESULT_UPGRADING });
+            fabricClient.instantiateOrUpgradeCc(false, this.props.citem.channel,
+              this.props.citem.name,
+              values.version,
+              values.construct,
+              values.policy,
+            )
+              .then(this.handleInstantiateChaincodeCallBack, this.handleInstantiateChaincodeCallBack);
+          },
+          this.handleInstallChaincodeCallBack);
+      });
+      form.resetFields();
+      this.setState({ visibleUpgradeForm: false });
     });
   }
 
@@ -225,39 +348,40 @@ class ContractDiv extends React.Component {
     // 安装链码失败时的响应
     if (result.indexOf('fail') > -1) {
       this.setState({ icontype: 'exclamation-circle', iconcolor: '#FF4500' });
-      this.setState({ disable1: false });
-      this.setState({ result: 'installation failed' });
+      this.setState({ disableInstall: false });
+      this.setState({ result: RESULT_INSTALL_FAIL });
     } else {
       // 安装链码成功时的响应
       this.setState({ icontype: 'check-circle', iconcolor: '#52c41a' });
-      this.setState({ disable1: true });
-      this.setState({ result: 'installed successfully' });
+      this.setState({ disableInstall: true });
+      this.setState({ result: RESULT_INSTALL_SUCCESS });
       this.setState({ signal: '1' });
       const listcopy = this.props.ctodocopy;
       // 查询链码的下标
       const index = ContractDiv.findIndexinArray(listcopy, this.props.citem.name, this.props.citem.version, this.props.citem.channel);
-      listcopy[index].disable1 = true;
+      listcopy[index].disableInstall = true;
       this.props.conChangeCopy(listcopy);
       logger.info('lict copy; ');
       logger.info(listcopy.toString());
     }
   }
+
   // 实例化链码的响应函数
   handleInstantiateChaincodeCallBack(result) {
     // 实例化链码失败时的响应
     if (result.indexOf('fail') > -1) {
       this.setState({ icontype: 'exclamation-circle', iconcolor: '#FF4500' });
-      this.setState({ disable2: false });
-      this.setState({ result: 'instantiation failed' });
+      this.setState({ disableInstantiate: false });
+      this.setState({ result: RESULT_INSTANTIATE_FAIL });
     } else {
       // 实例化链码成功时的响应
       this.setState({ icontype: 'check-circle', iconcolor: '#52c41a' });
-      this.setState({ disable2: true });
-      this.setState({ result: 'instantiated successfully' });
+      this.setState({ disableInstantiate: true });
+      this.setState({ result: RESULT_INSTANTIATE_SUCCESS });
       const listcopy = this.props.ctodocopy;
       // 考虑到已经安装但未被实例化的链码，所以只能再查询一次
       const index = ContractDiv.findIndexinArray(listcopy, this.props.citem.name, this.props.citem.version, this.props.citem.channel);
-      listcopy[index].disable2 = true;
+      listcopy[index].disableInstantiate = true;
       this.props.conChangeCopy(listcopy);
       logger.info('lict copy; ');
       logger.info(listcopy.toString());
@@ -271,11 +395,16 @@ class ContractDiv extends React.Component {
     }
   }
 
+  // 升级链码按钮--显示弹窗
+  handleUpgradeButtonClick() {
+    this.setState({ visibleUpgradeForm: true });
+  }
+
   // 安装链码操作
   handleInstallContract() {
     getFabricClientSingleton().then((fabricClient) => {
       this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
-      this.setState({ result: 'install chaincode...' });
+      this.setState({ result: RESULT_INSTALLING });
       fabricClient.installCc(this.props.citem.path,
         this.props.citem.name,
         this.props.citem.version)
@@ -287,9 +416,9 @@ class ContractDiv extends React.Component {
   handleInstantiateContract() {
     // 实例化链码操作带实例化参数
     this.setState({ icontype: 'clock-circle', iconcolor: '#1E90FF' });
-    this.setState({ result: 'instantiate chaincode...' });
+    this.setState({ result: RESULT_INSTANTIATING });
     getFabricClientSingleton().then((fabricClient) => {
-      fabricClient.instantiateCc(this.props.citem.channel,
+      fabricClient.instantiateOrUpgradeCc(true, this.props.citem.channel,
         this.props.citem.name,
         this.props.citem.version,
         null,
@@ -366,17 +495,20 @@ class ContractDiv extends React.Component {
       display: 'block',
       margin: '16px',
     };
+
     const menu = (
       <Menu onClick={this.handleMenuClick}>
-        {/* <Menu.Item key="1" disabled={this.state.disable1}>install</Menu.Item> */}
-        <Menu.Item key="2">with opts</Menu.Item>
+        {/* <Menu.Item key="1" disabled={this.state.disableInstall}>install</Menu.Item> */}
+        <Menu.Item key="2">with options</Menu.Item>
       </Menu>
     );
+
     return (
       <div style={ConTractDivStyle}>
         <div style={closeStyle}>
           <Button icon="close" size="small" style={{ border: 'none' }} onClick={this.handleDeleteContract} />
         </div>
+
         <div style={contentStyle}>
           <div>
             <p style={PStyle}>
@@ -389,20 +521,33 @@ class ContractDiv extends React.Component {
               <span>{this.state.result}</span>
             </p>
           </div>
+
           <div style={DropdownStyle}>
             {/* <Dropdown.Button overlay={menu} type="primary">{this.state.Common.OPERATIONS}</Dropdown.Button> */}
             <ButtonGroup size="small">
-              <Button type="primary" onClick={this.handleInstallContract} disabled={this.state.disable1}>install</Button>
-              <Dropdown overlay={menu} disabled={this.state.disable2}>
+              <Button type="primary" onClick={this.handleInstallContract} >install</Button>
+
+              <Dropdown overlay={menu} disabled={this.state.disableInstantiate}>
                 <Button type="primary" onClick={this.handleInstantiateContract}>instantiate</Button>
               </Dropdown>
+
+              <Button type="primary" onClick={this.handleUpgradeButtonClick} disabled={!this.state.disableInstantiate}>upgrade</Button>
             </ButtonGroup>
+
             <InstanitateCreateForm
               wrappedComponentRef={this.saveFormRef}
               visible={this.state.visible}
               onCancel={this.handleCancel}
               onCreate={this.handleCreate}
             />
+
+            <UpgradeCreateForm
+              wrappedComponentRef={this.saveFormRef}
+              visible={this.state.visibleUpgradeForm}
+              onCancel={this.handleCancelAtUpgradeForm}
+              onCreate={this.handleCreateAtUpgradeForm}
+            />
+
           </div>
         </div>
       </div>
@@ -462,19 +607,15 @@ export default class ChaincodeInstallContent extends React.Component {
                     version: chaincodes[k].version,
                     path: chaincodes[k].path,
                     channel: channellist[i],
-                    disable1: true,
-                    disable2: true,
-                    result: 'instantiated successfully',
+                    disableInstall: true,
+                    disableInstantiate: true,
+                    result: RESULT_INSTANTIATE_SUCCESS,
                   };
                   arr.push(doc);
                 }
                 // todolistcopy为todolist的副本，作为通道切换时的原数据使用
                 obj.setState({ todolist: arr });
                 obj.setState({ todolistcopy: arr });
-                // logger.info('初始化的todolist: ');
-                // logger.info(this.state.todolist);
-                // logger.info('初始化的todolistcopy: ');
-                // logger.info(this.state.todolistcopy);
               }
             });
         }
@@ -518,9 +659,9 @@ export default class ChaincodeInstallContent extends React.Component {
         version: values.version,
         path: values.path,
         channel: values.channel,
-        disable1: false,
-        disable2: false,
-        result: 'added successfully',
+        disableInstall: false,
+        disableInstantiate: false,
+        result: '',
       };
       // flag用来标志链码，flag=0标志链码只被添加，flag=1标志链码被安装，flag=2标志链码被实例化
       let flag = 0;
@@ -536,8 +677,8 @@ export default class ChaincodeInstallContent extends React.Component {
         // 在todolistcopy中查询该链码是否被实例化，对于已在某个通道实例化但是想在其他通道实例化的链码则重新插入一条记录
         if (listcopy[k].name === li.name && listcopy[k].version === li.version
             && listcopy[k].channel !== li.channel) {
-          li.disable1 = true;
-          li.result = 'installed successfully';
+          li.disableInstall = true;
+          li.result = 'Installation Success';
           flag = 2;
           const list = this.state.todolist;
           list.push(li);
@@ -573,8 +714,8 @@ export default class ChaincodeInstallContent extends React.Component {
                 // logger.info('isvisible: ' + isvisible);
                 // 如果界面中没渲染,则渲染出来
                 if (isvisible === 0) {
-                  li.disable1 = true;
-                  li.result = 'installed successfully';
+                  li.disableInstall = true;
+                  li.result = RESULT_INSTANTIATE_SUCCESS;
                   elements.push(li);
                   this.setState({ todolist: elements });
                   // logger.info('链码已经安装但是忘记被实例化的todolist: ');
