@@ -23,7 +23,7 @@ It is highly recommended to read [index.md](doc/doc-En/index-En.md) first.
 ## Contributing
 
 We welcome contributions in many forms, such as documenting, coding, feature designing etc. 
-Your name will be shown on [AUTHORS](AUTHORS) or [CONTRIBUTORS](CONTRIBUTOR). 
+Your name will be shown on [AUTHORS](AUTHORS) or [CONTRIBUTORS](CONTRIBUTORS). 
 
 Check [CONTRIBUTING](doc/doc-En/CONTRIUTING-EN.md) documentation for more details.
 
@@ -85,7 +85,7 @@ available at http://creativecommons.org/licenses/by/4.0/.
     处理pull request，维护开发路线与版本规划。
 
 我们欢迎各种形式的参与贡献，如完善文档、贡献代码、新特性设计等。
-您的名字将会展示在[AUTHORS](AUTHORS)或[CONTRIBUTORS](CONTRIBUTOR)。
+您的名字将会展示在[AUTHORS](AUTHORS)或[CONTRIBUTORS](CONTRIBUTORS)。
 
 
 ## 开发路线
@@ -99,7 +99,7 @@ available at http://creativecommons.org/licenses/by/4.0/.
 1. Github [Issues](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)：完全开放
     
 1. 每周会议：
-    * 时间：每周二，上午10点，北京时间
+    * 时间：每周二，上午10点，中国标准时间 (UTC +8)
     * 方式：[zoom](https://zoom.us/download#client_4meeting) 在线会议工具
         * 会议室链接：https://zoom.us/j/3890122981   
         * 会议室ID：389 012 2981  
