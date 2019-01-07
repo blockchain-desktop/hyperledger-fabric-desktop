@@ -92,6 +92,11 @@ npm run lint
 >注意!<br/>
 >使用IDE自动提示时，您需要设置IDE的代码质量工具为Eslint。
 
+#### 3.2.5 测试说明
+本项目测试框架采用jest，jest是facebook推出的一款测试框架，集成了 Mocha，chai，jsdom，sinon等功能。
+所有测试代码放在根目录下的test文件夹下，每一个文件与源代码相对应，文件以test.js结尾。
+测试代码标准参照jest。
+
 ### 3.3 关于代码规范的说明
 
 对于代码规范，我们采取了ESlint，并力求代码完全满足ESlint约束，但是在一些特殊情况下，我们适当地放宽了ESlint约束， 目前，
