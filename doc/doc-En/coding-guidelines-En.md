@@ -93,6 +93,11 @@ When there are some problems that cannot be fixed automatically, you need to man
 > Note! <br/>
 > You need to set the IDE's code quality tool to Eslint when using IDE's automatically prompt.
 
+#### Test specification
+This project test framework uses jest.jest,a test framework launched by facebook,is used in this project, 
+which integraties Mocha, chai, jsdom, sinon and other functions. All test code is placed in the test folder under the root directory.
+ Each file corresponds to the source code which ends with test.js. The standard of the test code refers to jest. 
+
 #### Code specification
 
 For code specification, we take ESlint and try to fully satisfy the ESlint constraint.But in some special cases, 
