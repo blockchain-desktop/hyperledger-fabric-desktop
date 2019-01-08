@@ -23,6 +23,7 @@ const RESULT_INSTANTIATE_FAIL = 'Instantiation Fail';
 
 const RESULT_UPGRADING = 'Upgrading';
 
+// 添加链码子组件
 const CollectionCreateForm = Form.create()(
   class extends React.Component {
     static nameValidator(rule, value, callback) {
@@ -120,7 +121,7 @@ const CollectionCreateForm = Form.create()(
   },
 );
 
-// 智能合约子组件层级下的实例化链码表单组件
+// 智能合约子组件层级下--实例化链码表单组件
 const InstanitateCreateForm = Form.create()(
   class extends React.Component {
     constructor(props) {
@@ -447,7 +448,7 @@ class ContractDiv extends React.Component {
   render() {
     const ConTractDivStyle = {
       height: '200px',
-      width: '230px',
+      width: '260px',
       marginBottom: '15px',
       marginRight: '15px',
       display: 'block',
@@ -463,7 +464,7 @@ class ContractDiv extends React.Component {
       cursor: 'pointer',
     };
     const contentStyle = {
-      padding: '20px',
+      padding: '18px 6px',
     };
     const PStyle = {
       display: 'block',
@@ -783,7 +784,7 @@ export default class ChaincodeInstallContent extends React.Component {
     };
     const plusDivStyle = {
       height: '200px',
-      width: '230px',
+      width: '260px',
       marginBottom: '15px',
       marginRight: '15px',
       display: 'block',
@@ -799,7 +800,7 @@ export default class ChaincodeInstallContent extends React.Component {
     const selectStyle = {
       display: 'block',
       position: 'absolute',
-      right: '60px',
+      right: '30px',
       top: '60px',
     };
     return (

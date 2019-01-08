@@ -280,7 +280,7 @@ export default class ChaincodeInvokeContent extends React.Component {
     const inputDivStyle = {
       float: 'right',
       width: '68%',
-      marginRight: '22%',
+      marginRight: '20%',
     };
     const inputStyle = {
       width: '100%',
