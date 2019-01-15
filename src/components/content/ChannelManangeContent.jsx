@@ -145,6 +145,7 @@ export default class ChannelManangeContent extends React.Component {
     const spanStyle = {
       marginRight: '10px',
       display: 'inline-block',
+      width: '100px',
     };
     const SpanStyle = {
       marginTop: '30px',
@@ -171,23 +172,23 @@ export default class ChannelManangeContent extends React.Component {
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
       overflow: 'hidden',
-      marginLeft: '176px',
+      marginLeft: '146px',
       marginTop: '-25px',
     };
     const configInputStyle = {
-      marginLeft: '74px',
+      marginLeft: '30px',
       width: '60%',
     };
     const CreateInputStyle = {
-      marginLeft: '64px',
+      marginLeft: '36px',
       width: '40%',
     };
     const AddInputStyle = {
-      marginLeft: '72px',
+      marginLeft: '36px',
       width: '40%',
     };
     const DivStyle = {
-      width: '80%',
+      width: '560px',
       marginBottom: '30px',
     };
     const ButtonStyle = {
@@ -212,28 +213,28 @@ export default class ChannelManangeContent extends React.Component {
         </div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
-          <span style={SpanStyle}>{this.state.Common.CPNFIG_YAML} : </span>
+          <span style={SpanStyle}>{this.state.Common.CPNFIG_YAML}</span>
           <input type="file" id="yamlFile" name="yamlFile" style={fileStyle} onChange={this.yamlFileImport} />
           <label htmlFor="yamlFile" style={labelStyle} ><Icon type="copy" theme="outlined" style={{ color: '#0083FA', paddingLeft: '7px', paddingRight: '7px' }} />{this.state.yamlLabel} </label>
         </div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
-          <span style={SpanStyle}>{this.state.Common.MSP_FOLDER} : </span>
+          <span style={SpanStyle}>{this.state.Common.MSP_FOLDER} </span>
           <input type="file" id="cerFiles" name="cerFiles" style={fileStyle} onChange={this.orgCertDirImport} ref="certDirSupport" />
           <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', paddingLeft: '7px', paddingRight: '7px' }} />{this.state.certLabel} </label>
         </div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
-          <span style={spanStyle}>{this.state.Common.CONFIG_NAME} : </span>
+          <span style={spanStyle}>{this.state.Common.CONFIG_NAME}</span>
           <Input placeholder="channel config profile" style={configInputStyle} value={this.state.configProfile} onChange={this.onChangeConfigProfile} />
         </div>
         <div style={DivStyle}>
-          <span style={spanStyle}>{this.state.Common.CREATECHANNEl} : </span>
+          <span style={spanStyle}>{this.state.Common.CREATECHANNEl}</span>
           <Input placeholder="channel name" style={CreateInputStyle} value={this.state.channelNameValue} onChange={this.onChangeChannel} />
           <Button style={ButtonStyle} type="primary" onClick={this.handleCreateChannel}>{this.state.Common.SUBMITCREATE}</Button>
         </div>
         <div style={DivStyle}>
-          <span style={spanStyle}>{this.state.Common.ADDCHANNEL} :</span>
+          <span style={spanStyle}>{this.state.Common.ADDCHANNEL}</span>
           <Input placeholder="channel name" style={AddInputStyle} value={this.state.channelValue} onChange={this.onChangeAddChannel} />
           <Button style={ButtonStyle} type="primary" onClick={this.handleAddToChannel}>{this.state.Common.SUBMITJOIN}</Button>
         </div>
