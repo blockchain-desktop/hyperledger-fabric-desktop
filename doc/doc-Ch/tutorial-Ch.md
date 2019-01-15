@@ -71,7 +71,7 @@
 
 ![Blcok](../img/img-Ch/block-detail.png)
 
-点击`交易列表`的任一记录，可查看交易具体信息:
+点击`交易列表`的任一记录，可查看交易具体信息:  
 ![Transaction](../img/img-Ch/transaction-detail.png)
 
 ##### 1.2.3 链码调用
@@ -143,7 +143,7 @@
 > 注：
 > fabric默认在GOPATH路径下src文件夹下寻找链码文件，路径只需具体到链码文件的所在文件夹，您可参考下面的例子：
 如：要安装的链码文件的完整路径为：`/Users/my/go/src/chaincode/fabcar/go/fabcar.go`
-GOPATH为`/Users/chuancey/go`，需填入的路径为：`chaincode/fabcar/go/fabcar.go`
+GOPATH为`/Users/chuancey/go`，需填入的路径为：`chaincode/fabcar/go`
 
 如果觉得这样填入链码文件路径比较麻烦，我们已经提出了[issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues/16)
 ，规划解决。
@@ -175,8 +175,8 @@ GOPATH为`/Users/chuancey/go`，需填入的路径为：`chaincode/fabcar/go/fab
 - `configtx.yaml`：选择configtx.yaml文件
 - `msp folder`：选择证书文件夹路径。(注：该文件夹应包含configtx.yaml文件中定义的MSPDir证书目录和相应证书。建议configtx.yaml的MSPDir使用相对路径写法，如下图，则选择crypto-config文件夹目录即可。)
 - `config name`：输入configtx.yaml中定义的profile名称。(注：如下图，则输入`OneOrgChannel`，即二进制工具`configtxgen -profile OneOrgChannel -outputCreateChannelTx ./config/channel.tx`命令的`-profile`选项的参数)
-- `创建新通道` ：输入你所希望定义的通道名称，如`mychannel`。 点击创建，即可创建新通道
-- `加入通道`：输入上述你所创建的通道名称，如`mychannel`，或由其他人创建的通道名称。点击加入，即可将当前连接的peer加入该通道。
+- `创建新通道` ：输入你所希望定义的通道名称，如`mychannel`。 点击`创建`按钮，即可创建新通道
+- `加入通道`：输入上述你所创建的通道名称，如`mychannel`，或由其他人创建的通道名称。点击`加入`按钮，即可将当前连接的peer加入该通道。
 
 ![配置文件](../img/img-Ch/configtx.png)
 
