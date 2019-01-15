@@ -113,15 +113,15 @@ export default class BasicLayout extends React.Component {
             </Menu.Item>
             <Menu.Item key="2" onClick={() => this.switchContent(2)}>
               <Icon type="file-search" theme="outlined" />
-              <span>{this.state.language === 'cn' ? '链码调用' : 'Chaincode Invoke' }</span>
+              <span>{this.state.language === 'cn' ? '链码调用' : 'Chaincode Invocation' }</span>
             </Menu.Item>
             <Menu.Item key="3" onClick={() => this.switchContent(3)}>
               <Icon type="upload" />
-              <span>{this.state.language === 'cn' ? '链码安装' : 'Chaincode Install' }</span>
+              <span>{this.state.language === 'cn' ? '链码安装' : 'Chaincode Installation' }</span>
             </Menu.Item>
             <Menu.Item key="4" onClick={() => this.switchContent(4)}>
               <Icon type="block" />
-              <span>{this.state.language === 'cn' ? '通道管理' : 'Channel Manage' }</span>
+              <span>{this.state.language === 'cn' ? '通道管理' : 'Channel Management' }</span>
             </Menu.Item>
           </Menu>
         </Sider>
