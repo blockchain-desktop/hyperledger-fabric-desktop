@@ -88,7 +88,7 @@
 
 ![多节点背书](../img/img-Ch/endorse.png)
 
-具体操作可参考[Quqering the Ledgr](https://hyperledger-fabric.readthedocs.io/en/release-1.3/write_first_app.html#querying-the-ledger)。
+具体操作可参考[Quering the Ledegr](https://hyperledger-fabric.readthedocs.io/en/release-1.3/write_first_app.html#querying-the-ledger)。
 
 > 注: 查询操作（query）只是查询数据，不会生成新的区块，调用操作（invoke）会发起新的交易，产生新的区块
 > 此时，我们可以回到数据看板页面，可以看到已经产生了新的记录。
@@ -157,7 +157,7 @@ GOPATH为`/Users/chuancey/go`，需填入的路径为：`chaincode/fabcar/go`
 输入相应参数，点击确认后，即可实例化链码，
 
 > 注：
-> * 启动参数，json格式的字符串数组。
+> * 启动参数，json格式的字符串数组。例如 `["arg1", "arg2"]`
 > * 背书策略，json格式的背书策略，为fabric-node-sdk的原生格式，可参考[链接](https://fabric-sdk-node.github.io/global.html#ChaincodeInstantiateUpgradeRequest)
 
 此外，我们还可以查看不同通道下已经实例化的链码有哪些，如查看`channel1`通道下：
