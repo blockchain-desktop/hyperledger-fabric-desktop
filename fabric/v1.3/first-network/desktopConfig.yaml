@@ -1,0 +1,10 @@
+peerGrpcUrl: grpcs://localhost:7051
+peerEventUrl: grpcs://localhost:7053
+ordererUrl: grpcs://localhost:7050
+mspId: Org1MSP
+certificate: crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem
+privateKey: crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/484c1040e45a96e059d48991a5426139f6f0c9fd2ee0a60dca1120398407683e_sk
+peerTlsCaCert: crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem
+ordererTlsCaCert: crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem
+peerSslTarget: peer0.org1.example.com
+ordererSslTarget: orderer.example.com

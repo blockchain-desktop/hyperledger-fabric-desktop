@@ -9,7 +9,8 @@ import { getConfigDBSingleton } from '../util/createDB';
 
 const ButtonGroup = Button.Group;
 const path = require('path');
-
+const yaml = require('js-yaml');
+const fs   = require('fs');
 const logger = require('electron-log');
 
 const db = getConfigDBSingleton();
@@ -41,6 +42,7 @@ export default class UserLayout extends React.Component {
     };
 
     this.onClick = this.onClick.bind(this);
+    this.configImport = this.configImport.bind(this);
     this.peerGrpcUrlChange = this.peerGrpcUrlChange.bind(this);
     this.peerEventUrlChange = this.peerEventUrlChange.bind(this);
     this.cerImport = this.cerImport.bind(this);
@@ -117,6 +119,36 @@ export default class UserLayout extends React.Component {
     this.setState({ keyPath: selectedFile.path });
     const keylabel = path.basename(selectedFile.path);
     this.setState({ keylabel });
+  }
+
+  configImport() {
+    const configFile = document.getElementById('configFiles').files[0];// 获取读取的File对象
+    try {
+      const config = yaml.safeLoad(fs.readFileSync(configFile.path));
+      logger.info('Read configFile: ', config);
+      const configDir = path.dirname(configFile.path);
+      // TODO: Only support relative path so far. May support absolute path in future.
+      this.setState({
+        peerGrpcUrl: config.peerGrpcUrl,
+        peerEventUrl: config.peerEventUrl,
+        ordererUrl: config.ordererUrl,
+        mspid: config.mspId,
+        certPath: path.join(configDir, config.certificate),
+        keyPath: path.join(configDir, config.privateKey),
+        tlsPeerPath: config.peerTlsCaCert ? path.join(configDir, config.peerTlsCaCert) : '',
+        tlsOrdererPath: config.ordererTlsCaCert ? path.join(configDir, config.ordererTlsCaCert) : '',
+        peerSSLTarget: config.peerSslTarget,
+        ordererSSLTarget: config.ordererSslTarget,
+        certlabel: config.certificate ? path.basename(config.certificate) : config.certificate,
+        keylabel: config.privateKey ? path.basename(config.privateKey) : config.privateKey,
+        tlsPeerLabel: config.peerTlsCaCert ?
+          path.basename(config.peerTlsCaCert) : config.peerTlsCaCert,
+        tlsOrdererLabel: config.ordererTlsCaCert ?
+          path.basename(config.ordererTlsCaCert) : config.ordererTlsCaCert,
+      });
+    } catch (e) {
+      logger.error('Read desktop config file error: ', e.toString());
+    }
   }
 
   ordererChange(event) {
@@ -245,11 +277,16 @@ export default class UserLayout extends React.Component {
             <div style={languageStyle}>
               <ButtonGroup>
                 <Button style={buttonGroupStyle} onClick={this.changeLangtoEn}>En</Button>
-                <Button style={buttonGroupStyle} onClick={this.changeLangtoCn}>Ch</Button>
+                <Button style={buttonGroupStyle} onClick={this.changeLangtoCn}>中文</Button>
               </ButtonGroup>
             </div>
             <div style={LoginStyle}>
               <span style={fontStyle}>Fabric Desktop</span>
+            </div>
+
+            <div style={divStyle}>
+              <input type="file" id="configFiles" name="configFiles" style={fileStyle} onChange={this.configImport} />
+              <label htmlFor="configFiles" style={{border: '1px solid rgb(217, 217, 217)', borderRadius: '4px' }}>&thinsp;通过配置文件导入</label>
             </div>
 
             <div style={firstDivStyle}>
