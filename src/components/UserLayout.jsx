@@ -309,52 +309,52 @@ export default class UserLayout extends React.Component {
 
             <div style={firstDivStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>Peer Grpc Url：</span>
+              <span style={spanStyle}>{this.state.Common.LOGIN_PEER_GRPC_URL}:</span>
               <Input type="text" style={InputStyle} value={this.state.peerGrpcUrl} onChange={this.peerGrpcUrlChange} />
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>Peer Event Url：</span>
+              <span style={spanStyle}>{this.state.Common.LOGIN_PEER_EVENT_URL}:</span>
               <Input type="text" style={InputStyle} value={this.state.peerEventUrl} onChange={this.peerEventUrlChange} />
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>Orderer Url:</span>
+              <span style={spanStyle}>{this.state.Common.LOGIN_ORDERER_URL}:</span>
               <Input type="text" style={InputStyle} value={this.state.ordererUrl} onChange={this.ordererChange} />
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>MSP ID:</span>
+              <span style={spanStyle}>{this.state.Common.LOGIN_MSP_ID}:</span>
               <Input type="text" style={InputStyle} value={this.state.mspid} onChange={this.mspidChange} />
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>Certificate：</span>
+              <span style={spanStyle}>{this.state.Common.LOGIN_CERTIFICATE}:</span>
               <input type="file" id="cerFiles" name="cerFiles" style={fileStyle}onChange={this.cerImport} />
               <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.certlabel} </label>
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>Private Key：</span>
+              <span style={spanStyle}>{this.state.Common.LOGIN_PRIVATE_KEY}:</span>
               <input type="file" id="priFiles" name="priFiles" style={fileStyle} onChange={this.priImport} />
               <label htmlFor="priFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.keylabel}</label>
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; Peer TLS CA Cert：</span>
+              <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_PEER_TLS_CA_CERT}:</span>
               <input type="file" id="tlsPeerFiles" name="tlsPeerFiles" style={fileStyle} onChange={this.tlsPeerImport} />
               <label htmlFor="tlsPeerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsPeerLabel} </label>
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; Orderer TLS CA Cert：</span>
+              <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_ORDERER_TLS_CA_CERT}:</span>
               <input type="file" id="tlsOrdererFiles" name="tlsOrdererFiles" style={fileStyle} onChange={this.tlsOrdererImport} />
               <label htmlFor="tlsOrdererFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsOrdererLabel} </label>
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; Peer SSL Target:</span>
+              <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_PEER_SSL_TARGET}:</span>
               <Input type="text" style={InputStyle} value={this.state.peerSSLTarget} onChange={this.peerSSLTargetChange} />
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; Orderer SSL Target:</span>
+              <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_ORDERER_SSL_TARGET}:</span>
               <Input type="text" style={InputStyle} value={this.state.ordererSSLTarget} onChange={this.ordererSSLTargetChange} />
             </div>
             <div style={lastDivStyle}>

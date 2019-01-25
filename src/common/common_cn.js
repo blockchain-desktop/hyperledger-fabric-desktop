@@ -42,6 +42,19 @@ Common.CPNFIG_YAML = 'configtx.yaml';
 Common.SUBMITCREATE = '创建';
 Common.SUBMITJOIN = '加入';
 
+// user login page, language options
+Common.LOGIN_PEER_GRPC_URL = '组织节点地址';
+Common.LOGIN_PEER_EVENT_URL = '组织节点事件地址';
+Common.LOGIN_ORDERER_URL = '排序节点地址';
+Common.LOGIN_MSP_ID = '组织MspID';
+Common.LOGIN_CERTIFICATE = '用户证书';
+Common.LOGIN_PRIVATE_KEY = '用户私钥';
+Common.LOGIN_PEER_TLS_CA_CERT = '组织节点TLS证书';
+Common.LOGIN_ORDERER_TLS_CA_CERT = '排序节点TLS证书';
+Common.LOGIN_PEER_SSL_TARGET = '组织节点SSL域名';
+Common.LOGIN_ORDERER_SSL_TARGET = '排序节点SSL域名';
+
+
 Common.WARN = {
   chaincodeName: '链码名称不能为空!',
   chaincodeVersion: '链码版本不能为空!',
