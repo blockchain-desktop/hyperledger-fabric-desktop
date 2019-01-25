@@ -9,7 +9,8 @@ import { getConfigDBSingleton } from '../util/createDB';
 
 const ButtonGroup = Button.Group;
 const path = require('path');
-
+const yaml = require('js-yaml');
+const fs   = require('fs');
 const logger = require('electron-log');
 
 const db = getConfigDBSingleton();
@@ -41,6 +42,7 @@ export default class UserLayout extends React.Component {
     };
 
     this.onClick = this.onClick.bind(this);
+    this.configImport = this.configImport.bind(this);
     this.peerGrpcUrlChange = this.peerGrpcUrlChange.bind(this);
     this.peerEventUrlChange = this.peerEventUrlChange.bind(this);
     this.cerImport = this.cerImport.bind(this);
@@ -119,6 +121,36 @@ export default class UserLayout extends React.Component {
     this.setState({ keylabel });
   }
 
+  configImport() {
+    const configFile = document.getElementById('configFiles').files[0];// 获取读取的File对象
+    try {
+      const config = yaml.safeLoad(fs.readFileSync(configFile.path));
+      logger.info('Read configFile: ', config);
+      const configDir = path.dirname(configFile.path);
+      // TODO: Only support relative path so far. May support absolute path in future.
+      this.setState({
+        peerGrpcUrl: config.peerGrpcUrl,
+        peerEventUrl: config.peerEventUrl,
+        ordererUrl: config.ordererUrl,
+        mspid: config.mspId,
+        certPath: path.join(configDir, config.certificate),
+        keyPath: path.join(configDir, config.privateKey),
+        tlsPeerPath: config.peerTlsCaCert ? path.join(configDir, config.peerTlsCaCert) : '',
+        tlsOrdererPath: config.ordererTlsCaCert ? path.join(configDir, config.ordererTlsCaCert) : '',
+        peerSSLTarget: config.peerSslTarget,
+        ordererSSLTarget: config.ordererSslTarget,
+        certlabel: config.certificate ? path.basename(config.certificate) : config.certificate,
+        keylabel: config.privateKey ? path.basename(config.privateKey) : config.privateKey,
+        tlsPeerLabel: config.peerTlsCaCert ?
+          path.basename(config.peerTlsCaCert) : config.peerTlsCaCert,
+        tlsOrdererLabel: config.ordererTlsCaCert ?
+          path.basename(config.ordererTlsCaCert) : config.ordererTlsCaCert,
+      });
+    } catch (e) {
+      logger.error('Read desktop config file error: ', e.toString());
+    }
+  }
+
   ordererChange(event) {
     this.setState({ ordererUrl: event.target.value });
   }
@@ -149,7 +181,7 @@ export default class UserLayout extends React.Component {
       maxWidth: '800px',
     };
     const backgroundStyle = {
-      width: '400px',
+      width: '325px',
       height: 'auto',
       display: 'block',
       position: 'absolute',
@@ -159,7 +191,7 @@ export default class UserLayout extends React.Component {
     const contentStyle = {
       padding: '30px 20px 30px 20px',
       backgroundColor: '#fff',
-      width: '425px',
+      width: '450px',
       height: 'auto',
       minHeight: '900px',
       display: 'block',
@@ -208,6 +240,21 @@ export default class UserLayout extends React.Component {
       overflow: 'hidden',
       padding: '0 9px',
     };
+    const configStyle = {
+      fontSize: '1.1em',
+      border: '1px solid rgb(217, 217, 217)',
+      borderRadius: '4px',
+      display: 'block',
+      height: '32px',
+      verticalAlign: 'middle',
+      textAlign: 'center',
+      lineHeight: '30px',
+      cursor: 'pointer',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      padding: '0 9px',
+    };
     const spanStyle = {
       display: 'inlineBlock',
       fontSize: '1.2em',
@@ -245,61 +292,69 @@ export default class UserLayout extends React.Component {
             <div style={languageStyle}>
               <ButtonGroup>
                 <Button style={buttonGroupStyle} onClick={this.changeLangtoEn}>En</Button>
-                <Button style={buttonGroupStyle} onClick={this.changeLangtoCn}>Ch</Button>
+                <Button style={buttonGroupStyle} onClick={this.changeLangtoCn}>中文</Button>
               </ButtonGroup>
             </div>
             <div style={LoginStyle}>
               <span style={fontStyle}>Fabric Desktop</span>
             </div>
 
+            <div style={divStyle}>
+              <input type="file" id="configFiles" name="configFiles" style={fileStyle} onChange={this.configImport} />
+              <label htmlFor="configFiles" style={configStyle} >
+                <Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />
+                {this.state.Common.LOGIN_CONFIG}
+              </label>
+            </div>
+
             <div style={firstDivStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}> peer grpc url：</span>
+              <span style={spanStyle}>{this.state.Common.LOGIN_PEER_GRPC_URL}:</span>
               <Input type="text" style={InputStyle} value={this.state.peerGrpcUrl} onChange={this.peerGrpcUrlChange} />
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>peer event url：</span>
+              <span style={spanStyle}>{this.state.Common.LOGIN_PEER_EVENT_URL}:</span>
               <Input type="text" style={InputStyle} value={this.state.peerEventUrl} onChange={this.peerEventUrlChange} />
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>orderer url:</span>
+              <span style={spanStyle}>{this.state.Common.LOGIN_ORDERER_URL}:</span>
               <Input type="text" style={InputStyle} value={this.state.ordererUrl} onChange={this.ordererChange} />
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>msp id:</span>
+              <span style={spanStyle}>{this.state.Common.LOGIN_MSP_ID}:</span>
               <Input type="text" style={InputStyle} value={this.state.mspid} onChange={this.mspidChange} />
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>certificate：</span>
+              <span style={spanStyle}>{this.state.Common.LOGIN_CERTIFICATE}:</span>
               <input type="file" id="cerFiles" name="cerFiles" style={fileStyle}onChange={this.cerImport} />
               <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.certlabel} </label>
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>private key：</span>
+              <span style={spanStyle}>{this.state.Common.LOGIN_PRIVATE_KEY}:</span>
               <input type="file" id="priFiles" name="priFiles" style={fileStyle} onChange={this.priImport} />
               <label htmlFor="priFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.keylabel}</label>
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; peer tls ca cert：</span>
+              <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_PEER_TLS_CA_CERT}:</span>
               <input type="file" id="tlsPeerFiles" name="tlsPeerFiles" style={fileStyle} onChange={this.tlsPeerImport} />
               <label htmlFor="tlsPeerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsPeerLabel} </label>
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; orderer tls ca cert：</span>
+              <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_ORDERER_TLS_CA_CERT}:</span>
               <input type="file" id="tlsOrdererFiles" name="tlsOrdererFiles" style={fileStyle} onChange={this.tlsOrdererImport} />
               <label htmlFor="tlsOrdererFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsOrdererLabel} </label>
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; peer ssl target:</span>
+              <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_PEER_SSL_TARGET}:</span>
               <Input type="text" style={InputStyle} value={this.state.peerSSLTarget} onChange={this.peerSSLTargetChange} />
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; orderer ssl target:</span>
+              <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_ORDERER_SSL_TARGET}:</span>
               <Input type="text" style={InputStyle} value={this.state.ordererSSLTarget} onChange={this.ordererSSLTargetChange} />
             </div>
             <div style={lastDivStyle}>
