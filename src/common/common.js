@@ -28,6 +28,7 @@ Common.SELECT = 'select a ';
 Common.ADD_CONTRACT = 'Add contract';
 Common.OPERATIONS = 'operations';
 Common.LOGIN = 'Sign in';
+Common.LOGIN_CONFIG = 'Fill inputs by configuration file';
 Common.ADD_PEERS = 'add a peer';
 Common.PEER = 'peers';
 Common.SUBMIT = 'submit';

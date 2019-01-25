@@ -181,7 +181,7 @@ export default class UserLayout extends React.Component {
       maxWidth: '800px',
     };
     const backgroundStyle = {
-      width: '400px',
+      width: '325px',
       height: 'auto',
       display: 'block',
       position: 'absolute',
@@ -191,7 +191,7 @@ export default class UserLayout extends React.Component {
     const contentStyle = {
       padding: '30px 20px 30px 20px',
       backgroundColor: '#fff',
-      width: '425px',
+      width: '450px',
       height: 'auto',
       minHeight: '900px',
       display: 'block',
@@ -230,6 +230,21 @@ export default class UserLayout extends React.Component {
       display: 'block',
       float: 'right',
       width: '200px',
+      height: '32px',
+      verticalAlign: 'middle',
+      textAlign: 'center',
+      lineHeight: '30px',
+      cursor: 'pointer',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      padding: '0 9px',
+    };
+    const configStyle = {
+      fontSize: '1.1em',
+      border: '1px solid rgb(217, 217, 217)',
+      borderRadius: '4px',
+      display: 'block',
       height: '32px',
       verticalAlign: 'middle',
       textAlign: 'center',
@@ -286,57 +301,60 @@ export default class UserLayout extends React.Component {
 
             <div style={divStyle}>
               <input type="file" id="configFiles" name="configFiles" style={fileStyle} onChange={this.configImport} />
-              <label htmlFor="configFiles" style={{border: '1px solid rgb(217, 217, 217)', borderRadius: '4px' }}>&thinsp;通过配置文件导入</label>
+              <label htmlFor="configFiles" style={configStyle} >
+                <Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />
+                {this.state.Common.LOGIN_CONFIG}
+              </label>
             </div>
 
             <div style={firstDivStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}> peer grpc url：</span>
+              <span style={spanStyle}>Peer Grpc Url：</span>
               <Input type="text" style={InputStyle} value={this.state.peerGrpcUrl} onChange={this.peerGrpcUrlChange} />
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>peer event url：</span>
+              <span style={spanStyle}>Peer Event Url：</span>
               <Input type="text" style={InputStyle} value={this.state.peerEventUrl} onChange={this.peerEventUrlChange} />
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>orderer url:</span>
+              <span style={spanStyle}>Orderer Url:</span>
               <Input type="text" style={InputStyle} value={this.state.ordererUrl} onChange={this.ordererChange} />
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>msp id:</span>
+              <span style={spanStyle}>MSP ID:</span>
               <Input type="text" style={InputStyle} value={this.state.mspid} onChange={this.mspidChange} />
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>certificate：</span>
+              <span style={spanStyle}>Certificate：</span>
               <input type="file" id="cerFiles" name="cerFiles" style={fileStyle}onChange={this.cerImport} />
               <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.certlabel} </label>
             </div>
             <div style={divStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>private key：</span>
+              <span style={spanStyle}>Private Key：</span>
               <input type="file" id="priFiles" name="priFiles" style={fileStyle} onChange={this.priImport} />
               <label htmlFor="priFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.keylabel}</label>
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; peer tls ca cert：</span>
+              <span style={spanStyle}>&nbsp; Peer TLS CA Cert：</span>
               <input type="file" id="tlsPeerFiles" name="tlsPeerFiles" style={fileStyle} onChange={this.tlsPeerImport} />
               <label htmlFor="tlsPeerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsPeerLabel} </label>
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; orderer tls ca cert：</span>
+              <span style={spanStyle}>&nbsp; Orderer TLS CA Cert：</span>
               <input type="file" id="tlsOrdererFiles" name="tlsOrdererFiles" style={fileStyle} onChange={this.tlsOrdererImport} />
               <label htmlFor="tlsOrdererFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsOrdererLabel} </label>
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; peer ssl target:</span>
+              <span style={spanStyle}>&nbsp; Peer SSL Target:</span>
               <Input type="text" style={InputStyle} value={this.state.peerSSLTarget} onChange={this.peerSSLTargetChange} />
             </div>
             <div style={divStyle}>
-              <span style={spanStyle}>&nbsp; orderer ssl target:</span>
+              <span style={spanStyle}>&nbsp; Orderer SSL Target:</span>
               <Input type="text" style={InputStyle} value={this.state.ordererSSLTarget} onChange={this.ordererSSLTargetChange} />
             </div>
             <div style={lastDivStyle}>

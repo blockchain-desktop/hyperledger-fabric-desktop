@@ -26,6 +26,7 @@ Common.SELECT = '选择一个';
 Common.ADD_CONTRACT = '添加合约';
 Common.OPERATIONS = '操作';
 Common.LOGIN = '登录';
+Common.LOGIN_CONFIG = '通过配置文件填写';
 Common.ADD_PEERS = '添加一个节点';
 Common.PEER = '节点';
 Common.SUBMIT = '提交';
