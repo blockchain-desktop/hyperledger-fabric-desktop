@@ -10,7 +10,7 @@ import { getConfigDBSingleton } from '../util/createDB';
 const ButtonGroup = Button.Group;
 const path = require('path');
 const yaml = require('js-yaml');
-const fs   = require('fs');
+const fs = require('fs');
 const logger = require('electron-log');
 
 const db = getConfigDBSingleton();
