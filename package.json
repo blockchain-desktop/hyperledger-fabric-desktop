@@ -93,6 +93,8 @@
     "eslint-plugin-import": "^2",
     "eslint-plugin-jsx-a11y": "^5",
     "eslint-plugin-react": "^7",
+    "@types/jest": "^23.3.13",
+    "eslint-plugin-jest": "^22.3.0",
     "jest": "^23.6.0"
   }
 }
