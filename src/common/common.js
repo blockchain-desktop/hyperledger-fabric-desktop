@@ -28,6 +28,7 @@ Common.SELECT = 'select a ';
 Common.ADD_CONTRACT = 'Add contract';
 Common.OPERATIONS = 'operations';
 Common.LOGIN = 'Sign in';
+Common.LOGIN_CONFIG = 'Fill inputs by configuration file';
 Common.ADD_PEERS = 'add a peer';
 Common.PEER = 'peers';
 Common.SUBMIT = 'submit';
@@ -42,6 +43,19 @@ Common.CONFIG_NAME = 'config name';
 Common.CPNFIG_YAML = 'configtx.yaml';
 Common.SUBMITCREATE = 'create';
 Common.SUBMITJOIN = 'join';
+
+// user login page, language options
+Common.LOGIN_PEER_GRPC_URL = 'Peer Grpc Url';
+Common.LOGIN_PEER_EVENT_URL = 'Peer Event Url';
+Common.LOGIN_ORDERER_URL = 'Orderer Url';
+Common.LOGIN_MSP_ID = 'MSP ID';
+Common.LOGIN_CERTIFICATE = 'User Certificate';
+Common.LOGIN_PRIVATE_KEY = 'User Private Key';
+Common.LOGIN_PEER_TLS_CA_CERT = 'Peer TLS CA Cert';
+Common.LOGIN_ORDERER_TLS_CA_CERT = 'Orderer TLS CA Cert';
+Common.LOGIN_PEER_SSL_TARGET = 'Peer SSL Target';
+Common.LOGIN_ORDERER_SSL_TARGET = 'Orderer SSL Target';
+
 
 Common.WARN = {
   chaincodeName: 'chaincode name can not be null!',

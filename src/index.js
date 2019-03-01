@@ -20,19 +20,19 @@ const createWindow = async () => {
   if (process.platform === 'linux') {
     mainWindow = new BrowserWindow({
       icon: path.join(__dirname, '../resources/styles/image/logo/logo.iconset/icon_512x512.png'),
-      width: 825,
-      height: 625,
+      width: 850,
+      height: 700,
       minWidth: 825,
-      minHeight: 625,
+      minHeight: 700,
       backgroundColor: '#fff',
     });
   } else {
     mainWindow = new BrowserWindow({
       icon: path.join(__dirname, '../resources/styles/image/logo/logo.iconset/icon_512x512.png'),
-      width: 825,
-      height: 645,
+      width: 850,
+      height: 700,
       minWidth: 825,
-      minHeight: 645,
+      minHeight: 700,
       backgroundColor: '#fff',
     });
   }
@@ -75,7 +75,6 @@ const createWindow = async () => {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
-
 };
 
 // This method will be called when Electron has finished

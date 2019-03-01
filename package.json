@@ -1,7 +1,7 @@
 {
   "name": "hyperledger-fabric-desktop",
   "productName": "Fabric-Desktop",
-  "version": "0.2.0-beta",
+  "version": "0.2.0-rc1",
   "description": "My Electron application description",
   "main": "src/index.js",
   "scripts": {
@@ -72,6 +72,7 @@
     "fabric-ca-client": "~1.1.0",
     "fabric-client": "~1.1.0",
     "grpc": "^1.6.0",
+    "js-yaml": "~3.12.0",
     "log4js": "^3.0.6",
     "nedb": "^1.8.0",
     "react": "^15.4.1",
