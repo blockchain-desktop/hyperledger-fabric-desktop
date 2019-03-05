@@ -15,12 +15,14 @@ and aims to help people use and manage fabric networks easily.
 
 ## Releases
 
-- [package](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/releases)
+- [released app](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/releases)
 
 - [source code](https://github.com/blockchain-desktop/hyperledger-fabric-desktop)
 
 ## Documentation, Getting Started and Develop Guideline
-It is highly recommended to read [index.md](doc/doc-En/index-En.md) first.
+It is highly recommended to read [index.md](doc/doc-En/index-En.md) first. 
+
+You can also watch the [introduction video](https://wiki.hyperledger.org/download/attachments/2392116/20190228_Fabric_Desktop.mp4?version=1&modificationDate=1551429922000&api=v2). 
 
 ## Contributing
 
@@ -76,7 +78,10 @@ available at http://creativecommons.org/licenses/by/4.0/.
 * [使用者：功能介绍](doc/doc-Ch/tutorial-Ch.md)  
 * [开发者：参与开发](doc/doc-Ch/coding-guidelines-Ch.md) 
 * [开发者：贡献代码](doc/doc-Ch/CONTRIBUTING-Ch.md)   
-* [项目架构](./doc/architect.md)  
+* [项目架构](./doc/architect.md)
+
+介绍视频  
+* [超级账本meetup录像](https://pan.baidu.com/s/1VU_bt4Oo_OJtk5DhCZ3L4A)
 
 ## 如何参与？
 
