@@ -1,8 +1,10 @@
 // Copyright 2019 The hyperledger-fabric-desktop Authors. All rights reserved.
-import getFabricClientSingleton from '../../src/util/fabric';
+import { getFabricClientSingletonHelper } from '../../src/util/fabric';
 
 const { execSync } = require('child_process');
 const logger = require('electron-log');
+const Datastore = require('nedb');
+const path = require('path');
 
 // Steps
 // 1. start fabric network
@@ -28,14 +30,23 @@ function clearFabricNetwork() {
   // logger.debug(buf.toString());
 }
 
-beforeAll(initFabricNetwork);
+beforeAll(() => {
+  jest.setTimeout(10000);
+  initFabricNetwork();
+});
 
 afterAll(clearFabricNetwork);
 
+// 注意, config.db文件中的"path"字段，对应fabric-node-sdk的用户私钥仓库路径，需根据测试环境配置，
+// 目前只处理fabric v1.1-basic-network的例子，处理fabric v1.3需同时考虑sdk版本升级，以及启动脚本的调整等
+const configDbForTest = new Datastore({
+  filename: path.join(__dirname, '../resources/persistence/config.db'),
+  autoload: true,
+});
 
 describe('Fabric Client Basic', () => {
   it('instantiate client.', () =>
-    getFabricClientSingleton()
+    getFabricClientSingletonHelper(configDbForTest)
       .then((client) => {
         expect(client)
           .not
@@ -43,16 +54,19 @@ describe('Fabric Client Basic', () => {
       }));
 
   it('query chaincode', () => {
-    const clientPromise = getFabricClientSingleton();
+    const clientPromise = getFabricClientSingletonHelper(configDbForTest);
     return clientPromise.then((client) => {
-      logger.info('OK. get client.');
-      logger.info('client.channel: ', client.channels);
+      logger.info('OK. Got client. client.channel: ', client.channels);
       client.queryCc('fabcar', 'queryAllCars', null, 'mychannel')
         .then((result) => {
           logger.info('query result: ', result);
           expect(result)
             .not
             .toBeNull();
+        })
+        .catch((err) => {
+          logger.error(err);
+          throw new Error();
         });
     });
   });
@@ -60,8 +74,26 @@ describe('Fabric Client Basic', () => {
 
 describe('Fabric Client Advanced', () => {
   describe('invoke chaincode', () => {
-    it('invoke for one peer', () => {
-    });
+    it('invoke for one peer', () => getFabricClientSingletonHelper(configDbForTest)
+      .then(client => client.invokeCc('fabcar',
+        'changeCarOwner',
+        ['CAR0', 'newPerson'],
+        'mychannel',
+        [],
+        [],
+        [])
+        .then((result) => {
+          logger.info('invoke result: ', result);
+          expect(result)
+            .not
+            .toBeNull();
+          return Promise.resolve();
+        }))
+      .catch((err) => {
+        logger.info('catch invoke reject');
+        logger.info(err);
+        throw err;
+      }));
 
     it('invoke for multiple peers', () => {
       // TODO: to be implemented

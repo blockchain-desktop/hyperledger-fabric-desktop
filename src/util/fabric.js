@@ -199,9 +199,9 @@ class FabricClient {
     const self = this;
     return this._enrollUser(this).then((user) => {
       if (user && user.isEnrolled()) {
-        logger.info('Successfully loaded user1 from persistence');
+        logger.info(`Successfully loaded user(${user.getName()}) from persistence`);
       } else {
-        logger.error('Failed to get user1.... run registerUser.js');
+        logger.error('Failed to get user run registerUser.js');
         return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
       }
 
