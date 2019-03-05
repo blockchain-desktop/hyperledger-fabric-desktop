@@ -18,10 +18,11 @@ class FabricClient {
     this.fabric_client = fabricClient;
   }
 
-  _gitConfig() {
+  // 抽出空挡，插入配置文件，以便集成测试
+  _getConfig(configDb) {
     const self = this;
     return new Promise((resolve, reject) => {
-      db.find({}, (err, resultList) => {
+      configDb.find({}, (err, resultList) => {
         if (err) {
           logger.info('the operation of find documents failed!');
           reject('error');
@@ -117,6 +118,7 @@ class FabricClient {
       }
       this.channels[channelName] = channel;
     } else {
+      logger.info(`channel(${channelName}) exists, get it from memory.`);
       channel = this.channels[channelName];
     }
     return channel;
@@ -197,9 +199,9 @@ class FabricClient {
     const self = this;
     return this._enrollUser(this).then((user) => {
       if (user && user.isEnrolled()) {
-        logger.info('Successfully loaded user1 from persistence');
+        logger.info(`Successfully loaded user(${user.getName()}) from persistence`);
       } else {
-        logger.error('Failed to get user1.... run registerUser.js');
+        logger.error('Failed to get user run registerUser.js');
         return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
       }
 
@@ -773,17 +775,24 @@ class FabricClient {
 
 let __fabricClient;
 
-// FabricClient单例模式。后续考虑优化为多套身份，多个client
-export default function getFabricClientSingleton() {
+export function getFabricClientSingletonHelper(dbConfig) {
   if (!__fabricClient) {
-    logger.info('strat create fabric client');
+    logger.info('instantiating fabric client.');
     __fabricClient = new FabricClient();
-    return __fabricClient._gitConfig()
+    return __fabricClient._getConfig(dbConfig)
       .then(__fabricClient._config)
       .then(__fabricClient._enrollUser)
       .then(() => Promise.resolve(__fabricClient));
   }
   return Promise.resolve(__fabricClient);
+}
+
+// TODO: 考虑是否去除export default，全部使用export。
+// 由此保证import无需再区分 import something from 'lib' 与 import {something} from 'lib'
+
+// FabricClient单例模式。后续考虑优化为多套身份，多个client
+export default function getFabricClientSingleton() {
+  return getFabricClientSingletonHelper(db);
 }
 
 export function deleteFabricClientSingleton() {
