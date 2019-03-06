@@ -57,12 +57,10 @@ describe('Fabric Client Basic', () => {
     const clientPromise = getFabricClientSingletonHelper(configDbForTest);
     return clientPromise.then((client) => {
       logger.info('OK. Got client. client.channel: ', client.channels);
-      client.queryCc('fabcar', 'queryAllCars', null, 'mychannel')
+      return client.queryCc('fabcar', 'queryAllCars', null, 'mychannel')
         .then((result) => {
           logger.info('query result: ', result);
-          expect(result)
-            .not
-            .toBeNull();
+          expect(result).not.toBeNull();
         })
         .catch((err) => {
           logger.error(err);
@@ -74,6 +72,7 @@ describe('Fabric Client Basic', () => {
 
 describe('Fabric Client Advanced', () => {
   describe('invoke chaincode', () => {
+    // FIXME: invoke 后测试进程无法正常结束，可能存在连接或其他调用未断开。待查因解决
     it('invoke for one peer', () => getFabricClientSingletonHelper(configDbForTest)
       .then(client => client.invokeCc('fabcar',
         'changeCarOwner',
@@ -84,9 +83,7 @@ describe('Fabric Client Advanced', () => {
         [])
         .then((result) => {
           logger.info('invoke result: ', result);
-          expect(result)
-            .not
-            .toBeNull();
+          expect(result).not.toBeNull();
           return Promise.resolve();
         }))
       .catch((err) => {
@@ -100,17 +97,31 @@ describe('Fabric Client Advanced', () => {
     });
   });
 
-  it('install chaincode', () => {
+  describe('put chaincode into system', () => {
+    it('install chaincode', () => getFabricClientSingletonHelper(configDbForTest)
+      .then(client =>
+      // FIXME: 需处理GOPATH依赖的问题
 
-  });
+        client.installCc('fabcar', 'yetAnotherfabcar', '2.0')
+          .then((result) => {
+            logger.info('install chaincode result: ', result);
+            expect(result).not.toBeNull();
+          }),
+      )
+      .catch((err) => {
+        logger.info('install chaincode error: ', err);
+        throw err;
+      }));
 
   it('instantiate chaincode', () => {
 
   });
 
-  it('upgrade chaincode', () => {
+    it('upgrade chaincode', () => {
 
+    });
   });
+
 
   it('query block info', () => {
 
