@@ -97,7 +97,7 @@ describe('Fabric Client Advanced', () => {
     });
   });
 
-  describe('put chaincode into system', () => {
+  describe('manage chaincode', () => {
     it('install chaincode', () => getFabricClientSingletonHelper(configDbForTest)
       .then(client =>
       // FIXME: 需处理GOPATH依赖的问题
@@ -113,12 +113,52 @@ describe('Fabric Client Advanced', () => {
         throw err;
       }));
 
-  it('instantiate chaincode', () => {
-
-  });
+    it('instantiate chaincode', () => {
+      const ccName = 'instFabcar';
+      return getFabricClientSingletonHelper(configDbForTest)
+        .then(client => client.installCc('fabcar', ccName, '1.0')
+          .then((result) => {
+            expect(result)
+              .not
+              .toBeNull();
+            return Promise.resolve(client);
+          }))
+        .then((client) => {
+          jest.setTimeout(100000);
+          return client.instantiateOrUpgradeCc(true, 'mychannel', ccName, '1.0', null, null)
+            .then((result) => {
+              logger.info('instantiateOrUpgradeCc result: ', result);
+              expect(result)
+                .not
+                .toBeNull();
+              jest.setTimeout(30000);
+            });
+        })
+        .catch((err) => {
+          logger.info('instantiate chaincode error: ', err);
+          throw err;
+        });
+    });
 
     it('upgrade chaincode', () => {
-
+      jest.setTimeout(120000);
+      const ccName = 'upgradeFabcar';
+      return getFabricClientSingletonHelper(configDbForTest)
+        .then(client => client.installCc('fabcar', ccName, '1.0')
+          .then(() => client.instantiateOrUpgradeCc(true, 'mychannel', ccName, '1.0', null, null))
+          // 等待链码实例化容器启动，否则升级链码会失败
+          .then(() => new Promise(resolve => setTimeout(resolve, 10000)))
+          .then(() => client.installCc('fabcar', ccName, '2.0'))
+          .then(() => client.instantiateOrUpgradeCc(false, 'mychannel', ccName, '2.0', null, null)
+            .then((result) => {
+              logger.info('UpgradeCc result: ', result);
+              expect(result).not.toBeNull();
+              jest.setTimeout(30000);
+            })))
+        .catch((err) => {
+          logger.info('instantiate chaincode error: ', err);
+          throw err;
+        });
     });
   });
 
