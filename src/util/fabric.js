@@ -443,7 +443,7 @@ class FabricClient {
       return Promise.resolve('success');
     }, (err) => {
       logger.info('Failed instantiating chaincode.', err.stack);
-      return Promise.resolve('fail');
+      return Promise.reject('fail');
     })
       .catch((err) => {
         logger.error(`Fail to instantiate chaincode. Error message: ${err.stack}` ? err.stack : err);
@@ -767,6 +767,12 @@ class FabricClient {
    */
   newPeer(url, opts) {
     return this.fabricClient.newPeer(url, opts);
+  }
+
+  // 关闭连接
+  close() {
+    this.peer.close();
+    this.order.close();
   }
 }
 

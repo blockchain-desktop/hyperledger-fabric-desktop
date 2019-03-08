@@ -163,9 +163,17 @@ describe('Fabric Client Advanced', () => {
   });
 
 
-  it('query block info', () => {
-
-  });
+  it('query block info', () => getFabricClientSingletonHelper(configDbForTest)
+    .then(client => client.queryBlock(0, 'mychannel')
+      .then((result) => {
+        logger.info('query block result: ', result);
+        expect(result)
+          .not
+          .toBeNull();
+      }))
+    .catch((err) => {
+      throw err;
+    }));
 
   it('create channel', () => {
 
