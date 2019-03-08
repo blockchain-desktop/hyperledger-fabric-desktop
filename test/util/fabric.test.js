@@ -175,12 +175,37 @@ describe('Fabric Client Advanced', () => {
       throw err;
     }));
 
-  it('create channel', () => {
+  describe('manage channel', () => {
+    it('create channel', () =>
+      // FIXME: 创建通道，目前依赖contenct类中，复制configtx.yaml文件到指定目录下，需考虑如何测试这一步
+      getFabricClientSingletonHelper(configDbForTest)
+        .then(client => client.createChannel('createtestchannel', 'OneOrgChannel')
+          .then((result) => {
+            logger.info('createChannel result: ', result);
+            expect(result).not.toBeNull();
+          }))
+        .catch((err) => {
+          throw err;
+        }),
+    );
 
-  });
-
-  it('join peer to channel', () => {
-
+    it('join peer to channel', () => {
+      const chanName = 'jointestchannel';
+      return getFabricClientSingletonHelper(configDbForTest)
+        .then(client => client.createChannel(chanName, 'OneOrgChannel')
+          .then((result) => {
+            logger.info('createChannel result: ', result);
+            expect(result).not.toBeNull();
+          })
+          .then(() => client.joinChannel(chanName)
+            .then((result) => {
+              logger.info('joinChannel result: ', result);
+              expect(result).not.toBeNull();
+            })))
+        .catch((err) => {
+          throw err;
+        });
+    });
   });
 });
 
