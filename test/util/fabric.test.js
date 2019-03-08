@@ -57,12 +57,10 @@ describe('Fabric Client Basic', () => {
     const clientPromise = getFabricClientSingletonHelper(configDbForTest);
     return clientPromise.then((client) => {
       logger.info('OK. Got client. client.channel: ', client.channels);
-      client.queryCc('fabcar', 'queryAllCars', null, 'mychannel')
+      return client.queryCc('fabcar', 'queryAllCars', null, 'mychannel')
         .then((result) => {
           logger.info('query result: ', result);
-          expect(result)
-            .not
-            .toBeNull();
+          expect(result).not.toBeNull();
         })
         .catch((err) => {
           logger.error(err);
@@ -74,6 +72,7 @@ describe('Fabric Client Basic', () => {
 
 describe('Fabric Client Advanced', () => {
   describe('invoke chaincode', () => {
+    // FIXME: invoke 后测试进程无法正常结束，可能存在连接或其他调用未断开。待查因解决
     it('invoke for one peer', () => getFabricClientSingletonHelper(configDbForTest)
       .then(client => client.invokeCc('fabcar',
         'changeCarOwner',
@@ -84,9 +83,7 @@ describe('Fabric Client Advanced', () => {
         [])
         .then((result) => {
           logger.info('invoke result: ', result);
-          expect(result)
-            .not
-            .toBeNull();
+          expect(result).not.toBeNull();
           return Promise.resolve();
         }))
       .catch((err) => {
@@ -100,28 +97,115 @@ describe('Fabric Client Advanced', () => {
     });
   });
 
-  it('install chaincode', () => {
+  describe('manage chaincode', () => {
+    it('install chaincode', () => getFabricClientSingletonHelper(configDbForTest)
+      .then(client =>
+      // FIXME: 需处理GOPATH依赖的问题
 
+        client.installCc('fabcar', 'yetAnotherfabcar', '2.0')
+          .then((result) => {
+            logger.info('install chaincode result: ', result);
+            expect(result).not.toBeNull();
+          }),
+      )
+      .catch((err) => {
+        logger.info('install chaincode error: ', err);
+        throw err;
+      }));
+
+    it('instantiate chaincode', () => {
+      const ccName = 'instFabcar';
+      return getFabricClientSingletonHelper(configDbForTest)
+        .then(client => client.installCc('fabcar', ccName, '1.0')
+          .then((result) => {
+            expect(result)
+              .not
+              .toBeNull();
+            return Promise.resolve(client);
+          }))
+        .then((client) => {
+          jest.setTimeout(100000);
+          return client.instantiateOrUpgradeCc(true, 'mychannel', ccName, '1.0', null, null)
+            .then((result) => {
+              logger.info('instantiateOrUpgradeCc result: ', result);
+              expect(result)
+                .not
+                .toBeNull();
+              jest.setTimeout(30000);
+            });
+        })
+        .catch((err) => {
+          logger.info('instantiate chaincode error: ', err);
+          throw err;
+        });
+    });
+
+    it('upgrade chaincode', () => {
+      jest.setTimeout(120000);
+      const ccName = 'upgradeFabcar';
+      return getFabricClientSingletonHelper(configDbForTest)
+        .then(client => client.installCc('fabcar', ccName, '1.0')
+          .then(() => client.instantiateOrUpgradeCc(true, 'mychannel', ccName, '1.0', null, null))
+          // 等待链码实例化容器启动，否则升级链码会失败
+          .then(() => new Promise(resolve => setTimeout(resolve, 10000)))
+          .then(() => client.installCc('fabcar', ccName, '2.0'))
+          .then(() => client.instantiateOrUpgradeCc(false, 'mychannel', ccName, '2.0', null, null)
+            .then((result) => {
+              logger.info('UpgradeCc result: ', result);
+              expect(result).not.toBeNull();
+              jest.setTimeout(30000);
+            })))
+        .catch((err) => {
+          logger.info('instantiate chaincode error: ', err);
+          throw err;
+        });
+    });
   });
 
-  it('instantiate chaincode', () => {
 
-  });
+  it('query block info', () => getFabricClientSingletonHelper(configDbForTest)
+    .then(client => client.queryBlock(0, 'mychannel')
+      .then((result) => {
+        logger.info('query block result: ', result);
+        expect(result)
+          .not
+          .toBeNull();
+      }))
+    .catch((err) => {
+      throw err;
+    }));
 
-  it('upgrade chaincode', () => {
+  describe('manage channel', () => {
+    it('create channel', () =>
+      // FIXME: 创建通道，目前依赖contenct类中，复制configtx.yaml文件到指定目录下，需考虑如何测试这一步
+      getFabricClientSingletonHelper(configDbForTest)
+        .then(client => client.createChannel('createtestchannel', 'OneOrgChannel')
+          .then((result) => {
+            logger.info('createChannel result: ', result);
+            expect(result).not.toBeNull();
+          }))
+        .catch((err) => {
+          throw err;
+        }),
+    );
 
-  });
-
-  it('query block info', () => {
-
-  });
-
-  it('create channel', () => {
-
-  });
-
-  it('join peer to channel', () => {
-
+    it('join peer to channel', () => {
+      const chanName = 'jointestchannel';
+      return getFabricClientSingletonHelper(configDbForTest)
+        .then(client => client.createChannel(chanName, 'OneOrgChannel')
+          .then((result) => {
+            logger.info('createChannel result: ', result);
+            expect(result).not.toBeNull();
+          })
+          .then(() => client.joinChannel(chanName)
+            .then((result) => {
+              logger.info('joinChannel result: ', result);
+              expect(result).not.toBeNull();
+            })))
+        .catch((err) => {
+          throw err;
+        });
+    });
   });
 });
 
