@@ -16,7 +16,8 @@ export FABRIC_TAG=${FABRIC_TAG:-1.3.0}
 
 export FABRIC_CA_TAG=${FABRIC_CA_TAG:-${FABRIC_TAG}}
 export NS=${NS:-hyperledger}
-export MARCH=$(echo "$(uname -s|tr '[:upper:]' '[:lower:]'|sed 's/mingw64_nt.*/windows/')-$(uname -m | sed 's/x86_64/amd64/g')" | awk '{print tolower($0)}')
+#export MARCH=$(echo "$(uname -s|tr '[:upper:]' '[:lower:]'|sed 's/mingw64_nt.*/windows/')-$(uname -m | sed 's/x86_64/amd64/g')" | awk '{print tolower($0)}')
+export MARCH=linux-amd64
 CA_BINARY_FILE=hyperledger-fabric-ca-${MARCH}-${FABRIC_CA_TAG}.tar.gz
 URL=https://nexus.hyperledger.org/content/repositories/releases/org/hyperledger/fabric-ca/hyperledger-fabric-ca/${MARCH}-${FABRIC_CA_TAG}/${CA_BINARY_FILE}
 

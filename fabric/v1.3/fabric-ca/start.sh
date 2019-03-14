@@ -46,7 +46,7 @@ fi
 mkdir -p ${DDIR}/logs
 
 # Create the docker-compose file
-${SDIR}/makeDocker.sh
+# ${SDIR}/makeDocker.sh
 
 # Create the docker containers
 log "Creating docker containers ..."
