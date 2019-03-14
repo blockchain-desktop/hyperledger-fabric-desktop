@@ -182,6 +182,8 @@ services:
       - ./data:/data
     networks:
       - fabric-ca
+    ports:
+      - 7050:7050
     depends_on:
       - setup
 
@@ -209,7 +211,7 @@ services:
       - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/data/org1-ca-chain.pem
-      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=true
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false
       - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/data/org1-ca-chain.pem
       - CORE_PEER_TLS_CLIENTCERT_FILE=/data/tls/peer1-org1-client.crt
       - CORE_PEER_TLS_CLIENTKEY_FILE=/data/tls/peer1-org1-client.key
@@ -227,6 +229,9 @@ services:
       - /var/run:/host/var/run
     networks:
       - fabric-ca
+    ports:
+      - 7051:7051
+      - 7053:7053
     depends_on:
       - setup
 
@@ -254,7 +259,7 @@ services:
       - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/data/org1-ca-chain.pem
-      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=true
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false
       - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/data/org1-ca-chain.pem
       - CORE_PEER_TLS_CLIENTCERT_FILE=/data/tls/peer2-org1-client.crt
       - CORE_PEER_TLS_CLIENTKEY_FILE=/data/tls/peer2-org1-client.key
@@ -300,7 +305,7 @@ services:
       - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/data/org2-ca-chain.pem
-      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=true
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false
       - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/data/org2-ca-chain.pem
       - CORE_PEER_TLS_CLIENTCERT_FILE=/data/tls/peer1-org2-client.crt
       - CORE_PEER_TLS_CLIENTKEY_FILE=/data/tls/peer1-org2-client.key
@@ -345,7 +350,7 @@ services:
       - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/data/org2-ca-chain.pem
-      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=true
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false
       - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/data/org2-ca-chain.pem
       - CORE_PEER_TLS_CLIENTCERT_FILE=/data/tls/peer2-org2-client.crt
       - CORE_PEER_TLS_CLIENTKEY_FILE=/data/tls/peer2-org2-client.key
