@@ -36,7 +36,7 @@ class FabricClient {
     const self = this;
     const fabricClient = this.fabricClient;
     return new Promise((resolve) => {
-      logger.info('input:', input.result);
+      logger.info('config:', config);
 
       if (config.tlsPeerPath === '' || config.tlsOrdererPath === '') {
         logger.info('+++++++++++++++++');
@@ -49,9 +49,9 @@ class FabricClient {
         self.orderersCert = fs.readFileSync(config.tlsOrdererPath);
         self.flag = true;
         self.peer = fabricClient.newPeer(config.peerGrpcUrl,
-          { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': this.config.peerSSLTarget });
+          { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': config.peerSSLTarget });
         self.order = fabricClient.newOrderer(config.ordererUrl,
-          { pem: Buffer.from(this.orderersCert).toString(), 'ssl-target-name-override': this.config.ordererSSLTarget });
+          { pem: Buffer.from(this.orderersCert).toString(), 'ssl-target-name-override': config.ordererSSLTarget });
       }
 
       logger.info('config:', config);
