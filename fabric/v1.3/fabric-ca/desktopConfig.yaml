@@ -1,0 +1,10 @@
+peerGrpcUrl: grpcs://localhost:7051
+peerEventUrl: grpcs://localhost:7053
+ordererUrl: grpcs://localhost:7050
+mspId: org1MSP
+certificate: data/orgs/org1/admin/msp/signcerts/cert.pem
+privateKey: data/orgs/org1/admin/msp/keystore/6a65f3b294f455b1dc41bfec77da60ed86570cb5a342a21f052d3930d0d4f7c0_sk
+peerTlsCaCert: data/org1-ca-chain.pem
+ordererTlsCaCert: data/org0-ca-chain.pem
+peerSslTarget: peer1-org1
+ordererSslTarget: orderer1-org0
