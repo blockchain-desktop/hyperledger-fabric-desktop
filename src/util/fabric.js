@@ -14,53 +14,54 @@ const logger = require('electron-log');
 
 class FabricClient {
   constructor() {
-    const fabricClient = new FabricClientSDK();
-    this.fabric_client = fabricClient;
+    this.fabricClient = new FabricClientSDK();
   }
 
-  _gitConfig() {
-    const self = this;
+  // 抽出空挡，插入配置文件，以便集成测试
+  _getConfig(configDb) {
     return new Promise((resolve, reject) => {
-      db.find({}, (err, resultList) => {
+      configDb.find({}, (err, resultList) => {
         if (err) {
           logger.info('the operation of find documents failed!');
           reject('error');
         }
-        logger.info('success get config!');
-        const output = {
-          result: resultList,
-          obj: self,
-        };
-        resolve(output);
-        logger.info('result:', resultList);
+        logger.info('success get config!', ' result:', resultList);
+        resolve(resultList);
       });
     });
   }
 
   _config(input) {
-    const obj = input.obj;
+    const config = input[0];
+    const self = this;
+    const fabricClient = this.fabricClient;
     return new Promise((resolve) => {
-      logger.info('input:', input.result);
-      const config = input.result[0];
+      logger.info('config:', config);
 
       if (config.tlsPeerPath === '' || config.tlsOrdererPath === '') {
         logger.info('+++++++++++++++++');
-        obj.flag = false;
+        self.flag = false;
+        self.peer = fabricClient.newPeer(config.peerGrpcUrl);
+        self.order = fabricClient.newOrderer(config.ordererUrl);
       } else {
         logger.info('------------------');
-        obj.peerCert = fs.readFileSync(config.tlsPeerPath);
-        obj.orderersCert = fs.readFileSync(config.tlsOrdererPath);
-        obj.flag = true;
+        self.peerCert = fs.readFileSync(config.tlsPeerPath);
+        self.orderersCert = fs.readFileSync(config.tlsOrdererPath);
+        self.flag = true;
+        self.peer = fabricClient.newPeer(config.peerGrpcUrl,
+          { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': config.peerSSLTarget });
+        self.order = fabricClient.newOrderer(config.ordererUrl,
+          { pem: Buffer.from(this.orderersCert).toString(), 'ssl-target-name-override': config.ordererSSLTarget });
       }
 
       logger.info('config:', config);
       const storePath = path.join(__dirname, '../../', config.path);
       logger.info(`Store path:${storePath}`);
-      obj.config = config;
-      obj.store_path = storePath;
-      obj.channels = {};
+      self.config = config;
+      self.store_path = storePath;
+      self.channels = {};
 
-      resolve(obj);
+      resolve();
     });
   }
 
@@ -69,22 +70,26 @@ class FabricClient {
    * @returns {Promise<Client.User | never>}
    *
    */
-  _enrollUser(self) {
+  _enrollUser() {
+    const self = this;
     const usrName = self.config.mspid;
-    // logger.info('start to load member user.');
+    logger.info('start to load member user.', ' store_path: ', self.store_path);
     return FabricClientSDK.newDefaultKeyValueStore({ path: self.store_path,
     }).then((stateStore) => {
+      logger.info('get stateStore: ', stateStore);
+
       // assign the store to the fabric client
-      self.fabric_client.setStateStore(stateStore);
+      self.fabricClient.setStateStore(stateStore);
       const cryptoSuite = FabricClientSDK.newCryptoSuite();
 
       // use the same location for the state store (where the users' certificate are kept)
       // and the crypto store (where the users' keys are kept)
       const cryptoStore = FabricClientSDK.newCryptoKeyStore({ path: self.store_path });
       cryptoSuite.setCryptoKeyStore(cryptoStore);
-      self.fabric_client.setCryptoSuite(cryptoSuite);
+      self.fabricClient.setCryptoSuite(cryptoSuite);
 
-      return self.fabric_client.getUserContext(usrName, true);
+      logger.info('almost done');
+      return self.fabricClient.getUserContext(usrName, true);
     });
   }
 
@@ -98,25 +103,19 @@ class FabricClient {
     let channel = this.channels[channelName];
     if (!channel) {
       logger.info('start create channel');
-      channel = this.fabric_client.newChannel(channelName);
-
+      channel = this.fabricClient.newChannel(channelName);
       if (this.flag) {
         logger.info('-----------');
-        this.peer = this.fabric_client.newPeer(this.config.peerGrpcUrl,
-          { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': this.config.peerSSLTarget });
         channel.addPeer(this.peer);
-        this.order = this.fabric_client.newOrderer(this.config.ordererUrl,
-          { pem: Buffer.from(this.orderersCert).toString(), 'ssl-target-name-override': this.config.ordererSSLTarget });
         channel.addOrderer(this.order);
       } else {
         logger.info('+++++++++++++++++');
-        this.peer = this.fabric_client.newPeer(this.config.peerGrpcUrl);
         channel.addPeer(this.peer);
-        this.order = this.fabric_client.newOrderer(this.config.ordererUrl);
         channel.addOrderer(this.order);
       }
       this.channels[channelName] = channel;
     } else {
+      logger.info(`channel(${channelName}) exists, get it from memory.`);
       channel = this.channels[channelName];
     }
     return channel;
@@ -193,13 +192,13 @@ class FabricClient {
       return Promise.reject(err);
     }
     let txID;
-    const fabricClient = this.fabric_client;
+    const fabricClient = this.fabricClient;
     const self = this;
     return this._enrollUser(this).then((user) => {
       if (user && user.isEnrolled()) {
-        logger.info('Successfully loaded user1 from persistence');
+        logger.info(`Successfully loaded user(${user.getName()}) from persistence`);
       } else {
-        logger.error('Failed to get user1.... run registerUser.js');
+        logger.error('Failed to get user run registerUser.js');
         return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
       }
 
@@ -210,7 +209,7 @@ class FabricClient {
       tempTargets.push(self.peer);
       for (let i = 0; i < peerList.length; i++) {
         const peerCert = fs.readFileSync(certList[i]);
-        const peer = self.fabric_client.newPeer((peerList[i]),
+        const peer = self.fabricClient.newPeer((peerList[i]),
           { pem: Buffer.from(peerCert).toString(), 'ssl-target-name-override': sslTargetList[i] });
         tempTargets.push(peer);
       }
@@ -340,7 +339,7 @@ class FabricClient {
    * @param chaincodeVersion
    */
   installCc(chaincodePath, chaincodeName, chaincodeVersion) {
-    logger.info(`${chaincodePath}, ${chaincodeName}, ${chaincodeVersion}`);
+    logger.info(`installing chaincode: ${chaincodePath}, ${chaincodeName}, ${chaincodeVersion}`);
 
     const request = {
       targets: [this.peer], // peerAddress
@@ -348,7 +347,8 @@ class FabricClient {
       chaincodeId: chaincodeName,
       chaincodeVersion,
     };
-    return this.fabric_client.installChaincode(request)
+    logger.info('installChaincode request param: ', request);
+    return this.fabricClient.installChaincode(request)
       .then((results) => {
         const proposalResponses = results[0];
         if (proposalResponses && proposalResponses[0].response &&
@@ -391,7 +391,7 @@ class FabricClient {
     }
     logger.info('args: ', args, '&& endors-policy:', endorspolicy);
 
-    const txID = this.fabric_client.newTransactionID();
+    const txID = this.fabricClient.newTransactionID();
 
     let endorspolicyObj;
     let argsObj;
@@ -443,7 +443,7 @@ class FabricClient {
       return Promise.resolve('success');
     }, (err) => {
       logger.info('Failed instantiating chaincode.', err.stack);
-      return Promise.resolve('fail');
+      return Promise.reject('fail');
     })
       .catch((err) => {
         logger.error(`Fail to instantiate chaincode. Error message: ${err.stack}` ? err.stack : err);
@@ -495,7 +495,7 @@ class FabricClient {
   importCer(keyPath, certPath) {
     // -------------------- admin start ---------
     logger.info('start to create admin user.');
-    return this.fabric_client.createUser({
+    return this.fabricClient.createUser({
       username: this.config.mspid,
       mspid: this.config.mspid,
       cryptoContent: {
@@ -531,7 +531,7 @@ class FabricClient {
       logger.error(err);
       return Promise.reject('fail');
     }
-    return this.fabric_client.queryInstalledChaincodes(this.peer)
+    return this.fabricClient.queryInstalledChaincodes(this.peer)
       .then((response) => {
         if (response) {
           logger.info('Successfully get response from fabric client');
@@ -595,7 +595,7 @@ class FabricClient {
       return Promise.reject('fail');
     }
     const self = this;
-    return self.fabric_client.queryChannels(self.peer)
+    return self.fabricClient.queryChannels(self.peer)
       .then((response) => {
         if (response) {
           logger.info('Successfully get response from fabric client');
@@ -659,10 +659,10 @@ class FabricClient {
           return Promise.reject('fail');
         }
 
-        const tempTxId = self.fabric_client.newTransactionID();
+        const tempTxId = self.fabricClient.newTransactionID();
         const envelopeBytes = fs.readFileSync(path.join(__dirname, '../../resources/key/tx/' + channelName + '.tx'));
-        const tempConfig = self.fabric_client.extractChannelConfig(envelopeBytes);
-        const signature = self.fabric_client.signChannelConfig(tempConfig);
+        const tempConfig = self.fabricClient.extractChannelConfig(envelopeBytes);
+        const signature = self.fabricClient.signChannelConfig(tempConfig);
         const stringSignature = signature.toBuffer().toString('hex');
         const tempSignatures = [];
         tempSignatures.push(stringSignature);
@@ -673,7 +673,7 @@ class FabricClient {
           orderer: self.order,
           txId: tempTxId,
         };
-        return self.fabric_client.createChannel(request);
+        return self.fabricClient.createChannel(request);
       })
       .then((result) => {
         logger.info(' response ::%j', result);
@@ -705,7 +705,7 @@ class FabricClient {
     }
     const self = this;
 
-    const tempTxId = self.fabric_client.newTransactionID(); // 根据用户的证书构建新的事务ID，并自动生成nonce值。
+    const tempTxId = self.fabricClient.newTransactionID(); // 根据用户的证书构建新的事务ID，并自动生成nonce值。
     const request = {
       txId: tempTxId,
     };
@@ -717,7 +717,7 @@ class FabricClient {
         const tempTargets = [];
         tempTargets.push(self.peer);
         const genesisBlock = block;
-        const _tempTxId = self.fabric_client.newTransactionID();
+        const _tempTxId = self.fabricClient.newTransactionID();
         const _request = {
           targets: tempTargets,
           block: genesisBlock,
@@ -766,24 +766,37 @@ class FabricClient {
    * @param opts 对象
    */
   newPeer(url, opts) {
-    return this.fabric_client.newPeer(url, opts);
+    return this.fabricClient.newPeer(url, opts);
+  }
+
+  // 关闭连接
+  close() {
+    this.peer.close();
+    this.order.close();
   }
 }
 
 
 let __fabricClient;
 
-// FabricClient单例模式。后续考虑优化为多套身份，多个client
-export default function getFabricClientSingleton() {
+export function getFabricClientSingletonHelper(dbConfig) {
   if (!__fabricClient) {
-    logger.info('strat create fabric client');
+    logger.info('instantiating fabric client.');
     __fabricClient = new FabricClient();
-    return __fabricClient._gitConfig()
-      .then(__fabricClient._config)
-      .then(__fabricClient._enrollUser)
+    return __fabricClient._getConfig(dbConfig)
+      .then(input => __fabricClient._config(input))
+      .then(() => __fabricClient._enrollUser())
       .then(() => Promise.resolve(__fabricClient));
   }
   return Promise.resolve(__fabricClient);
+}
+
+// TODO: 考虑是否去除export default，全部使用export。
+// 由此保证import无需再区分 import something from 'lib' 与 import {something} from 'lib'
+
+// FabricClient单例模式。后续考虑优化为多套身份，多个client
+export default function getFabricClientSingleton() {
+  return getFabricClientSingletonHelper(db);
 }
 
 export function deleteFabricClientSingleton() {
