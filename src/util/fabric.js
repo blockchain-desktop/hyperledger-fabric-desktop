@@ -7,10 +7,10 @@ const path = require('path');
 const util = require('util');
 const fs = require('fs');
 const { exec } = require('child_process');
+const logger = require('electron-log');
 
 const db = getConfigDBSingleton();
 
-const logger = require('electron-log');
 
 class FabricClient {
   constructor() {
@@ -40,14 +40,14 @@ class FabricClient {
 
       if (config.tlsPeerPath === '' || config.tlsOrdererPath === '') {
         logger.info('+++++++++++++++++');
-        self.flag = false;
+        self.isTlsEnabled = false;
         self.peer = fabricClient.newPeer(config.peerGrpcUrl);
         self.order = fabricClient.newOrderer(config.ordererUrl);
       } else {
         logger.info('------------------');
         self.peerCert = fs.readFileSync(config.tlsPeerPath);
         self.orderersCert = fs.readFileSync(config.tlsOrdererPath);
-        self.flag = true;
+        self.isTlsEnabled = true;
         self.peer = fabricClient.newPeer(config.peerGrpcUrl,
           { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': config.peerSSLTarget });
         self.order = fabricClient.newOrderer(config.ordererUrl,
@@ -104,15 +104,8 @@ class FabricClient {
     if (!channel) {
       logger.info('start create channel');
       channel = this.fabricClient.newChannel(channelName);
-      if (this.flag) {
-        logger.info('-----------');
-        channel.addPeer(this.peer);
-        channel.addOrderer(this.order);
-      } else {
-        logger.info('+++++++++++++++++');
-        channel.addPeer(this.peer);
-        channel.addOrderer(this.order);
-      }
+      channel.addPeer(this.peer);
+      channel.addOrderer(this.order);
       this.channels[channelName] = channel;
     } else {
       logger.info(`channel(${channelName}) exists, get it from memory.`);
