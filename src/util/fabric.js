@@ -70,7 +70,7 @@ class FabricClient {
    * @returns {Promise<Client.User | never>}
    *
    */
-  _enrollUser() {
+  _loginUser() {
     const self = this;
     const usrName = self.config.mspid;
     logger.info('start to load member user.', ' store_path: ', self.store_path);
@@ -187,7 +187,7 @@ class FabricClient {
     let txID;
     const fabricClient = this.fabricClient;
     const self = this;
-    return this._enrollUser(this).then((user) => {
+    return this._loginUser(this).then((user) => {
       if (user && user.isEnrolled()) {
         logger.info(`Successfully loaded user(${user.getName()}) from persistence`);
       } else {
@@ -778,7 +778,7 @@ export function getFabricClientSingletonHelper(dbConfig) {
     __fabricClient = new FabricClient();
     return __fabricClient._getConfig(dbConfig)
       .then(input => __fabricClient._config(input))
-      .then(() => __fabricClient._enrollUser())
+      .then(() => __fabricClient._loginUser())
       .then(() => Promise.resolve(__fabricClient));
   }
   return Promise.resolve(__fabricClient);
