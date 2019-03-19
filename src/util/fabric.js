@@ -3,6 +3,7 @@
 import { getConfigDBSingleton } from './createDB';
 
 const FabricClientSDK = require('fabric-client');
+const FabricCAClientSDK = require('fabric-ca-client');
 const path = require('path');
 const util = require('util');
 const fs = require('fs');
@@ -15,6 +16,7 @@ const db = getConfigDBSingleton();
 class FabricClient {
   constructor() {
     this.fabricClient = new FabricClientSDK();
+    this.fabricCAClient = null;
   }
 
   // 抽出空挡，插入配置文件，以便集成测试
@@ -52,6 +54,11 @@ class FabricClient {
           { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': config.peerSSLTarget });
         self.order = fabricClient.newOrderer(config.ordererUrl,
           { pem: Buffer.from(this.orderersCert).toString(), 'ssl-target-name-override': config.ordererSSLTarget });
+      }
+
+      // FIXME: CA also need to support TLS like peer/orderer above
+      if (config.caServerUrl) {
+        self.fabricCAClient = new FabricCAClientSDK(config.caServerUrl);
       }
 
       logger.info('config:', config);
@@ -760,6 +767,44 @@ class FabricClient {
    */
   newPeer(url, opts) {
     return this.fabricClient.newPeer(url, opts);
+  }
+
+
+  /**
+   * 连接CA，获取用户证书私钥 - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#enroll
+   * @param {EnrollmentRequest} req - 参考 https://fabric-sdk-node.github.io/release-1.4/global.html#EnrollmentRequest
+   * @return {Promise<Enrollment>} enrollment - 参考 https://fabric-sdk-node.github.io/release-1.4/global.html#Enrollment
+   */
+  enroll(req) {
+    return this.fabricCAClient.enroll(req);
+  }
+
+  /**
+   * 连接CA，注册用户 - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#register
+   * @param {RegisterRequest} req - 参考 https://fabric-sdk-node.github.io/release-1.4/global.html#RegisterRequest
+   * @return {Promise<string>} secret
+   */
+  register(req) {
+    return Promise.reject('not implemented');
+  }
+
+  /**
+   * 连接CA，获取当前用户更新后的证书私钥 - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#reenroll
+   * @param {Array.<AttributeRequest>} Optional - https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#reenroll
+   * @return {Promise<Object>} keyCert - Promise for an object with "key" for private key
+   *   and "certificate" for the signed certificate
+   */
+  reenroll(Optional) {
+    return Promise.reject('not implemented');
+  }
+
+  /**
+   * 连接CA，吊销用户证书 - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#revoke
+   * @param {Object} req - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#revoke
+   * @return {Promise<>} result -
+   */
+  revoke(req) {
+    return Promise.reject('not implemented');
   }
 
   // 关闭连接

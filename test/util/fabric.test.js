@@ -31,7 +31,7 @@ describe('fabric v1.1 basic-network', () => {
   }
 
   beforeAll(() => {
-    jest.setTimeout(15000);
+    jest.setTimeout(30000);
     initFabricNetwork();
   });
 
@@ -220,6 +220,92 @@ describe('fabric v1.1 basic-network', () => {
             throw err;
           });
       });
+    });
+  });
+
+  // TODO: configDbForTest的持久化数据参数,包含admin证书登入过程。 目前由fabricClient类的外部维护，考虑是否内部维护。
+  describe('fabric CA management', () => {
+    it('enroll admin user', () => {
+      const req = {
+        enrollmentID: 'admin',
+        enrollmentSecret: 'adminpw',
+      };
+
+      return getFabricClientSingletonHelper(configDbForTest)
+        .then((client) => {
+          return client.enroll(req);
+        })
+        .then((enrollment) => {
+          logger.info('enroll user, get enrollment: ', enrollment);
+          expect(enrollment).not.toBeNull();
+        })
+        .catch((err) => {
+          throw err;
+        });
+    });
+
+    it('enroll to get a TLS certficate', () => {
+      const req = {
+        enrollmentID: 'admin',
+        enrollmentSecret: 'adminpw',
+        // profile: // TODO:
+      };
+
+      return getFabricClientSingletonHelper(configDbForTest)
+        .then((client) => {
+          return client.enroll(req);
+        })
+        .then((enrollment) => {
+          expect(enrollment).not.toBeNull();
+        })
+        .catch((err) => {
+          throw err;
+        });
+    });
+
+
+    it('register user', () => {
+      const userId = 'user1';
+
+      return getFabricClientSingletonHelper(configDbForTest)
+        .then((client) => {
+          const regReq = { enrollmentID: userId, affiliation: 'org1.department1', role: 'client' };
+          // 默认已登入admin用户，否则内部将报错
+          return client.register(regReq)
+            .then((secret) => {
+              logger.info('registering successfully, user secret: ', secret);
+              expect(secret).not.toBeNull();
+
+              const enrReq = {
+                enrollmenID: userId,
+                enrollmenSecret: secret,
+              };
+              return client.enroll(enrReq);
+            })
+            .then((enrollment) => {
+              expect(enrollment).not.toBeNull();
+            });
+        })
+        .catch((err) => {
+          throw err;
+        });
+    });
+
+    it('revoke user', () => {
+      const userId = 'user1';
+      return getFabricClientSingletonHelper(configDbForTest)
+        .then((client) => {
+          const req = {
+            enrollmentID: userId,
+          };
+          return client.revoke(req);
+        })
+        .then((result) => {
+          expect(result).not.toBeNull();
+        })
+        .catch((err) => {
+          throw err;
+        });
     });
   });
 });
