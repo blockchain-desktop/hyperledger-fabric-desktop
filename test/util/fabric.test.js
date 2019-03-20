@@ -330,6 +330,88 @@ describe('fabric v1.1 basic-network', () => {
   });
 });
 
+// TODO: v1.1与v1.3，考虑区别主要在于网络差异，但测试用例可复用同一套。后续用同样逻辑，支持多种版本fabric的测试
+// 目前只处理fabric v1.1-basic-network的例子，处理fabric v1.3需同时考虑sdk版本升级，以及启动脚本的调整等
+// TODO: v1.3 fabric-ca 每次重新生成证书，需处理生成证书逻辑
 describe('fabric v1.3 fabric-ca network', () => {
-  // TODO
+  function initFabricNetwork() {
+    let buf;
+
+    logger.info('Shuting down old Fabric Network.');
+    buf = execSync('cd fabric/v1.3/fabric-ca && ./stop.sh');
+    logger.debug(buf.toString());
+
+    logger.info('Initiating Fabric Network.');
+    buf = execSync('cd fabric/v1.3/fabric-ca && ./start.sh');
+    logger.debug(buf.toString());
+  }
+
+  beforeAll(() => {
+    jest.setTimeout(30000);
+    initFabricNetwork();
+  });
+
+  // 注意, config.db文件中的"path"字段，对应fabric-node-sdk的用户私钥仓库路径，需根据测试环境配置，
+  const configDbForTest = new Datastore({
+    filename: path.join(__dirname, '../resources/v1.3-fabric-ca/persistence/config.db'),
+    autoload: true,
+  });
+
+  // it('fabric client log-in', () => {
+  //   getFabricClientSingletonHelper(configDbForTest)
+  //     .then((client) => {
+  //       client.importCer();
+  //     }));
+  // });
+
+  describe('Fabric Client Basic', () => {
+    it('instantiate client.', () =>
+      getFabricClientSingletonHelper(configDbForTest)
+        .then((client) => {
+          expect(client)
+            .not
+            .toBeNull();
+        }));
+
+    it('query chaincode', () => {
+      const clientPromise = getFabricClientSingletonHelper(configDbForTest);
+      return clientPromise.then((client) => {
+        logger.info('OK. Got client. client.channel: ', client.channels);
+        return client.queryCc('mycc', 'query', ['a'], 'mychannel')
+          .then((result) => {
+            logger.info('query result: ', result);
+            expect(result)
+              .not
+              .toBeNull();
+          })
+          .catch((err) => {
+            logger.error(err);
+            throw new Error();
+          });
+      });
+    });
+  });
+
+  describe('fabric CA management', () => {
+    it('enroll admin user', () => {
+
+    });
+
+    it('register normal user', () => getFabricClientSingletonHelper(configDbForTest)
+      .then(client =>
+        client.register(''),
+      ).then((secret) => {
+        expect(secret).not.toBeNull();
+      }).catch((err) => {
+        throw err;
+      }));
+
+    it('enroll normal user', () => {
+
+    });
+
+    it('revoke normal user', () => {
+
+    });
+  });
 });
