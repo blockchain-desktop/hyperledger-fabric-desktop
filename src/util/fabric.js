@@ -835,11 +835,8 @@ export function getFabricClientSingletonHelper(dbConfig) {
   return Promise.resolve(__fabricClient);
 }
 
-// TODO: 考虑是否去除export default，全部使用export。
-// 由此保证import无需再区分 import something from 'lib' 与 import {something} from 'lib'
-
 // FabricClient单例模式。后续考虑优化为多套身份，多个client
-export default function getFabricClientSingleton() {
+export function getFabricClientSingleton() {
   return getFabricClientSingletonHelper(db);
 }
 

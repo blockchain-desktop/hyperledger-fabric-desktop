@@ -3,7 +3,7 @@
 // TODO: 登录页（秘钥导入页面）
 import React from 'react';
 import { Button, Input, Layout, Icon, message } from 'antd';
-import getFabricClientSingleton from '../util/fabric';
+import { getFabricClientSingleton } from '../util/fabric';
 import { getConfigDBSingleton } from '../util/createDB';
 
 

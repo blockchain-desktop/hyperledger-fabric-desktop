@@ -8,7 +8,7 @@ import LoadingLayout from './components/LoadingLayout';
 
 import { getConfigDBSingleton } from './util/createDB';
 // import generateYaml from './util/generateYaml';
-// import getFabricClientSingleton from './util/fabric';
+// import { getFabricClientSingleton } from './util/fabric';
 
 
 const logger = require('electron-log');

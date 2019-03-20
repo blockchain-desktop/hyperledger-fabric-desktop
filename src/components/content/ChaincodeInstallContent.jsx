@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { Button, Form, Input, Modal, Menu, Dropdown, Icon, Select, Tag, message } from 'antd';
-import getFabricClientSingleton from '../../util/fabric';
+import { getFabricClientSingleton } from '../../util/fabric';
 
 const logger = require('electron-log');
 

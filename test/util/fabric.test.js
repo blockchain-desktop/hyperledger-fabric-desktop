@@ -1,5 +1,5 @@
 // Copyright 2019 The hyperledger-fabric-desktop Authors. All rights reserved.
-import { getFabricClientSingletonHelper, deleteFabricClientSingleton} from '../../src/util/fabric';
+import { getFabricClientSingletonHelper, deleteFabricClientSingleton } from '../../src/util/fabric';
 
 const { execSync } = require('child_process');
 const logger = require('electron-log');

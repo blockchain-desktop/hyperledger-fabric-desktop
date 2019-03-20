@@ -3,7 +3,7 @@
 import React from 'react';
 import { Col, Row, Table, Modal, Select, message } from 'antd';
 import { getQueryBlockSingleton, deleteQueryBlockSingleton } from '../../util/queryBlock';
-import getFabricClientSingleton from '../../util/fabric';
+import { getFabricClientSingleton } from '../../util/fabric';
 
 const logger = require('electron-log');
 
