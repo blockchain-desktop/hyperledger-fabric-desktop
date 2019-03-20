@@ -778,7 +778,7 @@ class FabricClient {
 
   /**
    * 连接CA，获取用户证书私钥 - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#enroll
-   * @param {EnrollmentRequest} req - 参考 https://fabric-sdk-node.github.io/release-1.4/global.html#EnrollmentRequest
+   * @param {FabricCAServices.IEnrollmentRequest} req - 参考 https://fabric-sdk-node.github.io/release-1.4/global.html#EnrollmentRequest
    * @return {Promise<Enrollment>} enrollment - 参考 https://fabric-sdk-node.github.io/release-1.4/global.html#Enrollment
    */
   enroll(req) {
@@ -787,7 +787,7 @@ class FabricClient {
 
   /**
    * 连接CA，注册用户 - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#register
-   * @param {RegisterRequest} req - 参考 https://fabric-sdk-node.github.io/release-1.4/global.html#RegisterRequest
+   * @param {FabricCAServices.IRegisterRequest} req - 参考 https://fabric-sdk-node.github.io/release-1.4/global.html#RegisterRequest
    * @return {Promise<string>} secret
    */
   register(req) {
@@ -796,7 +796,7 @@ class FabricClient {
 
   /**
    * 连接CA，获取当前用户更新后的证书私钥 - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#reenroll
-   * @param {Array.<AttributeRequest>} Optional - https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#reenroll
+   * @param {Array.<FabricCAServices.IAttributeRequest>} Optional - https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#reenroll
    * @return {Promise<Object>} keyCert - Promise for an object with "key" for private key
    *   and "certificate" for the signed certificate
    */
@@ -806,7 +806,7 @@ class FabricClient {
 
   /**
    * 连接CA，吊销用户证书 - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#revoke
-   * @param {Object} req - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#revoke
+   * @param {FabricCAServices.IRevokeRequest} req - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#revoke
    * @return {Promise<>} result -
    */
   revoke(req) {
@@ -844,5 +844,6 @@ export default function getFabricClientSingleton() {
 }
 
 export function deleteFabricClientSingleton() {
+  __fabricClient.close();
   __fabricClient = null;
 }

@@ -1,5 +1,5 @@
 // Copyright 2019 The hyperledger-fabric-desktop Authors. All rights reserved.
-import { getFabricClientSingletonHelper } from '../../src/util/fabric';
+import { getFabricClientSingletonHelper, deleteFabricClientSingleton} from '../../src/util/fabric';
 
 const { execSync } = require('child_process');
 const logger = require('electron-log');
@@ -224,15 +224,25 @@ describe('fabric v1.1 basic-network', () => {
     });
   });
 
-  // TODO: configDbForTest的持久化数据参数,包含admin证书登入过程。 目前由fabricClient类的外部维护，考虑是否内部维护。
   describe('fabric CA management', () => {
+    // TODO: configDbForTest的持久化数据参数,包含admin证书登入过程。 目前由fabricClient类的外部维护，考虑是否内部维护。
+    // FIXME: 因CA每次重新启动，将重新生成admin证书。所以不能在git中静态存储证书私钥，而需要在测试中动态生成处理。
+    const configDbForCATest = new Datastore({
+      filename: path.join(__dirname, '../resources/persistence/configCAAdmin.db'),
+      autoload: true,
+    });
+
+    beforeAll(() => {
+      deleteFabricClientSingleton();
+    });
+
     it('enroll admin user', () => {
       const req = {
         enrollmentID: 'admin',
         enrollmentSecret: 'adminpw',
       };
 
-      return getFabricClientSingletonHelper(configDbForTest)
+      return getFabricClientSingletonHelper(configDbForCATest)
         .then(client => client.enroll(req))
         .then((enrollment) => {
           logger.info('enroll user, get enrollment: ', enrollment);
@@ -251,7 +261,7 @@ describe('fabric v1.1 basic-network', () => {
       };
       throw Error('not implemented');
 
-      return getFabricClientSingletonHelper(configDbForTest)
+      return getFabricClientSingletonHelper(configDbForCATest)
         .then(client => client.enroll(req))
         .then((enrollment) => {
           expect(enrollment).not.toBeNull();
@@ -265,7 +275,7 @@ describe('fabric v1.1 basic-network', () => {
     it('register user', () => {
       const userId = 'usertest';
 
-      return getFabricClientSingletonHelper(configDbForTest)
+      return getFabricClientSingletonHelper(configDbForCATest)
         .then((client) => {
           const regReq = { enrollmentID: userId, affiliation: 'org1.department1', role: 'client' };
           // 默认已登入admin用户，否则内部将报错
@@ -290,7 +300,7 @@ describe('fabric v1.1 basic-network', () => {
         });
     });
 
-    it('reenroll current user', () => getFabricClientSingletonHelper(configDbForTest)
+    it('reenroll current user', () => getFabricClientSingletonHelper(configDbForCATest)
       .then(client => client.reenroll(null))
       .then((enrollment) => {
         logger.info('reenrolling successfully, new enrollment: ', enrollment);
@@ -302,7 +312,7 @@ describe('fabric v1.1 basic-network', () => {
 
     it('revoke user', () => {
       const userId = 'usertest';
-      return getFabricClientSingletonHelper(configDbForTest)
+      return getFabricClientSingletonHelper(configDbForCATest)
         .then((client) => {
           const req = {
             enrollmentID: userId,
