@@ -98,6 +98,7 @@ describe('fabric v1.1 basic-network', () => {
 
       it('invoke for multiple peers', () => {
         // TODO: to be implemented
+        throw Error('to be implemented');
       });
     });
 
@@ -232,9 +233,7 @@ describe('fabric v1.1 basic-network', () => {
       };
 
       return getFabricClientSingletonHelper(configDbForTest)
-        .then((client) => {
-          return client.enroll(req);
-        })
+        .then(client => client.enroll(req))
         .then((enrollment) => {
           logger.info('enroll user, get enrollment: ', enrollment);
           expect(enrollment).not.toBeNull();
@@ -250,11 +249,10 @@ describe('fabric v1.1 basic-network', () => {
         enrollmentSecret: 'adminpw',
         // profile: // TODO:
       };
+      throw Error('not implemented');
 
       return getFabricClientSingletonHelper(configDbForTest)
-        .then((client) => {
-          return client.enroll(req);
-        })
+        .then(client => client.enroll(req))
         .then((enrollment) => {
           expect(enrollment).not.toBeNull();
         })
@@ -265,7 +263,7 @@ describe('fabric v1.1 basic-network', () => {
 
 
     it('register user', () => {
-      const userId = 'user1';
+      const userId = 'usertest';
 
       return getFabricClientSingletonHelper(configDbForTest)
         .then((client) => {
@@ -277,12 +275,13 @@ describe('fabric v1.1 basic-network', () => {
               expect(secret).not.toBeNull();
 
               const enrReq = {
-                enrollmenID: userId,
-                enrollmenSecret: secret,
+                enrollmentID: userId,
+                enrollmentSecret: secret,
               };
               return client.enroll(enrReq);
             })
             .then((enrollment) => {
+              logger.info('enroll after registering successfully, enrollment: ', enrollment);
               expect(enrollment).not.toBeNull();
             });
         })
@@ -291,8 +290,18 @@ describe('fabric v1.1 basic-network', () => {
         });
     });
 
+    it('reenroll current user', () => getFabricClientSingletonHelper(configDbForTest)
+      .then(client => client.reenroll(null))
+      .then((enrollment) => {
+        logger.info('reenrolling successfully, new enrollment: ', enrollment);
+        expect(enrollment).not.toBeNull();
+      })
+      .catch((err) => {
+        throw err;
+      }));
+
     it('revoke user', () => {
-      const userId = 'user1';
+      const userId = 'usertest';
       return getFabricClientSingletonHelper(configDbForTest)
         .then((client) => {
           const req = {
@@ -301,6 +310,7 @@ describe('fabric v1.1 basic-network', () => {
           return client.revoke(req);
         })
         .then((result) => {
+          logger.info('revoke user result: ', result);
           expect(result).not.toBeNull();
         })
         .catch((err) => {

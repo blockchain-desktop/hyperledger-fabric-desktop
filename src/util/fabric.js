@@ -17,6 +17,7 @@ class FabricClient {
   constructor() {
     this.fabricClient = new FabricClientSDK();
     this.fabricCAClient = null;
+    this.user = null;
   }
 
   // 抽出空挡，插入配置文件，以便集成测试
@@ -48,14 +49,15 @@ class FabricClient {
       } else {
         logger.info('------------------');
         self.peerCert = fs.readFileSync(config.tlsPeerPath);
-        self.orderersCert = fs.readFileSync(config.tlsOrdererPath);
+        self.ordererCert = fs.readFileSync(config.tlsOrdererPath);
         self.isTlsEnabled = true;
         self.peer = fabricClient.newPeer(config.peerGrpcUrl,
           { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': config.peerSSLTarget });
         self.order = fabricClient.newOrderer(config.ordererUrl,
-          { pem: Buffer.from(this.orderersCert).toString(), 'ssl-target-name-override': config.ordererSSLTarget });
+          { pem: Buffer.from(this.ordererCert).toString(), 'ssl-target-name-override': config.ordererSSLTarget });
       }
 
+      // TODO: 考虑 ca管理 与 peer管理，分别维护两套用户
       // FIXME: CA also need to support TLS like peer/orderer above
       if (config.caServerUrl) {
         self.fabricCAClient = new FabricCAClientSDK(config.caServerUrl);
@@ -96,7 +98,12 @@ class FabricClient {
       self.fabricClient.setCryptoSuite(cryptoSuite);
 
       logger.info('almost done');
-      return self.fabricClient.getUserContext(usrName, true);
+      return self.fabricClient.getUserContext(usrName, true) // FIXME: usernaem和mspid可能要分开
+        .then((user) => {
+          logger.info('loginUser: ', user.toString());
+          self.user = user;
+          return Promise.resolve(user);
+        });
     });
   }
 
@@ -198,8 +205,7 @@ class FabricClient {
       if (user && user.isEnrolled()) {
         logger.info(`Successfully loaded user(${user.getName()}) from persistence`);
       } else {
-        logger.error('Failed to get user run registerUser.js');
-        return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
+        return Promise.reject(new Error('Failed to get user'));
       }
 
       // get a transaction id object based on the current user assigned to fabric client
@@ -785,7 +791,7 @@ class FabricClient {
    * @return {Promise<string>} secret
    */
   register(req) {
-    return Promise.reject('not implemented');
+    return this.fabricCAClient.register(req, this.user);
   }
 
   /**
@@ -795,7 +801,7 @@ class FabricClient {
    *   and "certificate" for the signed certificate
    */
   reenroll(Optional) {
-    return Promise.reject('not implemented');
+    return this.fabricCAClient.reenroll(this.user, Optional);
   }
 
   /**
@@ -804,7 +810,7 @@ class FabricClient {
    * @return {Promise<>} result -
    */
   revoke(req) {
-    return Promise.reject('not implemented');
+    return this.fabricCAClient.revoke(req, this.user);
   }
 
   // 关闭连接
