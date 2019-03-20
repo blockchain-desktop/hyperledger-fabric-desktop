@@ -3,18 +3,21 @@
 import { getConfigDBSingleton } from './createDB';
 
 const FabricClientSDK = require('fabric-client');
+const FabricCAClientSDK = require('fabric-ca-client');
 const path = require('path');
 const util = require('util');
 const fs = require('fs');
 const { exec } = require('child_process');
+const logger = require('electron-log');
 
 const db = getConfigDBSingleton();
 
-const logger = require('electron-log');
 
 class FabricClient {
   constructor() {
     this.fabricClient = new FabricClientSDK();
+    this.fabricCAClient = null;
+    this.user = null;
   }
 
   // 抽出空挡，插入配置文件，以便集成测试
@@ -40,18 +43,24 @@ class FabricClient {
 
       if (config.tlsPeerPath === '' || config.tlsOrdererPath === '') {
         logger.info('+++++++++++++++++');
-        self.flag = false;
+        self.isTlsEnabled = false;
         self.peer = fabricClient.newPeer(config.peerGrpcUrl);
         self.order = fabricClient.newOrderer(config.ordererUrl);
       } else {
         logger.info('------------------');
         self.peerCert = fs.readFileSync(config.tlsPeerPath);
-        self.orderersCert = fs.readFileSync(config.tlsOrdererPath);
-        self.flag = true;
+        self.ordererCert = fs.readFileSync(config.tlsOrdererPath);
+        self.isTlsEnabled = true;
         self.peer = fabricClient.newPeer(config.peerGrpcUrl,
           { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': config.peerSSLTarget });
         self.order = fabricClient.newOrderer(config.ordererUrl,
-          { pem: Buffer.from(this.orderersCert).toString(), 'ssl-target-name-override': config.ordererSSLTarget });
+          { pem: Buffer.from(this.ordererCert).toString(), 'ssl-target-name-override': config.ordererSSLTarget });
+      }
+
+      // TODO: 考虑 ca管理 与 peer管理，分别维护两套用户
+      // FIXME: CA also need to support TLS like peer/orderer above
+      if (config.caServerUrl) {
+        self.fabricCAClient = new FabricCAClientSDK(config.caServerUrl);
       }
 
       logger.info('config:', config);
@@ -70,7 +79,7 @@ class FabricClient {
    * @returns {Promise<Client.User | never>}
    *
    */
-  _enrollUser() {
+  _loginUser() {
     const self = this;
     const usrName = self.config.mspid;
     logger.info('start to load member user.', ' store_path: ', self.store_path);
@@ -89,7 +98,12 @@ class FabricClient {
       self.fabricClient.setCryptoSuite(cryptoSuite);
 
       logger.info('almost done');
-      return self.fabricClient.getUserContext(usrName, true);
+      return self.fabricClient.getUserContext(usrName, true) // FIXME: usernaem和mspid可能要分开
+        .then((user) => {
+          logger.info('loginUser: ', user.toString());
+          self.user = user;
+          return Promise.resolve(user);
+        });
     });
   }
 
@@ -104,15 +118,8 @@ class FabricClient {
     if (!channel) {
       logger.info('start create channel');
       channel = this.fabricClient.newChannel(channelName);
-      if (this.flag) {
-        logger.info('-----------');
-        channel.addPeer(this.peer);
-        channel.addOrderer(this.order);
-      } else {
-        logger.info('+++++++++++++++++');
-        channel.addPeer(this.peer);
-        channel.addOrderer(this.order);
-      }
+      channel.addPeer(this.peer);
+      channel.addOrderer(this.order);
       this.channels[channelName] = channel;
     } else {
       logger.info(`channel(${channelName}) exists, get it from memory.`);
@@ -194,12 +201,11 @@ class FabricClient {
     let txID;
     const fabricClient = this.fabricClient;
     const self = this;
-    return this._enrollUser(this).then((user) => {
+    return this._loginUser(this).then((user) => {
       if (user && user.isEnrolled()) {
         logger.info(`Successfully loaded user(${user.getName()}) from persistence`);
       } else {
-        logger.error('Failed to get user run registerUser.js');
-        return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
+        return Promise.reject(new Error('Failed to get user'));
       }
 
       // get a transaction id object based on the current user assigned to fabric client
@@ -769,6 +775,44 @@ class FabricClient {
     return this.fabricClient.newPeer(url, opts);
   }
 
+
+  /**
+   * 连接CA，获取用户证书私钥 - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#enroll
+   * @param {EnrollmentRequest} req - 参考 https://fabric-sdk-node.github.io/release-1.4/global.html#EnrollmentRequest
+   * @return {Promise<Enrollment>} enrollment - 参考 https://fabric-sdk-node.github.io/release-1.4/global.html#Enrollment
+   */
+  enroll(req) {
+    return this.fabricCAClient.enroll(req);
+  }
+
+  /**
+   * 连接CA，注册用户 - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#register
+   * @param {RegisterRequest} req - 参考 https://fabric-sdk-node.github.io/release-1.4/global.html#RegisterRequest
+   * @return {Promise<string>} secret
+   */
+  register(req) {
+    return this.fabricCAClient.register(req, this.user);
+  }
+
+  /**
+   * 连接CA，获取当前用户更新后的证书私钥 - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#reenroll
+   * @param {Array.<AttributeRequest>} Optional - https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#reenroll
+   * @return {Promise<Object>} keyCert - Promise for an object with "key" for private key
+   *   and "certificate" for the signed certificate
+   */
+  reenroll(Optional) {
+    return this.fabricCAClient.reenroll(this.user, Optional);
+  }
+
+  /**
+   * 连接CA，吊销用户证书 - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#revoke
+   * @param {Object} req - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#revoke
+   * @return {Promise<>} result -
+   */
+  revoke(req) {
+    return this.fabricCAClient.revoke(req, this.user);
+  }
+
   // 关闭连接
   close() {
     this.peer.close();
@@ -785,7 +829,7 @@ export function getFabricClientSingletonHelper(dbConfig) {
     __fabricClient = new FabricClient();
     return __fabricClient._getConfig(dbConfig)
       .then(input => __fabricClient._config(input))
-      .then(() => __fabricClient._enrollUser())
+      .then(() => __fabricClient._loginUser())
       .then(() => Promise.resolve(__fabricClient));
   }
   return Promise.resolve(__fabricClient);

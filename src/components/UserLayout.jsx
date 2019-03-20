@@ -68,20 +68,21 @@ export default class UserLayout extends React.Component {
         peerSSLTarget: this.state.peerSSLTarget,
         ordererSSLTarget: this.state.ordererSSLTarget,
         path: 'resources/key/users/' } },
-      {}, () => {
-      });
-    getFabricClientSingleton().then((fabricClient) => {
-      fabricClient.importCer(this.state.keyPath, this.state.certPath).then((result) => {
-        db.update({ id: 0 },
-          { $set: { isSign: 2 } },
-          {}, () => {
+      {},
+      () => {
+        getFabricClientSingleton().then((fabricClient) => {
+          fabricClient.importCer(this.state.keyPath, this.state.certPath).then((result) => {
+            db.update({ id: 0 },
+              { $set: { isSign: 2 } },
+              {}, () => {
+              });
+            this.props.onGetChildMessage(2);
+            logger.info('result', result);
+          }, () => {
+            message.error(this.state.Common.ERROR.certificateFailed);
           });
-        this.props.onGetChildMessage(2);
-        logger.info('result', result);
-      }, () => {
-        message.error(this.state.Common.ERROR.certificateFailed);
+        });
       });
-    });
 
     logger.info(this.state.certPath);
   }
