@@ -844,6 +844,8 @@ export default function getFabricClientSingleton() {
 }
 
 export function deleteFabricClientSingleton() {
-  __fabricClient.close();
-  __fabricClient = null;
+  if (__fabricClient) {
+    __fabricClient.close();
+    __fabricClient = null;
+  }
 }
