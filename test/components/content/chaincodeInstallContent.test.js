@@ -2,6 +2,11 @@ import React from 'react';
 import TestUtils from 'react-dom/test-utils';
 import ChaincodeInstallContent from '../../../src/components/content/ChaincodeInstallContent.jsx';
 
+// TODO: 待测试内容
+// 1. 按钮对 内容显示的影响
+// 2. 功能成功后，对显示的影响
+// 3. 功能失败后，显示如何处理
+
 // Required: Test if click on `add contract` button,a new modal will be poped up or not.
 describe('DOM rendering', () => {
   it('Click on add contract button,the contract item should be added.', () => {

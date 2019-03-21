@@ -1,7 +1,7 @@
 // Copyright 2018 The hyperledger-fabric-desktop Authors. All rights reserved.
 
 import { getBlockDBSingleton } from './createDB';
-import getFabricClientSingleton from './fabric';
+import { getFabricClientSingleton } from './fabric';
 
 const db = getBlockDBSingleton();
 

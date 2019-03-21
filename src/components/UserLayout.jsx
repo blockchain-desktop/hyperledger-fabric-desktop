@@ -3,7 +3,7 @@
 // TODO: 登录页（秘钥导入页面）
 import React from 'react';
 import { Button, Input, Layout, Icon, message } from 'antd';
-import getFabricClientSingleton from '../util/fabric';
+import { getFabricClientSingleton } from '../util/fabric';
 import { getConfigDBSingleton } from '../util/createDB';
 
 
@@ -38,6 +38,7 @@ export default class UserLayout extends React.Component {
       keylabel: ' choose a private key',
       tlsPeerLabel: ' choose a peer tls ca cert',
       tlsOrdererLabel: 'choose a orderer tls ca cert',
+      caServerUrl: 'http://localhost:7054', // TODO: 待实现
       Common: localStorage.getItem('language') === 'cn' ? require('../common/common_cn') : require('../common/common'),
     };
 
@@ -53,6 +54,7 @@ export default class UserLayout extends React.Component {
     this.mspidChange = this.mspidChange.bind(this);
     this.peerSSLTargetChange = this.peerSSLTargetChange.bind(this);
     this.ordererSSLTargetChange = this.ordererSSLTargetChange.bind(this);
+    this.caServerUrlChange = this.caServerUrlChange.bind(this);
     this.changeLangtoEn = this.changeLangtoEn.bind(this);
     this.changeLangtoCn = this.changeLangtoCn.bind(this);
   }
@@ -92,6 +94,10 @@ export default class UserLayout extends React.Component {
 
   peerEventUrlChange(event) {
     this.setState({ peerEventUrl: event.target.value });
+  }
+
+  caServerUrlChange(event) {
+    this.setState({ caServerUrl: event.target.value });
   }
 
   cerImport() {
@@ -310,26 +316,6 @@ export default class UserLayout extends React.Component {
 
             <div style={firstDivStyle}>
               <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>{this.state.Common.LOGIN_PEER_GRPC_URL}:</span>
-              <Input type="text" style={InputStyle} value={this.state.peerGrpcUrl} onChange={this.peerGrpcUrlChange} />
-            </div>
-            <div style={divStyle}>
-              <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>{this.state.Common.LOGIN_PEER_EVENT_URL}:</span>
-              <Input type="text" style={InputStyle} value={this.state.peerEventUrl} onChange={this.peerEventUrlChange} />
-            </div>
-            <div style={divStyle}>
-              <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>{this.state.Common.LOGIN_ORDERER_URL}:</span>
-              <Input type="text" style={InputStyle} value={this.state.ordererUrl} onChange={this.ordererChange} />
-            </div>
-            <div style={divStyle}>
-              <span style={asteriskStyle}>*&nbsp;</span>
-              <span style={spanStyle}>{this.state.Common.LOGIN_MSP_ID}:</span>
-              <Input type="text" style={InputStyle} value={this.state.mspid} onChange={this.mspidChange} />
-            </div>
-            <div style={divStyle}>
-              <span style={asteriskStyle}>*&nbsp;</span>
               <span style={spanStyle}>{this.state.Common.LOGIN_CERTIFICATE}:</span>
               <input type="file" id="cerFiles" name="cerFiles" style={fileStyle}onChange={this.cerImport} />
               <label htmlFor="cerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.certlabel} </label>
@@ -339,6 +325,27 @@ export default class UserLayout extends React.Component {
               <span style={spanStyle}>{this.state.Common.LOGIN_PRIVATE_KEY}:</span>
               <input type="file" id="priFiles" name="priFiles" style={fileStyle} onChange={this.priImport} />
               <label htmlFor="priFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.keylabel}</label>
+            </div>
+            <div style={divStyle}>
+              <span style={asteriskStyle}>*&nbsp;</span>
+              <span style={spanStyle}>{this.state.Common.LOGIN_MSP_ID}:</span>
+              <Input type="text" style={InputStyle} value={this.state.mspid} onChange={this.mspidChange} />
+            </div>
+            <div style={divStyle}>
+              <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_PEER_GRPC_URL}:</span>
+              <Input type="text" style={InputStyle} value={this.state.peerGrpcUrl} onChange={this.peerGrpcUrlChange} />
+            </div>
+            <div style={divStyle}>
+              <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_PEER_EVENT_URL}:</span>
+              <Input type="text" style={InputStyle} value={this.state.peerEventUrl} onChange={this.peerEventUrlChange} />
+            </div>
+            <div style={divStyle}>
+              <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_ORDERER_URL}:</span>
+              <Input type="text" style={InputStyle} value={this.state.ordererUrl} onChange={this.ordererChange} />
+            </div>
+            <div style={divStyle}>
+              <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_CA_SERVER_URL}:</span>
+              <Input type="text" style={InputStyle} value={this.state.caServerUrl} onChange={this.caServerUrlChange} />
             </div>
             <div style={divStyle}>
               <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_PEER_TLS_CA_CERT}:</span>

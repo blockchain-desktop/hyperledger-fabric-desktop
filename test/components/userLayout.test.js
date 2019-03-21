@@ -9,7 +9,7 @@ function shallowRender(Component) {
 }
 
 describe('title', () => {
-  it('UserLayout\\\'s title should be Fabric Desktop', () => {
+  it('UserLayout\'s title should be Fabric Desktop', () => {
     const userLayout = shallowRender(UserLayout);
     expect(userLayout.props.children[1].props.children.props.children[0].type).toBe('div');
     expect(userLayout.props.children[1].props.children.props.children[0].props.children.props.children).toBe('Fabric Desktop');
@@ -18,7 +18,8 @@ describe('title', () => {
 
 describe('Some variable should change with the value of the input box', () => {
   const userLayout = TestUtils.renderIntoDocument(<UserLayout />);
-  const inputItem = TestUtils.scryRenderedDOMComponentsWithTag(userLayout, 'input');
+  let inputItem = TestUtils.scryRenderedDOMComponentsWithTag(userLayout, 'input');
+  inputItem = inputItem.slice(1, inputItem.length);
 
   it('peerGrpcUrl', () => {
     const input = inputItem[0];
@@ -65,5 +66,13 @@ describe('Some variable should be the file path selected by the selector', () =>
     const input = inputItem[4];
     input.files.path = '/home/hjs/admin/a05e3c5fc2c10dee7f20a2750a4397c456918526284608ca5f7a12eda496e1e1_sk';
     expect(input.files.path).toBe('/home/hjs/admin/a05e3c5fc2c10dee7f20a2750a4397c456918526284608ca5f7a12eda496e1e1_sk');
+  });
+});
+
+describe('fill inputs by config file', () => {
+  const userLayout = TestUtils.renderIntoDocument(<UserLayout />);
+
+  it('import config file', () => {
+
   });
 });

@@ -55,6 +55,7 @@ Common.LOGIN_PEER_TLS_CA_CERT = 'Peer TLS CA Cert';
 Common.LOGIN_ORDERER_TLS_CA_CERT = 'Orderer TLS CA Cert';
 Common.LOGIN_PEER_SSL_TARGET = 'Peer SSL Target';
 Common.LOGIN_ORDERER_SSL_TARGET = 'Orderer SSL Target';
+Common.LOGIN_CA_SERVER_URL = 'CA Server Url';
 
 
 Common.WARN = {

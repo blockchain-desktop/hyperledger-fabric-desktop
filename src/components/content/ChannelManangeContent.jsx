@@ -4,7 +4,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Button, message, Input, Icon, Tooltip } from 'antd';
-import getFabricClientSingleton from '../../util/fabric';
+import { getFabricClientSingleton } from '../../util/fabric';
 import { copyDir, copyFile, deleteDir } from '../../util/tools';
 
 const path = require('path');

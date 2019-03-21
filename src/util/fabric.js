@@ -41,20 +41,20 @@ class FabricClient {
     return new Promise((resolve) => {
       logger.info('config:', config);
 
-      if (config.tlsPeerPath === '' || config.tlsOrdererPath === '') {
-        logger.info('+++++++++++++++++');
-        self.isTlsEnabled = false;
-        self.peer = fabricClient.newPeer(config.peerGrpcUrl);
-        self.order = fabricClient.newOrderer(config.ordererUrl);
-      } else {
-        logger.info('------------------');
-        self.peerCert = fs.readFileSync(config.tlsPeerPath);
-        self.ordererCert = fs.readFileSync(config.tlsOrdererPath);
-        self.isTlsEnabled = true;
-        self.peer = fabricClient.newPeer(config.peerGrpcUrl,
-          { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': config.peerSSLTarget });
-        self.order = fabricClient.newOrderer(config.ordererUrl,
-          { pem: Buffer.from(this.ordererCert).toString(), 'ssl-target-name-override': config.ordererSSLTarget });
+      if (config.peerGrpcUrl) {
+        if (config.tlsPeerPath === '' || config.tlsOrdererPath === '') {
+          self.isTlsEnabled = false;
+          self.peer = fabricClient.newPeer(config.peerGrpcUrl);
+          self.order = fabricClient.newOrderer(config.ordererUrl);
+        } else {
+          self.peerCert = fs.readFileSync(config.tlsPeerPath);
+          self.ordererCert = fs.readFileSync(config.tlsOrdererPath);
+          self.isTlsEnabled = true;
+          self.peer = fabricClient.newPeer(config.peerGrpcUrl,
+            { pem: Buffer.from(this.peerCert).toString(), 'ssl-target-name-override': config.peerSSLTarget });
+          self.order = fabricClient.newOrderer(config.ordererUrl,
+            { pem: Buffer.from(this.ordererCert).toString(), 'ssl-target-name-override': config.ordererSSLTarget });
+        }
       }
 
       // TODO: 考虑 ca管理 与 peer管理，分别维护两套用户
@@ -100,7 +100,6 @@ class FabricClient {
       logger.info('almost done');
       return self.fabricClient.getUserContext(usrName, true) // FIXME: usernaem和mspid可能要分开
         .then((user) => {
-          logger.info('loginUser: ', user.toString());
           self.user = user;
           return Promise.resolve(user);
         });
@@ -835,15 +834,14 @@ export function getFabricClientSingletonHelper(dbConfig) {
   return Promise.resolve(__fabricClient);
 }
 
-// TODO: 考虑是否去除export default，全部使用export。
-// 由此保证import无需再区分 import something from 'lib' 与 import {something} from 'lib'
-
 // FabricClient单例模式。后续考虑优化为多套身份，多个client
-export default function getFabricClientSingleton() {
+export function getFabricClientSingleton() {
   return getFabricClientSingletonHelper(db);
 }
 
 export function deleteFabricClientSingleton() {
-  __fabricClient.close();
-  __fabricClient = null;
+  if (__fabricClient) {
+    __fabricClient.close();
+    __fabricClient = null;
+  }
 }

@@ -1,5 +1,5 @@
 // Copyright 2019 The hyperledger-fabric-desktop Authors. All rights reserved.
-import { getFabricClientSingletonHelper, deleteFabricClientSingleton} from '../../src/util/fabric';
+import { getFabricClientSingletonHelper, deleteFabricClientSingleton } from '../../src/util/fabric';
 
 const { execSync } = require('child_process');
 const logger = require('electron-log');
@@ -68,7 +68,6 @@ describe('fabric v1.1 basic-network', () => {
 
     describe('Fabric Client Advanced', () => {
       describe('invoke chaincode', () => {
-        // FIXME: invoke 后测试进程无法正常结束，可能存在连接或其他调用未断开。待查因解决
         it('invoke for one peer', () => getFabricClientSingletonHelper(configDbForTest)
           .then(client => client.invokeCc('fabcar',
             'changeCarOwner',
@@ -221,7 +220,7 @@ describe('fabric v1.1 basic-network', () => {
 
   describe('fabric CA management', () => {
     // TODO: configDbForTest的持久化数据参数,包含admin证书登入过程。 目前由fabricClient类的外部维护，考虑是否内部维护。
-    // FIXME: 因CA每次重新启动，将重新生成admin证书。所以不能在git中静态存储证书私钥，而需要在测试中动态生成处理。
+    // FIXME: 待修复register测试失败。因CA每次重新启动，将重新生成admin证书。所以不能在git中静态存储证书私钥，而需要在测试中动态生成处理。
     const configDbForCATest = new Datastore({
       filename: path.join(__dirname, '../resources/persistence/configCAAdmin.db'),
       autoload: true,
@@ -252,13 +251,13 @@ describe('fabric v1.1 basic-network', () => {
       const req = {
         enrollmentID: 'admin',
         enrollmentSecret: 'adminpw',
-        // profile: // TODO:
+        profile: 'tls',
       };
-      throw Error('not implemented');
 
       return getFabricClientSingletonHelper(configDbForCATest)
         .then(client => client.enroll(req))
         .then((enrollment) => {
+          logger.info('enroll user TLS cert, get enrollment: ', enrollment);
           expect(enrollment).not.toBeNull();
         })
         .catch((err) => {
