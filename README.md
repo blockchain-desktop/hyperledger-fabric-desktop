@@ -1,7 +1,7 @@
 # Hyperledger Fabric Desktop
 
 Hyperledger Fabric Desktop is an out-of-the-box desktop app 
-and aims to help people use and manage fabric networks easily.
+which aims to help people use and manage fabric networks easily.
 
 [![Build Status](https://travis-ci.org/blockchain-desktop/hyperledger-fabric-desktop.svg?branch=master)](https://travis-ci.org/blockchain-desktop/hyperledger-fabric-desktop)
 

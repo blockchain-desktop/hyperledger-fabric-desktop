@@ -53,7 +53,7 @@ Fabric_Client.newDefaultKeyValueStore({ path: store_path,
 
   // at this point we should have the admin user
   // first need to register the user with the CA server
-  return fabric_ca_client.register({ enrollmentID: 'user1', affiliation: 'org1.department1', role: 'client' }, admin_user);
+  return fabric_ca_client.register({ enrollmentID: 'user1', affiliation: 'org1.department1', role: 'client',attrs: [{ "userid": "p11" }]}, admin_user);
 }).then((secret) => {
   // next we need to enroll the user with CA server
   console.log('Successfully registered user1 - secret:' + secret);
@@ -62,6 +62,11 @@ Fabric_Client.newDefaultKeyValueStore({ path: store_path,
 })
   .then((enrollment) => {
     console.log('Successfully enrolled member user "user1" ');
+    fs.writeFile('./hfc-key-store/user1.pem', enrollment.certificate, (err) => {
+        if (err) {
+            throw err;
+        }
+    });
     return fabric_client.createUser(
       { username: 'user1',
         mspid: 'Org1MSP',
