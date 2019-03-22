@@ -24,6 +24,7 @@ export default class UserLayout extends React.Component {
     super(props);
 
     this.state = {
+      expand: false,
       peerGrpcUrl: 'grpcs://localhost:7051',
       peerEventUrl: 'grpcs://localhost:7053',
       ordererUrl: 'grpcs://localhost:7050',
@@ -34,10 +35,10 @@ export default class UserLayout extends React.Component {
       tlsOrdererPath: '',
       peerSSLTarget: 'peer0.org1.example.com',
       ordererSSLTarget: 'orderer.example.com',
-      certlabel: '  choose a certificate ',
-      keylabel: ' choose a private key',
-      tlsPeerLabel: ' choose a peer tls ca cert',
-      tlsOrdererLabel: 'choose a orderer tls ca cert',
+      certlabel: 'user certificate ',
+      keylabel: 'user private key',
+      tlsPeerLabel: 'peer tls ca cert',
+      tlsOrdererLabel: 'orderer tls ca cert',
       caServerUrl: 'http://localhost:7054', // TODO: 待实现
       Common: localStorage.getItem('language') === 'cn' ? require('../common/common_cn') : require('../common/common'),
     };
@@ -57,6 +58,17 @@ export default class UserLayout extends React.Component {
     this.caServerUrlChange = this.caServerUrlChange.bind(this);
     this.changeLangtoEn = this.changeLangtoEn.bind(this);
     this.changeLangtoCn = this.changeLangtoCn.bind(this);
+    this.toggle=this.toggle.bind(this);
+    this.registerUser=this.registerUser.bind(this);
+  }
+
+  toggle(){
+      const { expand } = this.state;
+      this.setState({ expand: !expand });
+  }
+
+  registerUser(){
+      logger.info("Register new user here!");
   }
 
   onClick() {
@@ -184,11 +196,11 @@ export default class UserLayout extends React.Component {
   }
   render() {
     const LayoutStyle = {
-      maxHeight: '600px',
+      maxHeight: '680px',
       maxWidth: '800px',
     };
     const backgroundStyle = {
-      width: '325px',
+      width: '400px',
       height: 'auto',
       display: 'block',
       position: 'absolute',
@@ -196,9 +208,9 @@ export default class UserLayout extends React.Component {
       backgroundImage: 'url(' + bcgd + ')',
     };
     const contentStyle = {
-      padding: '30px 20px 30px 20px',
+      padding: '10px 20px 10px 20px',
       backgroundColor: '#fff',
-      width: '450px',
+      width: '400px',
       height: 'auto',
       minHeight: '900px',
       display: 'block',
@@ -236,7 +248,7 @@ export default class UserLayout extends React.Component {
       borderRadius: '4px',
       display: 'block',
       float: 'right',
-      width: '200px',
+      width: '160px',
       height: '32px',
       verticalAlign: 'middle',
       textAlign: 'center',
@@ -267,7 +279,7 @@ export default class UserLayout extends React.Component {
       fontSize: '1.2em',
     };
     const InputStyle = {
-      width: '200px',
+      width: '160px',
       display: 'block',
       float: 'right',
     };
@@ -275,10 +287,10 @@ export default class UserLayout extends React.Component {
       margin: '10px 8px 20px 8px',
     };
     const divStyle = {
-      margin: '20px 6px',
+      margin: '15px 6px',
     };
     const lastDivStyle = {
-      margin: '32px 6px',
+      margin: '16px 6px',
     };
     const buttonStyle = {
       width: '100%',
@@ -304,14 +316,6 @@ export default class UserLayout extends React.Component {
             </div>
             <div style={LoginStyle}>
               <span style={fontStyle}>Fabric Desktop</span>
-            </div>
-
-            <div style={divStyle}>
-              <input type="file" id="configFiles" name="configFiles" style={fileStyle} onChange={this.configImport} />
-              <label htmlFor="configFiles" style={configStyle} >
-                <Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />
-                {this.state.Common.LOGIN_CONFIG}
-              </label>
             </div>
 
             <div style={firstDivStyle}>
@@ -365,6 +369,19 @@ export default class UserLayout extends React.Component {
               <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_ORDERER_SSL_TARGET}:</span>
               <Input type="text" style={InputStyle} value={this.state.ordererSSLTarget} onChange={this.ordererSSLTargetChange} />
             </div>
+            <div style={{ margin: '10px 6px',display:this.state.expand?'block':'none'}}>
+              <input type="file" id="configFiles" name="configFiles" style={fileStyle} onChange={this.configImport} />
+              <label htmlFor="configFiles" style={configStyle} >
+                  <Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />
+                  {this.state.Common.LOGIN_CONFIG}
+              </label>
+            </div>
+            <a style={{marginLeft:'10px',marginRight:'200px',fontSize: 12 }} onClick={this.toggle}>
+                Collapse <Icon type={this.state.expand ? 'up' : 'down'} />
+            </a>
+            <a style={{fontSize: 12 }} onClick={this.registerUser}>
+                Register <Icon type="user" />
+            </a>
             <div style={lastDivStyle}>
               <Button type="primary" style={buttonStyle} onClick={this.onClick}>{this.state.Common.LOGIN}</Button>
             </div>
