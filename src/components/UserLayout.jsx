@@ -19,6 +19,10 @@ const { Content } = Layout;
 
 const bcgd = path.join(__dirname, '../../resources/styles/image/blc.jpg');
 
+function _configImportPathHelper(filePath, parentPath) {
+  return path.isAbsolute(filePath) ? filePath : path.join(parentPath, filePath);
+}
+
 export default class UserLayout extends React.Component {
   constructor(props) {
     super(props);
@@ -146,16 +150,15 @@ export default class UserLayout extends React.Component {
       const config = yaml.safeLoad(fs.readFileSync(configFile.path));
       logger.info('Read configFile: ', config);
       const configDir = path.dirname(configFile.path);
-      // TODO: Only support relative path so far. May support absolute path in future.
       this.setState({
         peerGrpcUrl: config.peerGrpcUrl,
         peerEventUrl: config.peerEventUrl,
         ordererUrl: config.ordererUrl,
         mspid: config.mspId,
-        certPath: path.join(configDir, config.certificate),
-        keyPath: path.join(configDir, config.privateKey),
-        tlsPeerPath: config.peerTlsCaCert ? path.join(configDir, config.peerTlsCaCert) : '',
-        tlsOrdererPath: config.ordererTlsCaCert ? path.join(configDir, config.ordererTlsCaCert) : '',
+        certPath: _configImportPathHelper(config.certificate, configDir),
+        keyPath: _configImportPathHelper(config.privateKey, configDir),
+        tlsPeerPath: config.peerTlsCaCert ? _configImportPathHelper(config.peerTlsCaCert, configDir) : '',
+        tlsOrdererPath: config.ordererTlsCaCert ? _configImportPathHelper(config.ordererTlsCaCert, configDir) : '',
         peerSSLTarget: config.peerSslTarget,
         ordererSSLTarget: config.ordererSslTarget,
         certlabel: config.certificate ? path.basename(config.certificate) : config.certificate,
