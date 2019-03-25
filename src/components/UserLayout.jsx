@@ -154,6 +154,7 @@ export default class UserLayout extends React.Component {
         peerGrpcUrl: config.peerGrpcUrl,
         peerEventUrl: config.peerEventUrl,
         ordererUrl: config.ordererUrl,
+        caServerUrl: config.caServerUrl,
         mspid: config.mspId,
         certPath: _configImportPathHelper(config.certificate, configDir),
         keyPath: _configImportPathHelper(config.privateKey, configDir),
