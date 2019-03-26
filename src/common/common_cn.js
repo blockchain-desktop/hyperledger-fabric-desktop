@@ -55,6 +55,8 @@ Common.LOGIN_PEER_SSL_TARGET = '组织节点SSL域名';
 Common.LOGIN_ORDERER_SSL_TARGET = '排序节点SSL域名';
 Common.LOGIN_CA_SERVER_URL = 'CA节点地址';
 
+// user register page
+Common.REGISTER_USERNAME = '用户名';
 
 Common.WARN = {
   chaincodeName: '链码名称不能为空!',
