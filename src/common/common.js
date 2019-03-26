@@ -57,6 +57,8 @@ Common.LOGIN_PEER_SSL_TARGET = 'Peer SSL Target';
 Common.LOGIN_ORDERER_SSL_TARGET = 'Orderer SSL Target';
 Common.LOGIN_CA_SERVER_URL = 'CA Server Url';
 
+// user register page
+Common.REGISTER_USERNAME = 'User Name';
 
 Common.WARN = {
   chaincodeName: 'chaincode name can not be null!',
