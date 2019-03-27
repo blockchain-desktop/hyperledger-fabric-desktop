@@ -59,17 +59,28 @@ Common.LOGIN_CA_SERVER_URL = 'CA Server Url';
 
 // user register page
 Common.REGISTER = 'REGISTER';
-Common.REGISTER_USERNAME = 'User Name';
+Common.REGISTER_USERNAME = 'User ID';
 Common.REGISTER_AFFILIATION = 'Affiliation';
 Common.REGISTER_ROLE = 'Role';
 Common.REGISTER_OPTIONAL = 'Optional';
 Common.REGISTER_CONFIRM = 'Register';
 
 Common.ENROLL = 'ENROLLMENT';
-Common.ENROLL_USERNAME = 'User Name';
+Common.ENROLL_USERNAME = 'User ID';
 Common.ENROLL_PASSWORD = 'Password';
 Common.ENROLL_OPTIONAL = 'Optional';
-Common.ENROLL_CONFIRM = 'Get';
+Common.ENROLL_CONFIRM = 'Enroll';
+
+// user update & revoke page
+Common.REENROLL = 'REENROLL CURRENT USER';
+Common.REENROLL_OPTIONAL = 'Optional';
+Common.REENROLL_CONFIRM = 'Reenroll';
+
+Common.REVOKE = 'REVOKE';
+Common.REVOKE_USERNAME = 'User ID';
+Common.REVOKE_OPTIONAL = 'Optional';
+Common.REVOKE_CONFIRM = 'Revoke';
+
 
 Common.WARN = {
   chaincodeName: 'chaincode name can not be null!',
