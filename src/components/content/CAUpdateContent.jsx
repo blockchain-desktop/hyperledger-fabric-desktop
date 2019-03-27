@@ -191,6 +191,8 @@ export default class CAUpdateContent extends React.Component {
             readOnly
           />
         </div>
+
+        {/*TODO: 实现generateCRL */}
       </div>
 
     );

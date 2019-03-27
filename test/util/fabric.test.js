@@ -12,15 +12,15 @@ const path = require('path');
 // 3. stop fabric network, clean up
 describe('fabric v1.1 basic-network', () => {
   function initFabricNetwork() {
-    logger.info('Initiating Fabric Network.');
-    const buf = execSync('cd fabric/v1.1/fabcar && ./startFabric.sh');
-    logger.debug(buf.toString());
+    // logger.info('Initiating Fabric Network.');
+    // const buf = execSync('cd fabric/v1.1/fabcar && ./startFabric.sh');
+    // logger.debug(buf.toString());
   }
 
   function clearFabricNetwork() {
-    logger.info('clearing Fabric Network.');
-    const buf = execSync('cd fabric/v1.1/basic-network && ./teardown.sh');
-    logger.debug(buf.toString());
+    // logger.info('clearing Fabric Network.');
+    // const buf = execSync('cd fabric/v1.1/basic-network && ./teardown.sh');
+    // logger.debug(buf.toString());
   }
 
   beforeAll(() => {
@@ -315,6 +315,21 @@ describe('fabric v1.1 basic-network', () => {
         })
         .then((result) => {
           logger.info('revoke user result: ', result);
+          expect(result).not.toBeNull();
+        })
+        .catch((err) => {
+          throw err;
+        });
+    });
+
+    it('get Certificate Revocation List (CRL)', () => {
+      return getFabricClientSingletonHelper(configDbForCATest)
+        .then((client) => {
+          const req = {};
+          return client.generateCRL(req);
+        })
+        .then((result) => {
+          logger.debug('get CRL result: ', result);
           expect(result).not.toBeNull();
         })
         .catch((err) => {
