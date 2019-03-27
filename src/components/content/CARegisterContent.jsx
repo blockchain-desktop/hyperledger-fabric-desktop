@@ -8,7 +8,6 @@ import { getFabricClientSingleton } from '../../util/fabric';
 const { TextArea } = Input;
 const logger = require('electron-log');
 
-// TODO: 多语言支持
 /**
  * register参数：用户名、affiliation, role等等
  * enroll参数：用户名、密码
@@ -191,7 +190,7 @@ export default class CARegisterContent extends React.Component {
     return (
       <div style={outerDivStyle}>
 
-        <div>注册</div>
+        <div>{this.state.Common.REGISTER}</div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
           <span style={spanStyle}>{this.state.Common.REGISTER_USERNAME}</span>
@@ -199,20 +198,20 @@ export default class CARegisterContent extends React.Component {
         </div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
-          <span style={spanStyle}>组织归属</span>
+          <span style={spanStyle}>{this.state.Common.REGISTER_AFFILIATION}</span>
           <Input placeholder="eg. org1.department" style={configInputStyle} value={this.state.registerAffiliation} onChange={this.onChangeRegisterAffiliation} />
         </div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
-          <span style={spanStyle}>角色类型</span>
+          <span style={spanStyle}>{this.state.Common.REGISTER_ROLE}</span>
           <Input placeholder="eg. client/peer/orderer/user/app" style={configInputStyle} value={this.state.registerRole} onChange={this.onChangeRegisterRole} />
         </div>
         <div style={DivStyle}>
-          <span style={spanStyle}>其他属性</span>
+          <span style={spanStyle}>{this.state.Common.REGISTER_OPTIONAL}</span>
           <Input placeholder="Optional json parameters" style={configInputStyle} value={this.state.registerOptional} onChange={this.onChangeRegisterOptional} />
         </div>
         <div style={DivStyle}>
-          <Button style={ButtonStyle} type="primary" onClick={this.handleRegister}>注册</Button>
+          <Button style={ButtonStyle} type="primary" onClick={this.handleRegister}>{this.state.Common.REGISTER_CONFIRM}</Button>
           <TextArea
             placeholder="Register Result: Password"
             value={this.state.registerResult}
@@ -221,23 +220,23 @@ export default class CARegisterContent extends React.Component {
           />
         </div>
 
-        <div >证书私钥领取</div>
+        <div >{this.state.Common.ENROLL}</div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
-          <span style={spanStyle}>用户名</span>
+          <span style={spanStyle}>{this.state.Common.ENROLL_USERNAME}</span>
           <Input placeholder="User Name" style={configInputStyle} value={this.state.enrollUserName} onChange={this.onChangeEnrollUserName} />
         </div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
-          <span style={spanStyle}>密码</span>
+          <span style={spanStyle}>{this.state.Common.ENROLL_PASSWORD}</span>
           <Input placeholder="Password" style={configInputStyle} value={this.state.enrollUserPassword} onChange={this.onChangeEnrollUserPassword} />
         </div>
         <div style={DivStyle}>
-          <span style={spanStyle}>其他属性</span>
+          <span style={spanStyle}>{this.state.Common.ENROLL_OPTIONAL}</span>
           <Input placeholder="Optional json parameters" style={configInputStyle} value={this.state.enrollOptional} onChange={this.onChangeEnrollOptional} />
         </div>
         <div style={DivStyle}>
-          <Button style={ButtonStyle} type="primary" onClick={this.handleEnroll}>领取</Button>
+          <Button style={ButtonStyle} type="primary" onClick={this.handleEnroll}>{this.state.Common.ENROLL_CONFIRM}</Button>
           <TextArea
             placeholder="Enroll Result"
             value={this.state.enrollResult}

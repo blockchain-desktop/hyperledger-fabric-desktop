@@ -58,7 +58,18 @@ Common.LOGIN_ORDERER_SSL_TARGET = 'Orderer SSL Target';
 Common.LOGIN_CA_SERVER_URL = 'CA Server Url';
 
 // user register page
+Common.REGISTER = 'REGISTER';
 Common.REGISTER_USERNAME = 'User Name';
+Common.REGISTER_AFFILIATION = 'Affiliation';
+Common.REGISTER_ROLE = 'Role';
+Common.REGISTER_OPTIONAL = 'Optional';
+Common.REGISTER_CONFIRM = 'Register';
+
+Common.ENROLL = 'ENROLLMENT';
+Common.ENROLL_USERNAME = 'User Name';
+Common.ENROLL_PASSWORD = 'Password';
+Common.ENROLL_OPTIONAL = 'Optional';
+Common.ENROLL_CONFIRM = 'Get';
 
 Common.WARN = {
   chaincodeName: 'chaincode name can not be null!',
