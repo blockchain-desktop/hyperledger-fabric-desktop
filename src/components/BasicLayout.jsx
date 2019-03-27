@@ -7,6 +7,7 @@ import DataContent from './content/DataContent';
 import ChaincodeInvokeContent from './content/ChaincodeInvokeContent';
 import ChaincodeInstallContent from './content/ChaincodeInstallContent';
 import CARegisterContent from './content/CARegisterContent';
+import CAUpdateContent from './content/CAUpdateContent';
 import { deleteFabricClientSingleton } from '../util/fabric';
 
 import { getConfigDBSingleton, getInvokeDBSingleton, getChaincodeDBSingleton } from '../util/createDB';
@@ -38,6 +39,8 @@ function ContentRoute(props) {
     return <ChannelManangeContent />;
   } else if (props.contentKey === 5) {
     return <CARegisterContent />;
+  } else if (props.contentKey === 6) {
+    return <CAUpdateContent />;
   }
   return <h1>The sidebar button is not bound to corresponding content</h1>;
 }
@@ -128,7 +131,11 @@ export default class BasicLayout extends React.Component {
             </Menu.Item>
             <Menu.Item key="5" onClick={() => this.switchContent(5)}>
               <Icon type="user-add" />
-              <span>{this.state.language === 'cn' ? 'CA注册' : 'CA Register' }</span>
+              <span>{this.state.language === 'cn' ? 'CA注册' : 'CA Registration' }</span>
+            </Menu.Item>
+            <Menu.Item key="6" onClick={() => this.switchContent(6)}>
+              <Icon type="team" />
+              <span>{this.state.language === 'cn' ? 'CA更新与吊销' : 'CA Update & Revoke' }</span>
             </Menu.Item>
           </Menu>
         </Sider>
