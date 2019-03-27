@@ -56,7 +56,18 @@ Common.LOGIN_ORDERER_SSL_TARGET = '排序节点SSL域名';
 Common.LOGIN_CA_SERVER_URL = 'CA节点地址';
 
 // user register page
+Common.REGISTER = '注册';
 Common.REGISTER_USERNAME = '用户名';
+Common.REGISTER_AFFILIATION = '组织归属';
+Common.REGISTER_ROLE = '角色类型';
+Common.REGISTER_OPTIONAL = '其他属性';
+Common.REGISTER_CONFIRM = '注册';
+
+Common.ENROLL = '证书私钥获取';
+Common.ENROLL_USERNAME = '用户名';
+Common.ENROLL_PASSWORD = '密码';
+Common.ENROLL_OPTIONAL = '其他属性';
+Common.ENROLL_CONFIRM = '获取';
 
 Common.WARN = {
   chaincodeName: '链码名称不能为空!',

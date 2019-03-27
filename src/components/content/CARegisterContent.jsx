@@ -5,13 +5,13 @@ import React from 'react';
 import { Button, Input } from 'antd';
 import { getFabricClientSingleton } from '../../util/fabric';
 
+const { TextArea } = Input;
 const logger = require('electron-log');
 
 /**
  * register参数：用户名、affiliation, role等等
  * enroll参数：用户名、密码
  */
-
 export default class CARegisterContent extends React.Component {
   constructor(props) {
     super(props);
@@ -22,10 +22,12 @@ export default class CARegisterContent extends React.Component {
       registerAffiliation: '',
       registerRole: '',
       registerOptional: '',
+      registerResult: '',
 
       enrollUserName: '',
       enrollUserPassword: '',
       enrollOptional: '',
+      enrollResult: '',
     };
 
     this.onChangeRegisterUserName = this.onChangeRegisterUserName.bind(this);
@@ -73,25 +75,50 @@ export default class CARegisterContent extends React.Component {
     if (this.state.registerOptional) {
       req = Object.assign({}, tmpReq, JSON.parse(this.state.registerOptional));
     }
-
+    const self = this;
     logger.info('start to register user, RegisterRequest: ', req);
     getFabricClientSingleton()
       .then((client) => {
         logger.info('client: ', client.toString());
         return client.register(req);
       })
-      .then((enrollment) => {
-        // TODO: 输出密码，到页面上。
-        logger.info('register successfully, enrollment: ', enrollment);
+      .then((secret) => {
+        // 输出密码，到页面上。
+        self.setState({ registerResult: secret });
+        logger.debug('register successfully, secret: ', secret);
       })
       .catch((err) => {
+        self.setState({ registerResult: 'Register fails. Please check inputs/your CA identity are valid.' });
         logger.info('fail to register user, err: ', err);
         throw err;
       });
   }
 
   handleEnroll() {
+    const tmpReq = {
+      enrollmentID: this.state.enrollUserName,
+      enrollmentSecret: this.state.enrollUserPassword,
+    };
+    let req = tmpReq;
+    if (this.state.enrollOptional) {
+      req = Object.assign({}, tmpReq, JSON.parse(this.state.enrollOptional));
+    }
+    const self = this;
 
+    getFabricClientSingleton()
+      .then((client) => {
+        logger.debug('start to enroll, request: ', req);
+        return client.enroll(req);
+      })
+      .then((enrollment) => {
+        self.setState({ enrollResult: 'private key:\n' + enrollment.key.toBytes() + '\ncertificate:\n' + enrollment.certificate });
+        logger.debug('enroll after registering successfully, enrollment: ', enrollment);
+        // TODO: 输出enrollment中的证书、私钥到外部
+      })
+      .catch((err) => {
+        self.setState({ enrollResult: 'Register fails. Please check inputs/your CA identity are valid.' });
+        logger.debug(err);
+      });
   }
 
   render() {
@@ -163,7 +190,7 @@ export default class CARegisterContent extends React.Component {
     return (
       <div style={outerDivStyle}>
 
-        <div>注册</div>
+        <div>{this.state.Common.REGISTER}</div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
           <span style={spanStyle}>{this.state.Common.REGISTER_USERNAME}</span>
@@ -171,39 +198,51 @@ export default class CARegisterContent extends React.Component {
         </div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
-          <span style={spanStyle}>组织归属</span>
+          <span style={spanStyle}>{this.state.Common.REGISTER_AFFILIATION}</span>
           <Input placeholder="eg. org1.department" style={configInputStyle} value={this.state.registerAffiliation} onChange={this.onChangeRegisterAffiliation} />
         </div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
-          <span style={spanStyle}>角色类型</span>
-          <Input placeholder="client/peer/orderer/user/app" style={configInputStyle} value={this.state.registerRole} onChange={this.onChangeRegisterRole} />
+          <span style={spanStyle}>{this.state.Common.REGISTER_ROLE}</span>
+          <Input placeholder="eg. client/peer/orderer/user/app" style={configInputStyle} value={this.state.registerRole} onChange={this.onChangeRegisterRole} />
         </div>
         <div style={DivStyle}>
-          <span style={spanStyle}>其他属性</span>
-          <Input placeholder="Optional" style={configInputStyle} value={this.state.registerOptional} onChange={this.onChangeRegisterOptional} />
+          <span style={spanStyle}>{this.state.Common.REGISTER_OPTIONAL}</span>
+          <Input placeholder="Optional json parameters" style={configInputStyle} value={this.state.registerOptional} onChange={this.onChangeRegisterOptional} />
         </div>
         <div style={DivStyle}>
-          <Button style={ButtonStyle} type="primary" onClick={this.handleRegister}>注册</Button>
+          <Button style={ButtonStyle} type="primary" onClick={this.handleRegister}>{this.state.Common.REGISTER_CONFIRM}</Button>
+          <TextArea
+            placeholder="Register Result: Password"
+            value={this.state.registerResult}
+            autosize={{ minRows: 1, maxRows: 1 }}
+            readOnly
+          />
         </div>
 
-        <div >证书私钥领取</div>
+        <div >{this.state.Common.ENROLL}</div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
-          <span style={spanStyle}>用户名</span>
+          <span style={spanStyle}>{this.state.Common.ENROLL_USERNAME}</span>
           <Input placeholder="User Name" style={configInputStyle} value={this.state.enrollUserName} onChange={this.onChangeEnrollUserName} />
         </div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
-          <span style={spanStyle}>密码</span>
+          <span style={spanStyle}>{this.state.Common.ENROLL_PASSWORD}</span>
           <Input placeholder="Password" style={configInputStyle} value={this.state.enrollUserPassword} onChange={this.onChangeEnrollUserPassword} />
         </div>
         <div style={DivStyle}>
-          <span style={spanStyle}>其他属性</span>
-          <Input placeholder="Optional" style={configInputStyle} value={this.state.enrollOptional} onChange={this.onChangeEnrollOptional} />
+          <span style={spanStyle}>{this.state.Common.ENROLL_OPTIONAL}</span>
+          <Input placeholder="Optional json parameters" style={configInputStyle} value={this.state.enrollOptional} onChange={this.onChangeEnrollOptional} />
         </div>
         <div style={DivStyle}>
-          <Button style={ButtonStyle} type="primary" onClick={this.handleEnroll}>领取</Button>
+          <Button style={ButtonStyle} type="primary" onClick={this.handleEnroll}>{this.state.Common.ENROLL_CONFIRM}</Button>
+          <TextArea
+            placeholder="Enroll Result"
+            value={this.state.enrollResult}
+            autosize={{ minRows: 4, maxRows: 4 }}
+            readOnly
+          />
         </div>
       </div>
 
