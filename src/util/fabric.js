@@ -826,6 +826,9 @@ class FabricClient {
    * @returns {Promise<any>}
    */
   generateCRL(req) {
+    if (!req) {
+      req = {};
+    }
     return this.fabricCAClient.generateCRL(req, this.user);
   }
 

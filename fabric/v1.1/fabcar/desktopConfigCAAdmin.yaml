@@ -1,0 +1,8 @@
+peerGrpcUrl: grpc://localhost:7051
+peerEventUrl: grpc://localhost:7053
+ordererUrl: grpc://localhost:7050
+mspId: Org1MSP
+# 私钥和证书，每次需手动执行node enrollAdmin.js生成，并手动hfc-key-store/admin复制出证书创建新文件，并修改私钥对应的文件
+certificate: hfc-key-store/admin.crt
+privateKey: hfc-key-store/474b19c5aff786e6db33b89b94c8daa6b3336183e843c1e58630450c53f5bd96-priv
+caServerUrl: http://localhost:7054
