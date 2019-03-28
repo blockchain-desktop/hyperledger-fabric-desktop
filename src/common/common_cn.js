@@ -79,6 +79,9 @@ Common.REVOKE_USERNAME = '用户ID';
 Common.REVOKE_OPTIONAL = '其他参数';
 Common.REVOKE_CONFIRM = '吊销';
 
+Common.GENERATE_CRL = '证书吊销列表(CRL)获取';
+Common.GENERATE_CRL_OPTIONAL = '其他参数';
+Common.GENERATE_CRL_CONFIRM = '获取';
 
 Common.WARN = {
   chaincodeName: '链码名称不能为空!',

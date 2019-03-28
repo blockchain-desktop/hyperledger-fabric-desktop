@@ -506,16 +506,15 @@ class FabricClient {
       self.fabricClient.setCryptoSuite(cryptoSuite);
 
       logger.info('almost done');
-
-      return this.fabricClient.createUser({
-        mspid,
-        username: mspid,
-        cryptoContent: {
-          privateKey: keyPath,
-          signedCert: certPath,
-        },
-      })
-        .then((user) => {
+      if (keyPath) {
+        return this.fabricClient.createUser({
+          mspid,
+          username: mspid,
+          cryptoContent: {
+            privateKey: keyPath,
+            signedCert: certPath,
+          },
+        }).then((user) => {
           if (user && user.isEnrolled()) {
             logger.info('Successfully loaded user1 from persistence, user:', user.toString());
           } else {
@@ -525,10 +524,11 @@ class FabricClient {
           logger.info('create fabric client success');
           return Promise.resolve('success');
         })
-        .catch((err) => {
-          logger.error(`Fail to instantiate chaincode. Error message: ${err.stack}` ? err.stack : err);
-          return Promise.reject('fail');
-        });
+          .catch((err) => {
+            logger.error(`Fail to instantiate chaincode. Error message: ${err.stack}` ? err.stack : err);
+            return Promise.reject('fail');
+          });
+      }
     });
     // ---------------admin finish ---------------
   }
@@ -820,6 +820,18 @@ class FabricClient {
     return this.fabricCAClient.revoke(req, this.user);
   }
 
+  /**
+   * 获取证书吊销列表 - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#generateCRL
+   * @param { FabricCAServices.IRestriction } req
+   * @returns {Promise<any>}
+   */
+  generateCRL(req) {
+    if (!req) {
+      req = {};
+    }
+    return this.fabricCAClient.generateCRL(req, this.user);
+  }
+
   // 关闭连接
   close() {
     this.peer.close();
@@ -838,7 +850,11 @@ export function getFabricClientSingletonHelper(dbConfig) {
       .then(input => __fabricClient._config(input))
       .then(() => __fabricClient.importCer())
       .then(() => __fabricClient._loginUser())
-      .then(() => Promise.resolve(__fabricClient));
+      .then(() => Promise.resolve(__fabricClient))
+      .catch((err) => {
+        logger.debug('getFabricClientSingletonHelper error: ', err);
+        throw err;
+      });
   }
   return Promise.resolve(__fabricClient);
 }

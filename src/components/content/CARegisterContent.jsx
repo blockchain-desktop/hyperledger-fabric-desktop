@@ -172,7 +172,12 @@ export default class CARegisterContent extends React.Component {
     };
     const DivStyle = {
       width: '560px',
-      marginBottom: '30px',
+      marginBottom: '10px',
+    };
+    const titleStyle = {
+      fontSize: '130%',
+      marginTop: '20px',
+      textAlign: 'center',
     };
     const ButtonStyle = {
       marginLeft: '20px',
@@ -190,7 +195,7 @@ export default class CARegisterContent extends React.Component {
     return (
       <div style={outerDivStyle}>
 
-        <div>{this.state.Common.REGISTER}</div>
+        <div style={titleStyle}>{this.state.Common.REGISTER}</div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
           <span style={spanStyle}>{this.state.Common.REGISTER_USERNAME}</span>
@@ -220,7 +225,7 @@ export default class CARegisterContent extends React.Component {
           />
         </div>
 
-        <div >{this.state.Common.ENROLL}</div>
+        <div style={titleStyle}>{this.state.Common.ENROLL}</div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
           <span style={spanStyle}>{this.state.Common.ENROLL_USERNAME}</span>

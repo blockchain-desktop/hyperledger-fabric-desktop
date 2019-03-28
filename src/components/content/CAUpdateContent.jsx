@@ -20,13 +20,18 @@ export default class CAUpdateContent extends React.Component {
       revokeUserName: '',
       revokeOptional: '',
       revokeResult: '',
+
+      generateCrlOptional: '',
+      generateCrlResult: '',
     };
 
     this.onChangeReenrollOptional = this.onChangeReenrollOptional.bind(this);
     this.onChangeRevokeUserName = this.onChangeRevokeUserName.bind(this);
     this.onChangeRevokeOptional = this.onChangeRevokeOptional.bind(this);
+    this.onChangeRevokeOptional = this.onChangeRevokeOptional.bind(this);
     this.handleReenroll = this.handleReenroll.bind(this);
     this.handleRevoke = this.handleRevoke.bind(this);
+    this.handleGenerateCrl = this.handleGenerateCrl.bind(this);
   }
 
   onChangeReenrollOptional(event) {
@@ -37,6 +42,9 @@ export default class CAUpdateContent extends React.Component {
   }
   onChangeRevokeOptional(event) {
     this.setState({ revokeOptional: event.target.value });
+  }
+  onChangeGenerateCrlOptional(event) {
+    this.setState({ generateCrlOptional: event.target.value });
   }
 
   handleReenroll() {
@@ -80,10 +88,33 @@ export default class CAUpdateContent extends React.Component {
       })
       .then((result) => {
         logger.debug('revoke successfully, result: ', result);
-        self.setState({ revokeResult: result.toString() });
+        self.setState({ revokeResult: 'success' });
       })
       .catch((err) => {
         self.setState({ revokeResult: 'Revocation fails.' });
+        logger.debug(err);
+      });
+  }
+
+  handleGenerateCrl() {
+    let req = null;
+    if (this.state.enrollOptional) {
+      req = JSON.parse(this.state.enrollOptional);
+    }
+
+    const self = this;
+
+    getFabricClientSingleton()
+      .then((client) => {
+        logger.debug('start to generateCRL, request: ', req);
+        return client.generateCRL(req);
+      })
+      .then((result) => {
+        logger.debug('crlResult: ', result);
+        self.setState({ generateCrlResult: result.toString() });
+      })
+      .catch((err) => {
+        self.setState({ generateCrlResult: 'Fail.' });
         logger.debug(err);
       });
   }
@@ -139,7 +170,12 @@ export default class CAUpdateContent extends React.Component {
     };
     const DivStyle = {
       width: '560px',
-      marginBottom: '30px',
+      marginBottom: '10px',
+    };
+    const titleStyle = {
+      fontSize: '130%',
+      marginTop: '20px',
+      textAlign: 'center',
     };
     const ButtonStyle = {
       marginLeft: '20px',
@@ -157,7 +193,7 @@ export default class CAUpdateContent extends React.Component {
     return (
       <div style={outerDivStyle}>
 
-        <div>{this.state.Common.REENROLL}</div>
+        <div style={titleStyle}>{this.state.Common.REENROLL}</div>
         <div style={DivStyle}>
           <span style={spanStyle}>{this.state.Common.REENROLL_OPTIONAL}</span>
           <Input placeholder="Optional json parameters" style={configInputStyle} value={this.state.reenrollOptional} onChange={this.onChangeReenrollOptional} />
@@ -172,7 +208,7 @@ export default class CAUpdateContent extends React.Component {
           />
         </div>
 
-        <div >{this.state.Common.REVOKE}</div>
+        <div style={titleStyle}>{this.state.Common.REVOKE}</div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
           <span style={spanStyle}>{this.state.Common.REVOKE_USERNAME}</span>
@@ -187,6 +223,21 @@ export default class CAUpdateContent extends React.Component {
           <TextArea
             placeholder="Revoke Result"
             value={this.state.revokeResult}
+            autosize={{ minRows: 2, maxRows: 2 }}
+            readOnly
+          />
+        </div>
+
+        <div style={titleStyle}>{this.state.Common.GENERATE_CRL}</div>
+        <div style={DivStyle}>
+          <span style={spanStyle}>{this.state.Common.GENERATE_CRL_OPTIONAL}</span>
+          <Input placeholder="Optional json parameters" style={configInputStyle} value={this.state.generateCrlOptional} onChange={this.onChangeGenerateCrlOptional} />
+        </div>
+        <div style={DivStyle}>
+          <Button style={ButtonStyle} type="primary" onClick={this.handleGenerateCrl}>{this.state.Common.GENERATE_CRL_CONFIRM}</Button>
+          <TextArea
+            placeholder="GenerateCRL Result"
+            value={this.state.generateCrlResult}
             autosize={{ minRows: 2, maxRows: 2 }}
             readOnly
           />

@@ -81,6 +81,9 @@ Common.REVOKE_USERNAME = 'User ID';
 Common.REVOKE_OPTIONAL = 'Optional';
 Common.REVOKE_CONFIRM = 'Revoke';
 
+Common.GENERATE_CRL = 'GENERATE CERTIFICATE REVOKE LIST--CRL';
+Common.GENERATE_CRL_OPTIONAL = 'Optional';
+Common.GENERATE_CRL_CONFIRM = 'Get';
 
 Common.WARN = {
   chaincodeName: 'chaincode name can not be null!',
