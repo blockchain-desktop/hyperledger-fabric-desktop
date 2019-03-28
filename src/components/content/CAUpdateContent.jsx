@@ -170,7 +170,12 @@ export default class CAUpdateContent extends React.Component {
     };
     const DivStyle = {
       width: '560px',
-      marginBottom: '30px',
+      marginBottom: '10px',
+    };
+    const titleStyle = {
+      fontSize: '130%',
+      marginTop: '20px',
+      textAlign: 'center',
     };
     const ButtonStyle = {
       marginLeft: '20px',
@@ -188,7 +193,7 @@ export default class CAUpdateContent extends React.Component {
     return (
       <div style={outerDivStyle}>
 
-        <div>{this.state.Common.REENROLL}</div>
+        <div style={titleStyle}>{this.state.Common.REENROLL}</div>
         <div style={DivStyle}>
           <span style={spanStyle}>{this.state.Common.REENROLL_OPTIONAL}</span>
           <Input placeholder="Optional json parameters" style={configInputStyle} value={this.state.reenrollOptional} onChange={this.onChangeReenrollOptional} />
@@ -203,7 +208,7 @@ export default class CAUpdateContent extends React.Component {
           />
         </div>
 
-        <div >{this.state.Common.REVOKE}</div>
+        <div style={titleStyle}>{this.state.Common.REVOKE}</div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
           <span style={spanStyle}>{this.state.Common.REVOKE_USERNAME}</span>
@@ -223,7 +228,7 @@ export default class CAUpdateContent extends React.Component {
           />
         </div>
 
-        <div>{this.state.Common.GENERATE_CRL}</div>
+        <div style={titleStyle}>{this.state.Common.GENERATE_CRL}</div>
         <div style={DivStyle}>
           <span style={spanStyle}>{this.state.Common.GENERATE_CRL_OPTIONAL}</span>
           <Input placeholder="Optional json parameters" style={configInputStyle} value={this.state.generateCrlOptional} onChange={this.onChangeGenerateCrlOptional} />
