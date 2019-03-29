@@ -51,6 +51,7 @@ Common.LOGIN_CERTIFICATE = '用户证书';
 Common.LOGIN_PRIVATE_KEY = '用户私钥';
 Common.LOGIN_PEER_TLS_CA_CERT = '组织节点TLS证书';
 Common.LOGIN_ORDERER_TLS_CA_CERT = '排序节点TLS证书';
+Common.LOGIN_CA_SERVER_CA_CERT = 'CA节点TLS证书';
 Common.LOGIN_PEER_SSL_TARGET = '组织节点SSL域名';
 Common.LOGIN_ORDERER_SSL_TARGET = '排序节点SSL域名';
 Common.LOGIN_CA_SERVER_URL = 'CA节点地址';

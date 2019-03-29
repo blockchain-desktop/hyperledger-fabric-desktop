@@ -37,12 +37,14 @@ export default class UserLayout extends React.Component {
       keyPath: '',
       tlsPeerPath: '',
       tlsOrdererPath: '',
+      tlsCAServerPath: '',
       peerSSLTarget: 'peer0.org1.example.com',
       ordererSSLTarget: 'orderer.example.com',
       certlabel: 'user certificate ',
       keylabel: 'user private key',
       tlsPeerLabel: 'peer tls ca cert',
       tlsOrdererLabel: 'orderer tls ca cert',
+      tlsCAServerLabel: 'ca server tls ca cert',
       caServerUrl: 'http://localhost:7054', // TODO: 待实现
       Common: localStorage.getItem('language') === 'cn' ? require('../common/common_cn') : require('../common/common'),
     };
@@ -55,6 +57,7 @@ export default class UserLayout extends React.Component {
     this.priImport = this.priImport.bind(this);
     this.tlsPeerImport = this.tlsPeerImport.bind(this);
     this.tlsOrdererImport = this.tlsOrdererImport.bind(this);
+    this.tlsCAServerImport = this.tlsCAServerImport.bind(this);
     this.ordererChange = this.ordererChange.bind(this);
     this.mspidChange = this.mspidChange.bind(this);
     this.peerSSLTargetChange = this.peerSSLTargetChange.bind(this);
@@ -83,6 +86,7 @@ export default class UserLayout extends React.Component {
         mspid: this.state.mspid,
         tlsPeerPath: this.state.tlsPeerPath,
         tlsOrdererPath: this.state.tlsOrdererPath,
+        tlsCAServerPath: this.state.tlsCAServerPath,
         peerSSLTarget: this.state.peerSSLTarget,
         ordererSSLTarget: this.state.ordererSSLTarget,
         caServerUrl: this.state.caServerUrl,
@@ -135,6 +139,13 @@ export default class UserLayout extends React.Component {
     this.setState({ tlsOrdererLabel });
   }
 
+  tlsCAServerImport() {
+    const selectedFile = document.getElementById('tlsCAServerFiles').files[0];// 获取读取的File对象
+    this.setState({ tlsCAServerPath: selectedFile.path });
+    const tlsCAServerLabel = path.basename(selectedFile.path);
+    this.setState({ tlsCAServerLabel });
+  }
+
   priImport() {
     const selectedFile = document.getElementById('priFiles').files[0];// 获取读取的File对象
     this.setState({ keyPath: selectedFile.path });
@@ -158,6 +169,7 @@ export default class UserLayout extends React.Component {
         keyPath: _configImportPathHelper(config.privateKey, configDir),
         tlsPeerPath: config.peerTlsCaCert ? _configImportPathHelper(config.peerTlsCaCert, configDir) : '',
         tlsOrdererPath: config.ordererTlsCaCert ? _configImportPathHelper(config.ordererTlsCaCert, configDir) : '',
+        tlsCAServerPath: config.caServerTlsCaCert ? _configImportPathHelper(config.caServerTlsCaCert, configDir) : '',
         peerSSLTarget: config.peerSslTarget,
         ordererSSLTarget: config.ordererSslTarget,
         certlabel: config.certificate ? path.basename(config.certificate) : config.certificate,
@@ -166,6 +178,8 @@ export default class UserLayout extends React.Component {
           path.basename(config.peerTlsCaCert) : config.peerTlsCaCert,
         tlsOrdererLabel: config.ordererTlsCaCert ?
           path.basename(config.ordererTlsCaCert) : config.ordererTlsCaCert,
+        tlsCAServerLabel: config.caServerTlsCaCert ?
+          path.basename(config.caServerTlsCaCert) : config.caServerTlsCaCert,
       });
     } catch (e) {
       logger.error('Read desktop config file error: ', e.toString());
@@ -370,6 +384,11 @@ export default class UserLayout extends React.Component {
             <div style={divStyle}>
               <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_ORDERER_SSL_TARGET}:</span>
               <Input type="text" style={InputStyle} value={this.state.ordererSSLTarget} onChange={this.ordererSSLTargetChange} />
+            </div>
+            <div style={divStyle}>
+              <span style={spanStyle}>&nbsp; {this.state.Common.LOGIN_CA_SERVER_CA_CERT}:</span>
+              <input type="file" id="tlsCAServerFiles" name="tlsCAServerFiles" style={fileStyle} onChange={this.tlsCAServerImport} />
+              <label htmlFor="tlsCAServerFiles" style={labelStyle} ><Icon type="folder-open" theme="outlined" style={{ color: '#0083FA', padding: '0 7px 0 0' }} />&thinsp;{this.state.tlsCAServerLabel} </label>
             </div>
             <div style={{ margin: '10px 6px',display:this.state.expand?'block':'none'}}>
               <input type="file" id="configFiles" name="configFiles" style={fileStyle} onChange={this.configImport} />

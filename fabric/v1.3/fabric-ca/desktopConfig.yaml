@@ -1,11 +1,12 @@
 peerGrpcUrl: grpcs://localhost:7051
 peerEventUrl: grpcs://localhost:7053
 ordererUrl: grpcs://localhost:7050
-caServerUrl: http://localhost:7054
+caServerUrl: https://localhost:7054
 mspId: org1MSP
+caServerTlsCaCert: data/org1-ca-chain.pem
 certificate: data/orgs/org1/admin/msp/signcerts/cert.pem
 # FIXME: privateKey值目前每次重启fabric-ca网络需手动修改，待优化
-privateKey: data/orgs/org1/admin/msp/keystore/52aa979aa97e78e2df1ed49cf8e8fadef0adb880ad8a3b6946184ca1c1148105_sk
+privateKey: data/orgs/org1/admin/msp/keystore/8487a08743d7becfaff4f462224429e806edd9b7ce105fe8b3d95b9e222c1f11_sk
 peerTlsCaCert: data/org1-ca-chain.pem
 ordererTlsCaCert: data/org0-ca-chain.pem
 peerSslTarget: peer1-org1
