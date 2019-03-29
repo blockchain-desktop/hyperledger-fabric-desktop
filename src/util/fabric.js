@@ -57,10 +57,18 @@ class FabricClient {
         }
       }
 
-      // TODO: 考虑 ca管理 与 peer管理，分别维护两套用户
-      // FIXME: CA also need to support TLS like peer/orderer above
       if (config.caServerUrl) {
-        self.fabricCAClient = new FabricCAClientSDK(config.caServerUrl);
+        let tlsOptions;
+        if (config.tlsCAServerPath) { // TLS support
+          self.caServerCert = fs.readFileSync(config.tlsCAServerPath);
+          // FIXME: verify: false. Same reason as "ssl-target-name-override" above.
+          // Need to skip CA DNS check when server domain is not the same as certificate signed.
+          tlsOptions = {
+            trustedRoots: [self.caServerCert],
+            verify: false,
+          };
+        }
+        self.fabricCAClient = new FabricCAClientSDK(config.caServerUrl, tlsOptions);
       }
 
       logger.info('config:', config);
