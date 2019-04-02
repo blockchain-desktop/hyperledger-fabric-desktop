@@ -51,10 +51,38 @@ Common.LOGIN_CERTIFICATE = '用户证书';
 Common.LOGIN_PRIVATE_KEY = '用户私钥';
 Common.LOGIN_PEER_TLS_CA_CERT = '组织节点TLS证书';
 Common.LOGIN_ORDERER_TLS_CA_CERT = '排序节点TLS证书';
+Common.LOGIN_CA_SERVER_CA_CERT = 'CA节点TLS证书';
 Common.LOGIN_PEER_SSL_TARGET = '组织节点SSL域名';
 Common.LOGIN_ORDERER_SSL_TARGET = '排序节点SSL域名';
 Common.LOGIN_CA_SERVER_URL = 'CA节点地址';
 
+// user register page
+Common.REGISTER = '注册';
+Common.REGISTER_USERNAME = '用户ID';
+Common.REGISTER_AFFILIATION = '组织归属';
+Common.REGISTER_ROLE = '角色类型';
+Common.REGISTER_OPTIONAL = '其他属性';
+Common.REGISTER_CONFIRM = '注册';
+
+Common.ENROLL = '证书私钥获取';
+Common.ENROLL_USERNAME = '用户ID';
+Common.ENROLL_PASSWORD = '密码';
+Common.ENROLL_OPTIONAL = '其他属性';
+Common.ENROLL_CONFIRM = '获取';
+
+// user update & revoke page
+Common.REENROLL = '更新当前用户';
+Common.REENROLL_OPTIONAL = '其他参数';
+Common.REENROLL_CONFIRM = '更新';
+
+Common.REVOKE = '吊销';
+Common.REVOKE_USERNAME = '用户ID';
+Common.REVOKE_OPTIONAL = '其他参数';
+Common.REVOKE_CONFIRM = '吊销';
+
+Common.GENERATE_CRL = '证书吊销列表(CRL)获取';
+Common.GENERATE_CRL_OPTIONAL = '其他参数';
+Common.GENERATE_CRL_CONFIRM = '获取';
 
 Common.WARN = {
   chaincodeName: '链码名称不能为空!',

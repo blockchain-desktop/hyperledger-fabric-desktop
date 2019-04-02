@@ -107,6 +107,8 @@ services:
       - ./data:/data
     networks:
       - fabric-ca
+    ports:
+      - 7054:7054
     depends_on:
       - rca-org1
 

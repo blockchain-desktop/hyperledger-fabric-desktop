@@ -57,10 +57,18 @@ class FabricClient {
         }
       }
 
-      // TODO: 考虑 ca管理 与 peer管理，分别维护两套用户
-      // FIXME: CA also need to support TLS like peer/orderer above
       if (config.caServerUrl) {
-        self.fabricCAClient = new FabricCAClientSDK(config.caServerUrl);
+        let tlsOptions;
+        if (config.tlsCAServerPath) { // TLS support
+          self.caServerCert = fs.readFileSync(config.tlsCAServerPath);
+          // FIXME: verify: false. Same reason as "ssl-target-name-override" above.
+          // Need to skip CA DNS check when server domain is not the same as certificate signed.
+          tlsOptions = {
+            trustedRoots: [self.caServerCert],
+            verify: false,
+          };
+        }
+        self.fabricCAClient = new FabricCAClientSDK(config.caServerUrl, tlsOptions);
       }
 
       logger.info('config:', config);
@@ -83,27 +91,11 @@ class FabricClient {
     const self = this;
     const usrName = self.config.mspid;
     logger.info('start to load member user.', ' store_path: ', self.store_path);
-    return FabricClientSDK.newDefaultKeyValueStore({ path: self.store_path,
-    }).then((stateStore) => {
-      logger.info('get stateStore: ', stateStore);
-
-      // assign the store to the fabric client
-      self.fabricClient.setStateStore(stateStore);
-      const cryptoSuite = FabricClientSDK.newCryptoSuite();
-
-      // use the same location for the state store (where the users' certificate are kept)
-      // and the crypto store (where the users' keys are kept)
-      const cryptoStore = FabricClientSDK.newCryptoKeyStore({ path: self.store_path });
-      cryptoSuite.setCryptoKeyStore(cryptoStore);
-      self.fabricClient.setCryptoSuite(cryptoSuite);
-
-      logger.info('almost done');
-      return self.fabricClient.getUserContext(usrName, true) // FIXME: usernaem和mspid可能要分开
-        .then((user) => {
-          self.user = user;
-          return Promise.resolve(user);
-        });
-    });
+    return self.fabricClient.getUserContext(usrName, true)
+      .then((user) => {
+        self.user = user;
+        return Promise.resolve(user);
+      });
   }
 
   /**
@@ -497,31 +489,55 @@ class FabricClient {
    * 生成证书私钥
    * @returns {Promise<String>}
    */
-  importCer(keyPath, certPath) {
+  importCer() {
+    const keyPath = this.config.keyPath;
+    const certPath = this.config.certPath;
+    const mspid = this.config.mspid;
+
+    const self = this;
+    logger.debug('keyPath: ', keyPath);
+    logger.debug('certPath: ', certPath);
     // -------------------- admin start ---------
-    logger.info('start to create admin user.');
-    return this.fabricClient.createUser({
-      username: this.config.mspid,
-      mspid: this.config.mspid,
-      cryptoContent: {
-        privateKey: keyPath,
-        signedCert: certPath,
-      },
-    })
-      .then((user) => {
-        if (user && user.isEnrolled()) {
-          logger.info('Successfully loaded user1 from persistence, user:', user.toString());
-        } else {
-          logger.error('Failed to get user1.... run registerUser.js');
-          return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
-        }
-        logger.info('create fabric client success');
-        return Promise.resolve('success');
-      })
-      .catch((err) => {
-        logger.error(`Fail to instantiate chaincode. Error message: ${err.stack}` ? err.stack : err);
-        return Promise.reject('fail');
-      });
+    logger.info('start to create user, namely importing certificate and privkey.');
+    return FabricClientSDK.newDefaultKeyValueStore({ path: self.store_path,
+    }).then((stateStore) => {
+      logger.info('get stateStore: ', stateStore);
+
+      // assign the store to the fabric client
+      self.fabricClient.setStateStore(stateStore);
+      const cryptoSuite = FabricClientSDK.newCryptoSuite();
+
+      // use the same location for the state store (where the users' certificate are kept)
+      // and the crypto store (where the users' keys are kept)
+      const cryptoStore = FabricClientSDK.newCryptoKeyStore({ path: self.store_path });
+      cryptoSuite.setCryptoKeyStore(cryptoStore);
+      self.fabricClient.setCryptoSuite(cryptoSuite);
+
+      logger.info('almost done');
+      if (keyPath) {
+        return this.fabricClient.createUser({
+          mspid,
+          username: mspid,
+          cryptoContent: {
+            privateKey: keyPath,
+            signedCert: certPath,
+          },
+        }).then((user) => {
+          if (user && user.isEnrolled()) {
+            logger.info('Successfully loaded user1 from persistence, user:', user.toString());
+          } else {
+            logger.error('Failed to get user1.... run registerUser.js');
+            return Promise.reject(new Error('Failed to get user1.... run registerUser.js'));
+          }
+          logger.info('create fabric client success');
+          return Promise.resolve('success');
+        })
+          .catch((err) => {
+            logger.error(`Fail to instantiate chaincode. Error message: ${err.stack}` ? err.stack : err);
+            return Promise.reject('fail');
+          });
+      }
+    });
     // ---------------admin finish ---------------
   }
 
@@ -812,6 +828,18 @@ class FabricClient {
     return this.fabricCAClient.revoke(req, this.user);
   }
 
+  /**
+   * 获取证书吊销列表 - 参考 https://fabric-sdk-node.github.io/release-1.4/FabricCAServices.html#generateCRL
+   * @param { FabricCAServices.IRestriction } req
+   * @returns {Promise<any>}
+   */
+  generateCRL(req) {
+    if (!req) {
+      req = {};
+    }
+    return this.fabricCAClient.generateCRL(req, this.user);
+  }
+
   // 关闭连接
   close() {
     this.peer.close();
@@ -828,8 +856,13 @@ export function getFabricClientSingletonHelper(dbConfig) {
     __fabricClient = new FabricClient();
     return __fabricClient._getConfig(dbConfig)
       .then(input => __fabricClient._config(input))
+      .then(() => __fabricClient.importCer())
       .then(() => __fabricClient._loginUser())
-      .then(() => Promise.resolve(__fabricClient));
+      .then(() => Promise.resolve(__fabricClient))
+      .catch((err) => {
+        logger.debug('getFabricClientSingletonHelper error: ', err);
+        throw err;
+      });
   }
   return Promise.resolve(__fabricClient);
 }

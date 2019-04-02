@@ -53,10 +53,38 @@ Common.LOGIN_CERTIFICATE = 'User Certificate';
 Common.LOGIN_PRIVATE_KEY = 'User Private Key';
 Common.LOGIN_PEER_TLS_CA_CERT = 'Peer TLS CA Cert';
 Common.LOGIN_ORDERER_TLS_CA_CERT = 'Orderer TLS CA Cert';
+Common.LOGIN_CA_SERVER_CA_CERT = 'CAServer TLS CACert';
 Common.LOGIN_PEER_SSL_TARGET = 'Peer SSL Target';
 Common.LOGIN_ORDERER_SSL_TARGET = 'Orderer SSL Target';
 Common.LOGIN_CA_SERVER_URL = 'CA Server Url';
 
+// user register page
+Common.REGISTER = 'REGISTER';
+Common.REGISTER_USERNAME = 'User ID';
+Common.REGISTER_AFFILIATION = 'Affiliation';
+Common.REGISTER_ROLE = 'Role';
+Common.REGISTER_OPTIONAL = 'Optional';
+Common.REGISTER_CONFIRM = 'Register';
+
+Common.ENROLL = 'ENROLLMENT';
+Common.ENROLL_USERNAME = 'User ID';
+Common.ENROLL_PASSWORD = 'Password';
+Common.ENROLL_OPTIONAL = 'Optional';
+Common.ENROLL_CONFIRM = 'Enroll';
+
+// user update & revoke page
+Common.REENROLL = 'REENROLL CURRENT USER';
+Common.REENROLL_OPTIONAL = 'Optional';
+Common.REENROLL_CONFIRM = 'Reenroll';
+
+Common.REVOKE = 'REVOKE';
+Common.REVOKE_USERNAME = 'User ID';
+Common.REVOKE_OPTIONAL = 'Optional';
+Common.REVOKE_CONFIRM = 'Revoke';
+
+Common.GENERATE_CRL = 'GENERATE CERTIFICATE REVOKE LIST--CRL';
+Common.GENERATE_CRL_OPTIONAL = 'Optional';
+Common.GENERATE_CRL_CONFIRM = 'Get';
 
 Common.WARN = {
   chaincodeName: 'chaincode name can not be null!',
