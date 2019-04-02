@@ -800,7 +800,7 @@ export default class ChaincodeInstallContent extends React.Component {
     const selectStyle = {
       display: 'block',
       position: 'absolute',
-      right: '30px',
+      right: '40px',
       top: '60px',
     };
     return (

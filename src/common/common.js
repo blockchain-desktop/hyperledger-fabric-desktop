@@ -5,6 +5,11 @@
 class Common {
 
 }
+Common.USER_REGISTER='Enroll';
+Common.FABRIC_CA_SERVER='fabric-ca-server-url';
+Common.REGISTER_USER_NAME='user name';
+Common.REGISTER_PASSWORD='password';
+Common.REGISTER_CERTIFICATE='certificate directory';
 Common.CURRENT_BLOCKS = 'Current Blocks';
 Common.BLOCK_HASH = 'Block Hash';
 Common.TRANSACTION_NUM = 'Transaction Num';

@@ -2,11 +2,12 @@
 
 // main feature: CA register and enroll
 import React from 'react';
-import { Button, Input } from 'antd';
+import { Button, Input, Steps } from 'antd';
 import { getFabricClientSingleton } from '../../util/fabric';
 
 const { TextArea } = Input;
 const logger = require('electron-log');
+const Step = Steps.Step;
 
 /**
  * register参数：用户名、affiliation, role等等
@@ -123,65 +124,38 @@ export default class CARegisterContent extends React.Component {
 
   render() {
     const outerDivStyle = {
-      padding: '24px',
+      padding: '10px 24px',
     };
     const spanStyle = {
-      marginRight: '10px',
       display: 'inline-block',
       width: '100px',
     };
-    const SpanStyle = {
-      marginTop: '30px',
-    };
-    const fileStyle = {
-      width: '0.1px',
-      height: '0.1px',
-      opacity: 0,
-      overflow: 'hidden',
-      position: 'absolute',
-      zIndex: -1,
-    };
-    const labelStyle = {
-      fontSize: '1.1em',
-      border: '1px solid rgb(217, 217, 217)',
-      borderRadius: '4px',
-      display: 'block',
-      width: '60%',
-      height: '32px',
-      verticalAlign: 'middle',
-      textAlign: 'center',
-      lineHeight: '30px',
-      cursor: 'pointer',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
-      overflow: 'hidden',
-      marginLeft: '146px',
-      marginTop: '-25px',
-    };
     const configInputStyle = {
-      marginLeft: '30px',
+      marginLeft: '20px',
       width: '60%',
     };
-    const CreateInputStyle = {
-      marginLeft: '36px',
-      width: '40%',
-    };
-    const AddInputStyle = {
-      marginLeft: '36px',
-      width: '40%',
+    const optionalInputStyle = {
+        marginLeft: '28px',
+        width: '60%',
     };
     const DivStyle = {
       width: '560px',
       marginBottom: '10px',
     };
     const titleStyle = {
-      fontSize: '130%',
-      marginTop: '20px',
+      fontSize: '120%',
       textAlign: 'center',
+      marginBottom:'10px',
+    };
+    const title2Style = {
+        fontSize: '120%',
+        textAlign: 'center',
+        marginBottom:'10px',
+        marginTop:'20px'
     };
     const ButtonStyle = {
-      marginLeft: '20px',
       width: '15%',
+      marginBottom: '10px',
     };
     const TipDivStyle = {
       display: 'inline-block',
@@ -192,9 +166,22 @@ export default class CARegisterContent extends React.Component {
       float: 'left',
       color: '#ff0000',
     };
+    const stepsStyle={
+      position:'absolute',
+      right:'-35px',
+    };
+    const stepStyle={
+      height:'280px',
+    };
     return (
       <div style={outerDivStyle}>
-
+        <div style={stepsStyle}>
+        <Steps direction="vertical" progressDot current={3} >
+            <Step style={stepStyle} description="register" />
+            <Step style={stepStyle} description="enroll"/>
+            <Step  />
+        </Steps>
+        </div>
         <div style={titleStyle}>{this.state.Common.REGISTER}</div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
@@ -213,7 +200,7 @@ export default class CARegisterContent extends React.Component {
         </div>
         <div style={DivStyle}>
           <span style={spanStyle}>{this.state.Common.REGISTER_OPTIONAL}</span>
-          <Input placeholder="Optional json parameters" style={configInputStyle} value={this.state.registerOptional} onChange={this.onChangeRegisterOptional} />
+          <Input placeholder="Optional json parameters" style={optionalInputStyle} value={this.state.registerOptional} onChange={this.onChangeRegisterOptional} />
         </div>
         <div style={DivStyle}>
           <Button style={ButtonStyle} type="primary" onClick={this.handleRegister}>{this.state.Common.REGISTER_CONFIRM}</Button>
@@ -224,8 +211,7 @@ export default class CARegisterContent extends React.Component {
             readOnly
           />
         </div>
-
-        <div style={titleStyle}>{this.state.Common.ENROLL}</div>
+        <div style={title2Style}>{this.state.Common.ENROLL}</div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
           <span style={spanStyle}>{this.state.Common.ENROLL_USERNAME}</span>
@@ -238,14 +224,14 @@ export default class CARegisterContent extends React.Component {
         </div>
         <div style={DivStyle}>
           <span style={spanStyle}>{this.state.Common.ENROLL_OPTIONAL}</span>
-          <Input placeholder="Optional json parameters" style={configInputStyle} value={this.state.enrollOptional} onChange={this.onChangeEnrollOptional} />
+          <Input placeholder="Optional json parameters" style={optionalInputStyle} value={this.state.enrollOptional} onChange={this.onChangeEnrollOptional} />
         </div>
         <div style={DivStyle}>
           <Button style={ButtonStyle} type="primary" onClick={this.handleEnroll}>{this.state.Common.ENROLL_CONFIRM}</Button>
           <TextArea
             placeholder="Enroll Result"
             value={this.state.enrollResult}
-            autosize={{ minRows: 4, maxRows: 4 }}
+            autosize={{ minRows: 2, maxRows: 2 }}
             readOnly
           />
         </div>

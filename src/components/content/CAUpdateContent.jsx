@@ -2,9 +2,10 @@
 
 // main feature: CA register and enroll
 import React from 'react';
-import { Button, Input } from 'antd';
+import {Button, Input, Steps} from 'antd';
 import { getFabricClientSingleton } from '../../util/fabric';
 
+const Step = Steps.Step;
 const { TextArea } = Input;
 const logger = require('electron-log');
 
@@ -121,65 +122,33 @@ export default class CAUpdateContent extends React.Component {
 
   render() {
     const outerDivStyle = {
-      padding: '24px',
+      padding: '0px 24px',
     };
     const spanStyle = {
-      marginRight: '10px',
       display: 'inline-block',
       width: '100px',
     };
-    const SpanStyle = {
-      marginTop: '30px',
-    };
-    const fileStyle = {
-      width: '0.1px',
-      height: '0.1px',
-      opacity: 0,
-      overflow: 'hidden',
-      position: 'absolute',
-      zIndex: -1,
-    };
-    const labelStyle = {
-      fontSize: '1.1em',
-      border: '1px solid rgb(217, 217, 217)',
-      borderRadius: '4px',
-      display: 'block',
-      width: '60%',
-      height: '32px',
-      verticalAlign: 'middle',
-      textAlign: 'center',
-      lineHeight: '30px',
-      cursor: 'pointer',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
-      overflow: 'hidden',
-      marginLeft: '146px',
-      marginTop: '-25px',
-    };
     const configInputStyle = {
-      marginLeft: '30px',
+      marginLeft: '20px',
       width: '60%',
     };
-    const CreateInputStyle = {
-      marginLeft: '36px',
-      width: '40%',
-    };
-    const AddInputStyle = {
-      marginLeft: '36px',
-      width: '40%',
+    const optionalInputStyle = {
+        marginLeft: '26px',
+        width: '60%',
     };
     const DivStyle = {
       width: '560px',
       marginBottom: '10px',
     };
     const titleStyle = {
-      fontSize: '130%',
-      marginTop: '20px',
+      fontSize: '120%',
+      marginTop: '10px',
+      marginBottom:'10px',
       textAlign: 'center',
     };
     const ButtonStyle = {
-      marginLeft: '20px',
       width: '15%',
+      marginBottom: '10px',
     };
     const TipDivStyle = {
       display: 'inline-block',
@@ -190,20 +159,40 @@ export default class CAUpdateContent extends React.Component {
       float: 'left',
       color: '#ff0000',
     };
+    const stepsStyle={
+        position:'absolute',
+        right:'-35px',
+    };
+    const step1Style={
+        height:'170px',
+    };
+    const step2Style={
+        height:'230px',
+    };
+    const step3Style={
+        height:'160px',
+    };
     return (
       <div style={outerDivStyle}>
-
+        <div style={stepsStyle}>
+            <Steps direction="vertical" progressDot current={3} >
+                <Step style={step1Style} description="update" />
+                <Step style={step2Style} description="revoke" />
+                <Step style={step3Style} description="crl"/>
+                <Step  />
+            </Steps>
+        </div>
         <div style={titleStyle}>{this.state.Common.REENROLL}</div>
         <div style={DivStyle}>
           <span style={spanStyle}>{this.state.Common.REENROLL_OPTIONAL}</span>
-          <Input placeholder="Optional json parameters" style={configInputStyle} value={this.state.reenrollOptional} onChange={this.onChangeReenrollOptional} />
+          <Input placeholder="Optional json parameters" style={optionalInputStyle} value={this.state.reenrollOptional} onChange={this.onChangeReenrollOptional} />
         </div>
         <div style={DivStyle}>
           <Button style={ButtonStyle} type="primary" onClick={this.handleReenroll}>{this.state.Common.REENROLL_CONFIRM}</Button>
           <TextArea
             placeholder="Reenroll Result"
             value={this.state.reenrollResult}
-            autosize={{ minRows: 4, maxRows: 4 }}
+            autosize={{ minRows: 2, maxRows: 2 }}
             readOnly
           />
         </div>
@@ -216,7 +205,7 @@ export default class CAUpdateContent extends React.Component {
         </div>
         <div style={DivStyle}>
           <span style={spanStyle}>{this.state.Common.REVOKE_OPTIONAL}</span>
-          <Input placeholder="Optional json parameters" style={configInputStyle} value={this.state.revokeOptional} onChange={this.onChangeRevokeOptional} />
+          <Input placeholder="Optional json parameters" style={optionalInputStyle} value={this.state.revokeOptional} onChange={this.onChangeRevokeOptional} />
         </div>
         <div style={DivStyle}>
           <Button style={ButtonStyle} type="primary" onClick={this.handleRevoke}>{this.state.Common.REVOKE_CONFIRM}</Button>
@@ -231,7 +220,7 @@ export default class CAUpdateContent extends React.Component {
         <div style={titleStyle}>{this.state.Common.GENERATE_CRL}</div>
         <div style={DivStyle}>
           <span style={spanStyle}>{this.state.Common.GENERATE_CRL_OPTIONAL}</span>
-          <Input placeholder="Optional json parameters" style={configInputStyle} value={this.state.generateCrlOptional} onChange={this.onChangeGenerateCrlOptional} />
+          <Input placeholder="Optional json parameters" style={optionalInputStyle} value={this.state.generateCrlOptional} onChange={this.onChangeGenerateCrlOptional} />
         </div>
         <div style={DivStyle}>
           <Button style={ButtonStyle} type="primary" onClick={this.handleGenerateCrl}>{this.state.Common.GENERATE_CRL_CONFIRM}</Button>

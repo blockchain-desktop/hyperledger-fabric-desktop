@@ -3,6 +3,11 @@
 class Common {
 
 }
+Common.USER_REGISTER='注册';
+Common.FABRIC_CA_SERVER='fabric-ca-server-url';
+Common.REGISTER_USER_NAME='用户名';
+Common.REGISTER_PASSWORD='密码';
+Common.REGISTER_CERTIFICATE='证书存放目录';
 Common.CURRENT_BLOCKS = '最近区块';
 Common.BLOCK_HASH = '哈希值';
 Common.TRANSACTION_NUM = '交易数量';
