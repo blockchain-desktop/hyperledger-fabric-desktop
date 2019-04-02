@@ -2,11 +2,12 @@
 
 // main feature: CA register and enroll
 import React from 'react';
-import { Button, Input } from 'antd';
+import { Button, Input, Steps } from 'antd';
 import { getFabricClientSingleton } from '../../util/fabric';
 
 const { TextArea } = Input;
 const logger = require('electron-log');
+const Step = Steps.Step;
 
 /**
  * register参数：用户名、affiliation, role等等
@@ -142,9 +143,15 @@ export default class CARegisterContent extends React.Component {
       marginBottom: '10px',
     };
     const titleStyle = {
-      fontSize: '130%',
+      fontSize: '120%',
       textAlign: 'center',
       marginBottom:'10px',
+    };
+    const title2Style = {
+        fontSize: '120%',
+        textAlign: 'center',
+        marginBottom:'10px',
+        marginTop:'20px'
     };
     const ButtonStyle = {
       width: '15%',
@@ -159,9 +166,22 @@ export default class CARegisterContent extends React.Component {
       float: 'left',
       color: '#ff0000',
     };
+    const stepsStyle={
+      position:'absolute',
+      right:'-35px',
+    };
+    const stepStyle={
+      height:'280px',
+    };
     return (
       <div style={outerDivStyle}>
-
+        <div style={stepsStyle}>
+        <Steps direction="vertical" progressDot current={3} >
+            <Step style={stepStyle} description="register" />
+            <Step style={stepStyle} description="enroll"/>
+            <Step  />
+        </Steps>
+        </div>
         <div style={titleStyle}>{this.state.Common.REGISTER}</div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
@@ -191,8 +211,7 @@ export default class CARegisterContent extends React.Component {
             readOnly
           />
         </div>
-
-        <div style={titleStyle}>{this.state.Common.ENROLL}</div>
+        <div style={title2Style}>{this.state.Common.ENROLL}</div>
         <div style={DivStyle}>
           <span style={asteriskStyle}>*</span>
           <span style={spanStyle}>{this.state.Common.ENROLL_USERNAME}</span>
@@ -212,7 +231,7 @@ export default class CARegisterContent extends React.Component {
           <TextArea
             placeholder="Enroll Result"
             value={this.state.enrollResult}
-            autosize={{ minRows: 3, maxRows: 3 }}
+            autosize={{ minRows: 2, maxRows: 2 }}
             readOnly
           />
         </div>
