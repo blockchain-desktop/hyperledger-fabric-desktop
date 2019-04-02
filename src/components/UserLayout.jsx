@@ -2,11 +2,11 @@
 
 // TODO: 登录页（秘钥导入页面）
 import React from 'react';
-import { Button, Input, Layout, Icon, message } from 'antd';
+import {Button, Input, Layout, Icon, message, Form, Modal} from 'antd';
 import { getFabricClientSingleton } from '../util/fabric';
 import { getConfigDBSingleton } from '../util/createDB';
 
-
+const FormItem = Form.Item;
 const ButtonGroup = Button.Group;
 const path = require('path');
 const yaml = require('js-yaml');
@@ -19,6 +19,64 @@ const { Content } = Layout;
 
 const bcgd = path.join(__dirname, '../../resources/styles/image/blc.jpg');
 
+const RegisterForm = Form.create()(
+    class extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {
+                Common: localStorage.getItem('language') === 'cn' ? require('../common/common_cn') : require('../common/common'),
+            };
+        }
+        render() {
+            const { visible, onCancel, onCreate, form } = this.props;
+            const { getFieldDecorator } = form;
+            return (
+                <Modal
+                    visible={visible}
+                    title={this.state.Common.USER_REGISTER}
+                    okText={this.state.Common.CREATE}
+                    cancelText={this.state.Common.CANCEL}
+                    onCancel={onCancel}
+                    onOk={onCreate}
+                    centered
+                    width="480px"
+                >
+                    <Form layout="vertical">
+                        <FormItem label={this.state.Common.FABRIC_CA_SERVER}>
+                            {getFieldDecorator('server', {
+                                rules: [{}],
+                            })(
+                                <Input placeholder={this.state.Common.FABRIC_CA_SERVER} />,
+                            )}
+                        </FormItem>
+                        <FormItem label={this.state.Common.REGISTER_USER_NAME} >
+                            {getFieldDecorator('username', {
+                                rules: [{}],
+                            })(
+                                <Input placeholder={this.state.Common.REGISTER_USER_NAME} />,
+                            )}
+                        </FormItem>
+                        <FormItem label={this.state.Common.REGISTER_PASSWORD} >
+                            {getFieldDecorator('password', {
+                                rules: [{}],
+                            })(
+                                <Input placeholder={this.state.Common.REGISTER_PASSWORD} />,
+                            )}
+                        </FormItem>
+                        <FormItem label={this.state.Common.REGISTER_CERTIFICATE} >
+                            {getFieldDecorator('directory', {
+                                rules: [{}],
+                            })(
+                                <Input placeholder={this.state.Common.REGISTER_CERTIFICATE} />,
+                            )}
+                        </FormItem>
+                    </Form>
+                </Modal>
+            );
+        }
+    },
+);
+
 function _configImportPathHelper(filePath, parentPath) {
   return path.isAbsolute(filePath) ? filePath : path.join(parentPath, filePath);
 }
@@ -28,6 +86,7 @@ export default class UserLayout extends React.Component {
     super(props);
 
     this.state = {
+      visibleRegisterForm:false,
       expand: false,
       peerGrpcUrl: 'grpcs://localhost:7051',
       peerEventUrl: 'grpcs://localhost:7053',
@@ -67,6 +126,10 @@ export default class UserLayout extends React.Component {
     this.changeLangtoCn = this.changeLangtoCn.bind(this);
     this.toggle=this.toggle.bind(this);
     this.registerUser=this.registerUser.bind(this);
+    this.saveFormRef=this.saveFormRef.bind(this);
+    this.handleCancel=this.handleCancel.bind(this);
+    this.handleCreate=this.handleCreate.bind(this);
+    this.showRegisterForm=this.showRegisterForm.bind(this);
   }
 
   toggle(){
@@ -76,6 +139,7 @@ export default class UserLayout extends React.Component {
 
   registerUser(){
       logger.info("Register new user here!");
+      this.showRegisterForm();
   }
 
   onClick() {
@@ -209,6 +273,68 @@ export default class UserLayout extends React.Component {
   changeLangtoCn() {
     localStorage.setItem('language', 'cn');
     this.setState({ Common: require('../common/common_cn') });
+  }
+  saveFormRef(formRef) {
+      this.formRef = formRef;
+  }
+  handleCancel() {
+      this.setState({ visibleRegisterForm: false });
+  }
+  handleCreate() {
+      const form = this.formRef.props.form;
+      form.validateFields((err, values) => {
+          if (err) {
+              return;
+          }
+        logger.info('Received values of instanitateform: ', values.server);
+        //调用接口这块有问题，需处理
+        db.update({ id: 0 },
+            { $set: {
+                    peerGrpcUrl: this.state.peerGrpcUrl,
+                    peerEventUrl: this.state.peerEventUrl,
+                    ordererUrl: this.state.ordererUrl,
+                    mspid: this.state.mspid,
+                    tlsPeerPath: this.state.tlsPeerPath,
+                    tlsOrdererPath: this.state.tlsOrdererPath,
+                    tlsCAServerPath: this.state.tlsCAServerPath,
+                    peerSSLTarget: this.state.peerSSLTarget,
+                    ordererSSLTarget: this.state.ordererSSLTarget,
+                    caServerUrl: values.server,
+                    keyPath: this.state.keyPath,
+                    certPath: this.state.certPath,
+                    path: 'resources/key/users/'
+                    } },
+            {},
+            () => {
+                getFabricClientSingleton().then((fabricClient) => {
+                    const enrReq = {
+                        enrollmentID: values.username,
+                        enrollmentSecret: values.password,
+                    };
+                  return fabricClient.enroll(enrReq);
+                }).then((enrollment) => {
+                    const certificate=values.directory+"/"+values.username+".pem";
+                    const privatekey=values.directory+"/"+values.username+".pri";
+                    logger.info('cert directory',certificate);
+                    logger.info('pri key directory',privatekey);
+                    fs.writeFile(certificate, enrollment.certificate, (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                    });
+                    fs.writeFile(privatekey, enrollment.key.toBytes(), (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                    });
+                });
+            });
+        form.resetFields();
+        this.setState({visibleRegisterForm:false})
+      });
+  }
+  showRegisterForm(){
+    this.setState({visibleRegisterForm:true})
   }
   render() {
     const LayoutStyle = {
@@ -407,6 +533,12 @@ export default class UserLayout extends React.Component {
               <Button type="primary" style={buttonStyle} onClick={this.onClick}>{this.state.Common.LOGIN}</Button>
             </div>
           </Content>
+          <RegisterForm
+              wrappedComponentRef={this.saveFormRef}
+              visible={this.state.visibleRegisterForm}
+              onCancel={this.handleCancel}
+              onCreate={this.handleCreate}
+          />
         </div>
       </Layout>
 
