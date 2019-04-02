@@ -2,9 +2,10 @@
 
 // main feature: CA register and enroll
 import React from 'react';
-import { Button, Input } from 'antd';
+import {Button, Input, Steps} from 'antd';
 import { getFabricClientSingleton } from '../../util/fabric';
 
+const Step = Steps.Step;
 const { TextArea } = Input;
 const logger = require('electron-log');
 
@@ -140,7 +141,7 @@ export default class CAUpdateContent extends React.Component {
       marginBottom: '10px',
     };
     const titleStyle = {
-      fontSize: '130%',
+      fontSize: '120%',
       marginTop: '10px',
       marginBottom:'10px',
       textAlign: 'center',
@@ -158,9 +159,29 @@ export default class CAUpdateContent extends React.Component {
       float: 'left',
       color: '#ff0000',
     };
+    const stepsStyle={
+        position:'absolute',
+        right:'-35px',
+    };
+    const step1Style={
+        height:'170px',
+    };
+    const step2Style={
+        height:'230px',
+    };
+    const step3Style={
+        height:'160px',
+    };
     return (
       <div style={outerDivStyle}>
-
+        <div style={stepsStyle}>
+            <Steps direction="vertical" progressDot current={3} >
+                <Step style={step1Style} description="update" />
+                <Step style={step2Style} description="revoke" />
+                <Step style={step3Style} description="crl"/>
+                <Step  />
+            </Steps>
+        </div>
         <div style={titleStyle}>{this.state.Common.REENROLL}</div>
         <div style={DivStyle}>
           <span style={spanStyle}>{this.state.Common.REENROLL_OPTIONAL}</span>

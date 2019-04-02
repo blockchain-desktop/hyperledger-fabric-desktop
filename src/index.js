@@ -20,18 +20,18 @@ const createWindow = async () => {
   if (process.platform === 'linux') {
     mainWindow = new BrowserWindow({
       icon: path.join(__dirname, '../resources/styles/image/logo/logo.iconset/icon_512x512.png'),
-      width: 800,
+      width: 860,
       height: 680,
-      minWidth: 800,
+      minWidth: 860,
       minHeight: 680,
       backgroundColor: '#fff',
     });
   } else {
     mainWindow = new BrowserWindow({
       icon: path.join(__dirname, '../resources/styles/image/logo/logo.iconset/icon_512x512.png'),
-      width: 800,
+      width: 860,
       height: 680,
-      minWidth: 800,
+      minWidth: 860,
       minHeight: 680,
       backgroundColor: '#fff',
     });
