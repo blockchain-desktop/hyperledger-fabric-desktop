@@ -60,6 +60,7 @@ class FabricClient {
       if (config.caServerUrl) {
         let tlsOptions;
         if (config.tlsCAServerPath) { // TLS support
+          logger.debug('CAServer enable TLS, cert path: ', config.tlsCAServerPath);
           self.caServerCert = fs.readFileSync(config.tlsCAServerPath);
           // FIXME: verify: false. Same reason as "ssl-target-name-override" above.
           // Need to skip CA DNS check when server domain is not the same as certificate signed.

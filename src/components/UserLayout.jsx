@@ -70,6 +70,14 @@ const RegisterForm = Form.create()(
                 <Input placeholder={this.state.Common.REGISTER_CERTIFICATE} />,
               )}
             </FormItem>
+            {/*TODO: type='file'，直接选择文件 */}
+            <FormItem label={this.state.Common.LOGIN_CA_SERVER_CA_CERT} >
+              {getFieldDecorator('caTlsCertPath', {
+                rules: [{}],
+              })(
+                <Input placeholder={this.state.Common.LOGIN_CA_SERVER_CA_CERT} />,
+              )}
+            </FormItem>
           </Form>
         </Modal>
       );
@@ -287,6 +295,9 @@ export default class UserLayout extends React.Component {
         return;
       }
       logger.info('Received values of instanitateform: ', values.server);
+      logger.debug('Enroll ca tls cert: ', values.caTlsCertPath);
+      // FIXME: Enroll ca tls cert:  C:\fakepath\org1-ca-chain.pem
+
       // 调用接口这块有问题，需处理
       db.update({ id: 0 },
         { $set: {
@@ -295,7 +306,7 @@ export default class UserLayout extends React.Component {
           ordererUrl: null,
           caServerUrl: values.server,
           path: 'resources/key/users/',
-        //    TODO: ca TLS
+          tlsCAServerPath: values.caTlsCertPath ? values.caTlsCertPath : '',
         } },
         {},
         () => {
