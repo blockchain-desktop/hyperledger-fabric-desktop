@@ -842,8 +842,12 @@ class FabricClient {
 
   // 关闭连接
   close() {
-    this.peer.close();
-    this.order.close();
+    if (this.peer) {
+      this.peer.close();
+    }
+    if (this.order) {
+      this.order.close();
+    }
   }
 }
 
