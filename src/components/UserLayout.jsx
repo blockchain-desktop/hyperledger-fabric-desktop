@@ -44,33 +44,33 @@ const RegisterForm = Form.create()(
           <Form layout="vertical">
             <FormItem label={this.state.Common.FABRIC_CA_SERVER}>
               {getFieldDecorator('server', {
-                rules: [{}],
+                rules: [{ required: true }],
               })(
                 <Input placeholder={this.state.Common.FABRIC_CA_SERVER} />,
               )}
             </FormItem>
             <FormItem label={this.state.Common.REGISTER_USER_NAME} >
               {getFieldDecorator('username', {
-                rules: [{}],
+                rules: [{ required: true }],
               })(
                 <Input placeholder={this.state.Common.REGISTER_USER_NAME} />,
               )}
             </FormItem>
             <FormItem label={this.state.Common.REGISTER_PASSWORD} >
               {getFieldDecorator('password', {
-                rules: [{}],
+                rules: [{ required: true }],
               })(
                 <Input placeholder={this.state.Common.REGISTER_PASSWORD} />,
               )}
             </FormItem>
             <FormItem label={this.state.Common.REGISTER_CERTIFICATE} >
               {getFieldDecorator('directory', {
-                rules: [{}],
+                rules: [{ required: true }],
               })(
                 <Input placeholder={this.state.Common.REGISTER_CERTIFICATE} />,
               )}
             </FormItem>
-            {/*TODO: type='file'，直接选择文件 */}
+            {/* TODO: type='file'，直接选择文件 */}
             <FormItem label={this.state.Common.LOGIN_CA_SERVER_CA_CERT} >
               {getFieldDecorator('caTlsCertPath', {
                 rules: [{}],
