@@ -140,16 +140,6 @@ export default class UserLayout extends React.Component {
     this.showRegisterForm = this.showRegisterForm.bind(this);
   }
 
-  toggle() {
-    const { expand } = this.state;
-    this.setState({ expand: !expand });
-  }
-
-  registerUser() {
-    logger.info('Register new user here!');
-    this.showRegisterForm();
-  }
-
   onClick() {
     db.update({ id: 0 },
       { $set: { peerGrpcUrl: this.state.peerGrpcUrl,
@@ -178,6 +168,17 @@ export default class UserLayout extends React.Component {
         });
       });
   }
+
+  toggle() {
+    const { expand } = this.state;
+    this.setState({ expand: !expand });
+  }
+
+  registerUser() {
+    logger.info('Register new user here!');
+    this.showRegisterForm();
+  }
+
   peerGrpcUrlChange(event) {
     this.setState({ peerGrpcUrl: event.target.value });
   }
@@ -321,14 +322,14 @@ export default class UserLayout extends React.Component {
             const privatekey = values.directory + '/' + values.username + '.pri';
             logger.info('cert directory', certificate);
             logger.info('pri key directory', privatekey);
-            fs.writeFileSync(certificate, enrollment.certificate, (err) => {
-              if (err) {
-                throw err;
+            fs.writeFileSync(certificate, enrollment.certificate, (errCert) => {
+              if (errCert) {
+                throw errCert;
               }
             });
-            fs.writeFileSync(privatekey, enrollment.key.toBytes(), (err) => {
-              if (err) {
-                throw err;
+            fs.writeFileSync(privatekey, enrollment.key.toBytes(), (errKey) => {
+              if (errKey) {
+                throw errKey;
               }
             });
           });
@@ -531,7 +532,7 @@ export default class UserLayout extends React.Component {
                 Collapse <Icon type={this.state.expand ? 'up' : 'down'} />
             </a>
             <a style={{ fontSize: 12 }} onClick={this.registerUser}>
-                Register <Icon type="user" />
+                Enroll <Icon type="user" />
             </a>
             <div style={lastDivStyle}>
               <Button type="primary" style={buttonStyle} onClick={this.onClick}>{this.state.Common.LOGIN}</Button>
