@@ -17,7 +17,7 @@ const db = getConfigDBSingleton();
 
 const { Content } = Layout;
 
-const bcgd = path.join(__dirname, '../../resources/styles/image/blc.jpg');
+const bcgd = path.join(__dirname, '../../resources/styles/image/blc2.jpg');
 
 const RegisterForm = Form.create()(
   class extends React.Component {
@@ -351,7 +351,7 @@ export default class UserLayout extends React.Component {
       height: 'auto',
       display: 'block',
       position: 'absolute',
-      minHeight: '625px',
+      minHeight: '750px',
       backgroundImage: 'url(' + bcgd + ')',
     };
     const contentStyle = {
