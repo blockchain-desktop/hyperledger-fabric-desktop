@@ -150,7 +150,7 @@
 > 注：
 > fabric默认在GOPATH路径下src文件夹下寻找链码文件，路径只需具体到链码文件的所在文件夹，您可参考下面的例子：
 如：要安装的链码文件的完整路径为：`/Users/my/go/src/chaincode/fabcar/go/fabcar.go`
-GOPATH为`/Users/chuancey/go`，需填入的路径为：`chaincode/fabcar/go`
+GOPATH为前半部分`/Users/my/go/`，则需填入的路径为：`chaincode/fabcar/go`
 
 如果觉得这样填入链码文件路径比较麻烦，我们已经提出了[issue](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues/16)
 ，规划解决。
