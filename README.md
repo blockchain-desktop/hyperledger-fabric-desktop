@@ -46,8 +46,8 @@ Check [CONTRIBUTING](doc/doc-En/CONTRIUTING-EN.md) documentation for more detail
 
 ## Community
 1. Github [Issues](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues): Open to Everyone.
-1. Weekly Online Meeting:
-    * Time: 10:00 AM, Tuesday，CST(UTC +8)
+1. Monthly Online Meeting:
+    * Time: 10:00 AM, Day 1st of Each Month，CST(UTC +8)
     * Access: [zoom](https://zoom.us/download#client_4meeting)
         * Meeting Room Link: https://zoom.us/j/3890122981
         * Meeting Room ID: 389 012 2981
@@ -105,8 +105,8 @@ available at http://creativecommons.org/licenses/by/4.0/.
 
 1. Github [Issues](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)：完全开放
     
-1. 每周会议：
-    * 时间：每周二，上午10点，中国标准时间 (UTC +8)
+1. 每月会议：
+    * 时间：每月1号，上午10点，中国标准时间 (UTC +8)
     * 方式：[zoom](https://zoom.us/download#client_4meeting) 在线会议工具
         * 会议室链接：https://zoom.us/j/3890122981   
         * 会议室ID：389 012 2981  
