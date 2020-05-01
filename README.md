@@ -46,12 +46,6 @@ Check [CONTRIBUTING](doc/doc-En/CONTRIUTING-EN.md) documentation for more detail
 
 ## Community
 1. Github [Issues](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues): Open to Everyone.
-1. Monthly Online Meeting:
-    * Time: 10:00 AM, Day 1st of Each Month，CST(UTC +8)
-    * Access: [zoom](https://zoom.us/download#client_4meeting)
-        * Meeting Room Link: https://zoom.us/j/3890122981
-        * Meeting Room ID: 389 012 2981
-        * Open to everyone.
 1. E-Mail: blockchain.desktop(at)outlook.com
 1. Mailing List: TBA
 
@@ -104,14 +98,6 @@ available at http://creativecommons.org/licenses/by/4.0/.
 ## 社区交流
 
 1. Github [Issues](https://github.com/blockchain-desktop/hyperledger-fabric-desktop/issues)：完全开放
-    
-1. 每月会议：
-    * 时间：每月1号，上午10点，中国标准时间 (UTC +8)
-    * 方式：[zoom](https://zoom.us/download#client_4meeting) 在线会议工具
-        * 会议室链接：https://zoom.us/j/3890122981   
-        * 会议室ID：389 012 2981  
-        * 无需注册完全开放，安装客户端后，打开会议室链接或输入会议室ID号即可进入会议室。
-        可通过电脑客户端、智能手机客户端、电话拨号连接。
 
 1. 微信群：  
 请添加群管理员微信（消息备注:来自Fabric-Desktop）
